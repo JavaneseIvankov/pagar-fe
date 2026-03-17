@@ -182,6 +182,32 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+
+  /* Headings */
+  --text-h1: 32px;
+  --text-h1--line-height: 120%;
+  --text-h1--font-weight: 700;
+
+  --text-h2: 28px;
+  --text-h2--line-height: 120%;
+  --text-h2--font-weight: 700;
+
+  --text-h3: 24px;
+  --text-h3--line-height: 120%;
+  --text-h3--font-weight: 700;
+
+  --text-h4: 20px;
+  --text-h4--line-height: 120%;
+  --text-h4--font-weight: 700;
+
+  /* Body */
+  --text-body-3: 16px;
+  --text-body-3--line-height: 150%;
+  --text-body-3--font-weight: 400;
+
+  --text-body-4: 12px;
+  --text-body-4--line-height: 150%;
+  --text-body-4--font-weight: 400;
 }
 
 @layer base {

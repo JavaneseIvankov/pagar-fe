@@ -19,7 +19,8 @@
       "!**/build",
       "!coverage",
       "!**/coverage",
-      "!**/components/ui"
+      "!**/components/ui",
+      "!.agents"
     ]
   },
   "formatter": {
@@ -35,7 +36,7 @@
         "noUnknownAtRules": "off"
       },
       "nursery": {
-        "useSortedClasses": "error"
+        "useSortedClasses": "on"
       }
     },
     "domains": {

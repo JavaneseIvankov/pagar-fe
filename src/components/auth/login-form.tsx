@@ -80,9 +80,9 @@ export function LoginForm() {
         <Link href="/auth/forgot-password" className="underline text-body-4">
           Lupa Password?
         </Link>
-        <Link href="/auth/login" className="underline text-body-4">
-          Sudah Punya Akun?{" "}
-          <span className="font-semibold text-primary">Masuk</span>
+        <Link href="/auth/register" className="underline text-body-4">
+          Belum Punya Akun?{" "}
+          <span className="font-semibold text-primary">Daftar</span>
         </Link>
       </div>
     </form>

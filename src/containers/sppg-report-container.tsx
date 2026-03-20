@@ -25,6 +25,7 @@ export function SppgReportContainer() {
     { label: "LEMAK", value: `${rawNutritionalFacts.fatGrams} gram` },
   ];
 
+  // TASK: implement infinite scroll here (later after backend contract and frontend domain types are stable)
   return (
     <SppgReportCard
       author={author}

@@ -36,27 +36,26 @@ export function SppgReportCard({
   origin,
   title,
   content,
-  likes,
-  comments,
   image,
   nutritionalFacts,
 }: SppgReportCardProps) {
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader className="space-between flex flex-row items-center">
+    <Card className="w-full max-w-[933px]">
+      <CardHeader className="space-between flex flex-row items-center pt-1">
         <div className="flex w-full flex-row items-center gap-3">
-          <Avatar>
+          <Avatar className="max-w-[60px] max-h-[60px] w-10 h-10">
             <AvatarImage src={image} />
             <AvatarFallback>{author.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
           <div>
-            <h4 className="font-medium">{author}</h4>
-            <p className="text-muted-foreground text-sm">
+            <h4 className="font-semibold text-h4">{author}</h4>
+            <p className="text-muted-foreground text-body-3">
               {timeSincePosted} • {origin}
             </p>
           </div>
         </div>
-        <Badge variant={"secondary"} className="text-yellow-500">
+        {/* FIXME: consider less hacky solution, no non-token color */}
+        <Badge variant={"secondary"} className="text-primary">
           <HoverCard>
             <HoverCardTrigger className="block @xs/card-header:hidden">
               <HugeiconsIcon icon={CheckCircle} className="size-4" />
@@ -68,48 +67,30 @@ export function SppgReportCard({
               Laporan Resmi
             </HoverCardContent>
           </HoverCard>
-          <span className="@xs/card-header:block hidden">Laporan Resmi</span>
+          <span className="@xs/card-header:block hidden text-body-3">
+            Laporan Resmi
+          </span>
         </Badge>
       </CardHeader>
 
-      <CardContent className="@container/card-content space-y-4">
+      <CardContent className="@container/card-content space-y-8 pb-6">
         <div className="relative aspect-[4/3] w-full overflow-hidden rounded-md">
           <Image fill src={image} alt={title} className="object-cover" />
         </div>
-        <div className="w-full">
-          <h3 className="font-semibold @xs/card-content:text-xl text-xs">
+        <div className="w-full flex flex-col gap-4">
+          <h3 className="font-semibold @xs/card-content:text-h2 text-body">
             {title}
           </h3>
-
           <NutritionalFacts facts={nutritionalFacts} />
-
-          <p className="text-muted-foreground text-sm">{content}</p>
+          <p className="text-body-3">{content}</p>
         </div>
       </CardContent>
 
       <CardFooter>
-        <CardAction className="flex w-full justify-between">
-          <span className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              <HugeiconsIcon icon={ThumbsUp} className="" absoluteStrokeWidth />
-              {likes}
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              <HugeiconsIcon icon={Comment} className="" absoluteStrokeWidth />
-              {comments}
-            </Button>
-          </span>
+        <CardAction className="flex w-full justify-end">
           <Button
-            variant={"secondary"}
-            className="p-4 font-semibold text-yellow-500"
+            variant={"tertiary"}
+            className="p-4 font-semibold hover:bg-primary hover:text-primary-foreground hover:cursor-pointer"
           >
             Lihat Detail
           </Button>

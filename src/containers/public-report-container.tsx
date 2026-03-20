@@ -1,6 +1,6 @@
-import { CivilReportCard } from "@/components/civil-report-card";
+import { PublicReportCard } from "@/components/public-report-card";
 
-export function CivilReportContainer() {
+export function PublicReportContainer() {
   const data = {
     author: "Anonim",
     timeSincePosted: "2 jam lalu",
@@ -11,7 +11,9 @@ export function CivilReportContainer() {
     likes: 124,
     comments: 18,
     image: "https://placehold.co/600x400",
+    forSppgName: "CV. Berkah Nutrisi",
   };
 
-  return <CivilReportCard {...data} />;
+  // TASK: later, we would need to implement infinite scroll here
+  return <PublicReportCard {...data} />;
 }

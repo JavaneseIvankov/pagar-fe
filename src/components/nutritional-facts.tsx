@@ -16,8 +16,10 @@ export function NutritionalFacts({ facts }: NutritionalFactsProps) {
             key={fact.label}
             className="rounded-lg border-0 bg-muted px-2 py-2 text-center"
           >
-            <p className="text-foreground/30 text-xs uppercase">{fact.label}</p>
-            <p className="font-black text-sm lg:text-md">{fact.value}</p>
+            <p className="text-foreground/30 text-body-3 uppercase">
+              {fact.label}
+            </p>
+            <p className="font-black text-body-3 lg:text-h4">{fact.value}</p>
           </div>
         ))}
       </div>

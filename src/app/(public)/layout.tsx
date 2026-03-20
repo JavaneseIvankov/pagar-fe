@@ -1,0 +1,12 @@
+import { AppHeader } from "@/components/app-header";
+
+export default function PublicLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <div className="w-full min-h-[100dvh] flex flex-col">
+      <AppHeader />
+      <section className="container pt-10 pb-20 md:pb-40">{children}</section>
+    </div>
+  );
+}

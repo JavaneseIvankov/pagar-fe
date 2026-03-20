@@ -1,4 +1,4 @@
-import { PublicReportCard } from "@/components/public-report-card";
+import { PublicReportCard } from "@/components/reports/public-report-card";
 
 export function PublicReportContainer() {
   const data = {

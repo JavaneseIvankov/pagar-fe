@@ -1,4 +1,4 @@
-import { ReportTabs } from "@/components/report-tabs";
+import { ReportTabs } from "@/components/reports/report-tabs";
 import { SppgReportContainer } from "@/containers/sppg-report-container";
 
 export default function SppgReportPage() {

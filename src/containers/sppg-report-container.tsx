@@ -1,4 +1,4 @@
-import { SppgReportCard } from "@/components/sppg-report-card";
+import { SppgReportCard } from "@/components/reports/sppg-report-card";
 
 export function SppgReportContainer() {
   const author = "Anonim";

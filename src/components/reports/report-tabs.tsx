@@ -5,8 +5,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
-import { PeopleIcon } from "./exported-icons";
+import { PeopleIcon } from "../exported-icons";
 
 /**
 This component state is tied to pathanme

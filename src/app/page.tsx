@@ -1,8 +1,8 @@
 import { AppHeader } from "@/components/app-header";
 import { ComponentExample } from "@/components/component-example";
-import { ReportTabs } from "@/components/report-tabs";
+import { ReportTabs } from "@/components/reports/report-tabs";
+import StarRating from "@/components/reports/star-rating";
 import { SearchInput } from "@/components/search-input";
-import StarRating from "@/components/star-rating";
 import { PublicReportContainer } from "@/containers/public-report-container";
 import { SppgReportContainer } from "@/containers/sppg-report-container";
 

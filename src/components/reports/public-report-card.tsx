@@ -1,5 +1,5 @@
 import Image from "next/image";
-import StarRating from "@/components/star-rating";
+import StarRating from "@/components/reports/star-rating";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 

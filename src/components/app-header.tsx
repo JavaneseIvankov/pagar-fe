@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { AppLogo } from "./app-logo";
 import ProfileButton from "./profile/profile-button";
-import { SearchReport } from "./search-report";
+import { SearchReport } from "./reports/search-report";
 import { buttonVariants } from "./ui/button";
 
 export function AppHeader() {

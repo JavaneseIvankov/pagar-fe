@@ -1,4 +1,4 @@
-import { ReportTabs } from "@/components/report-tabs";
+import { ReportTabs } from "@/components/reports/report-tabs";
 import { PublicReportContainer } from "@/containers/public-report-container";
 
 export default function PublicReportPage() {

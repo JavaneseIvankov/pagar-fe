@@ -2,7 +2,7 @@
 
 import { debounce, parseAsInteger, useQueryState } from "nuqs";
 import { useCallback } from "react";
-import { SearchInput } from "./search-input";
+import { SearchInput } from "../search-input";
 import {
   Combobox,
   ComboboxContent,
@@ -10,7 +10,7 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
-} from "./ui/combobox";
+} from "../ui/combobox";
 
 type KecamatanFilterEntry = {
   value: number;

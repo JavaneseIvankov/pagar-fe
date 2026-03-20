@@ -9,21 +9,21 @@ import { cn } from "@/lib/utils";
 
 const ROLE_DATA = [
   {
-    icon: <TruckIcon />,
+    icon: <TruckIcon className="text-[#13AFEC]" />,
     roleName: "SPPG",
     description: "Kelola dapur dan buktikan transparansi pelayanan Anda",
     iconWrapperClassName: "bg-[#E3F8FF]",
     href: "/auth/register/sppg",
   },
   {
-    icon: <SchoolIcon />,
+    icon: <SchoolIcon className="text-[#00A455]" />,
     roleName: "Sekolah",
     description: "Pastikan siswa mendapatkan hak nutrisinya",
     iconWrapperClassName: "bg-[#E7FDEE]",
     href: "/auth/register/school",
   },
   {
-    icon: <PeopleIcon />,
+    icon: <PeopleIcon className="text-[#6200EE]" />,
     roleName: "Umum",
     description: "Suarakan kepedulian Anda sebagai pengawas kualitas",
     iconWrapperClassName: "bg-[#EFE6FD]",

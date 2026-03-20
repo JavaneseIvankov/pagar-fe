@@ -3,7 +3,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { AuthContentLayout } from "@/components/auth/auth-content-layout";
-import { PeopleIcon, SchoolIcon, TruckIcon } from "@/components/exported-svgs";
+import { PeopleIcon, SchoolIcon, TruckIcon } from "@/components/exported-icons";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 

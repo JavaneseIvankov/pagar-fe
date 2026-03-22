@@ -1,0 +1,414 @@
+import type {
+  TAdminStatistics,
+  TBudget,
+  TNutritionalFact,
+  TPublicReview,
+  TPublicReviewHistory,
+  TRole,
+  TSchool,
+  TSppg,
+  TSppgPeriodicReport,
+  TSppgReport,
+  TSppgReportDetail,
+  TSppgStatistics,
+  TUser,
+} from "@/types";
+
+export const roles: TRole[] = ["ADMIN", "PUBLIC", "SCHOOL", "SPPG"];
+
+export const users: TUser[] = [
+  {
+    id: "user-admin-001",
+    role: "ADMIN",
+    username: "admin.pagar",
+  },
+  {
+    id: "user-public-001",
+    role: "PUBLIC",
+    username: "warga.malang",
+  },
+  {
+    id: "user-school-001",
+    role: "SCHOOL",
+    username: "sdn-kauman-1",
+  },
+  {
+    id: "user-sppg-001",
+    role: "SPPG",
+    username: "sppg-berkah-nutrisi",
+  },
+];
+
+export const sppgs: TSppg[] = [
+  {
+    id: "user-sppg-001",
+    role: "SPPG",
+    username: "sppg-berkah-nutrisi",
+    sppgId: "SPPG-MLG-001",
+    sppgName: "SPPG Berkah Nutrisi",
+    address: "Jl. Soekarno Hatta No. 18, Malang",
+  },
+  {
+    id: "user-sppg-002",
+    role: "SPPG",
+    username: "sppg-sehat-bersama",
+    sppgId: "SPPG-MLG-002",
+    sppgName: "SPPG Sehat Bersama",
+    address: "Jl. Ijen No. 44, Malang",
+  },
+  {
+    id: "user-sppg-003",
+    role: "SPPG",
+    username: "sppg-gizi-nusantara",
+    sppgId: "SPPG-SBY-001",
+    sppgName: "SPPG Gizi Nusantara",
+    address: "Jl. Darmo Permai No. 12, Surabaya",
+  },
+];
+
+export const schools: TSchool[] = [
+  {
+    id: "user-school-001",
+    role: "SCHOOL",
+    username: "sdn-kauman-1",
+    schoolId: "SCH-MLG-001",
+    schoolName: "SDN Kauman 1 Malang",
+    address: "Jl. Basuki Rahmat No. 7, Malang",
+  },
+  {
+    id: "user-school-002",
+    role: "SCHOOL",
+    username: "smpn-3-malang",
+    schoolId: "SCH-MLG-002",
+    schoolName: "SMPN 3 Malang",
+    address: "Jl. Bandung No. 20, Malang",
+  },
+];
+
+export const nutritionalFacts: TNutritionalFact[] = [
+  {
+    label: "Kalori",
+    value: 710,
+    unit: "kkal",
+    dciPercent: 36,
+  },
+  {
+    label: "Protein",
+    value: 35,
+    unit: "gram",
+    dciPercent: 58,
+  },
+  {
+    label: "Karbohidrat",
+    value: 65,
+    unit: "gram",
+    dciPercent: 22,
+  },
+  {
+    label: "Lemak",
+    value: 24,
+    unit: "gram",
+    dciPercent: 31,
+  },
+];
+
+export const sppgReports: TSppgReport[] = [
+  {
+    id: "report-001",
+    title: "Menu Ikan Goreng dan Sayur Bening",
+    author: sppgs[0],
+    mealTime: "Makan Siang",
+    imageUrl: "https://placehold.co/1200x800?text=SPPG+Report+1",
+    postedAt: new Date("2026-03-20T11:30:00+07:00"),
+    nutritionalFacts,
+    content:
+      "Menu hari ini terdiri dari nasi putih, ikan goreng, sayur bening bayam, tahu, dan buah pisang. Distribusi berjalan lancar dan mayoritas siswa menghabiskan porsi.",
+  },
+  {
+    id: "report-002",
+    title: "Menu Ayam Bakar dan Tumis Buncis",
+    author: sppgs[1],
+    mealTime: "Makan Siang",
+    imageUrl: "https://placehold.co/1200x800?text=SPPG+Report+2",
+    postedAt: new Date("2026-03-19T11:45:00+07:00"),
+    nutritionalFacts: [
+      {
+        label: "Kalori",
+        value: 680,
+        unit: "kkal",
+        dciPercent: 34,
+      },
+      {
+        label: "Protein",
+        value: 32,
+        unit: "gram",
+        dciPercent: 53,
+      },
+      {
+        label: "Karbohidrat",
+        value: 61,
+        unit: "gram",
+        dciPercent: 20,
+      },
+      {
+        label: "Lemak",
+        value: 22,
+        unit: "gram",
+        dciPercent: 28,
+      },
+    ],
+    content:
+      "Ayam bakar disajikan bersama tumis buncis wortel, nasi, dan jeruk. Porsi protein disesuaikan dengan kelompok usia siswa.",
+  },
+  {
+    id: "report-003",
+    title: "Menu Telur Balado dan Capcay",
+    author: sppgs[2],
+    mealTime: "Sarapan",
+    imageUrl: "https://placehold.co/1200x800?text=SPPG+Report+3",
+    postedAt: new Date("2026-03-18T08:00:00+07:00"),
+    nutritionalFacts: [
+      {
+        label: "Kalori",
+        value: 590,
+        unit: "kkal",
+        dciPercent: 30,
+      },
+      {
+        label: "Protein",
+        value: 27,
+        unit: "gram",
+        dciPercent: 45,
+      },
+      {
+        label: "Karbohidrat",
+        value: 54,
+        unit: "gram",
+        dciPercent: 18,
+      },
+      {
+        label: "Lemak",
+        value: 18,
+        unit: "gram",
+        dciPercent: 23,
+      },
+    ],
+    content:
+      "Menu sarapan ringan dengan fokus protein dan sayuran. Capcay dibuat dengan sedikit minyak untuk menjaga keseimbangan gizi.",
+  },
+];
+
+export const publicReviews: TPublicReview[] = [
+  {
+    id: "review-001",
+    title: "Porsi cukup dan lauk segar",
+    imageUrl: "https://placehold.co/1200x800?text=Public+Review+1",
+    postedAt: new Date("2026-03-20T13:10:00+07:00"),
+    ratingScore: 4.5,
+    forSppg: {
+      id: sppgs[0].id,
+      username: sppgs[0].username,
+      sppgId: sppgs[0].sppgId,
+      sppgName: sppgs[0].sppgName,
+    },
+    content:
+      "Menu hari ini terlihat bersih dan anak saya bilang ikannya enak. Sayurnya bisa ditambah sedikit agar lebih seimbang.",
+  },
+  {
+    id: "review-002",
+    title: "Distribusi tepat waktu",
+    imageUrl: "https://placehold.co/1200x800?text=Public+Review+2",
+    postedAt: new Date("2026-03-19T14:25:00+07:00"),
+    ratingScore: 4.8,
+    forSppg: {
+      id: sppgs[1].id,
+      username: sppgs[1].username,
+      sppgId: sppgs[1].sppgId,
+      sppgName: sppgs[1].sppgName,
+    },
+    content:
+      "Makanan datang sesuai jadwal dan masih hangat. Anak-anak terlihat antusias saat makan siang.",
+  },
+  {
+    id: "review-003",
+    title: "Menu cukup baik",
+    imageUrl: "https://placehold.co/1200x800?text=Public+Review+3",
+    postedAt: new Date("2026-03-18T09:30:00+07:00"),
+    ratingScore: 3.9,
+    forSppg: {
+      id: sppgs[2].id,
+      username: sppgs[2].username,
+      sppgId: sppgs[2].sppgId,
+      sppgName: sppgs[2].sppgName,
+    },
+    content:
+      "Rasa makanan cukup baik, tetapi buah pendamping kadang tidak tersedia. Secara umum masih memuaskan.",
+  },
+];
+
+export const budgets: TBudget[] = [
+  {
+    id: "budget-001",
+    items: [
+      {
+        id: "budget-item-001",
+        name: "Ikan nila segar",
+        price: 1250000,
+      },
+      {
+        id: "budget-item-002",
+        name: "Bayam dan wortel",
+        price: 320000,
+      },
+      {
+        id: "budget-item-003",
+        name: "Beras premium",
+        price: 890000,
+      },
+    ],
+    totalPrice: 2460000,
+    attachments: [
+      {
+        id: "attachment-001",
+        label: "Invoice bahan baku",
+        url: "https://example.com/invoices/budget-001.pdf",
+        mimeType: "application/pdf",
+      },
+      {
+        id: "attachment-002",
+        label: "Dokumentasi distribusi",
+        url: "https://example.com/photos/distribution-001.jpg",
+        mimeType: "image/jpeg",
+      },
+    ],
+  },
+];
+
+export const sppgReportDetails: TSppgReportDetail[] = [
+  {
+    ...sppgReports[0],
+    relatedReports: [sppgReports[1], sppgReports[2]],
+    budget: budgets[0],
+  },
+];
+
+export const sppgStatistics: TSppgStatistics = {
+  isDailyReportSubmitted: true,
+  weeklyCalories: {
+    average: 672,
+    percentFromLastWeek: 8.4,
+  },
+  budget: {
+    monthly: {
+      remaining: 12450000,
+      status: "SAFE",
+    },
+  },
+  publicReviews: {
+    total: 186,
+  },
+};
+
+export const sppgPeriodicReports: TSppgPeriodicReport[] = [
+  {
+    id: "periodic-001",
+    url: "https://example.com/reports/2026-01.pdf",
+    periode: "Januari 2026",
+    monthIndex: 0,
+    status: "VERIFIED",
+    totalMeal: 2480,
+    totalBudget: 74250000,
+  },
+  {
+    id: "periodic-002",
+    url: "https://example.com/reports/2026-02.pdf",
+    periode: "Februari 2026",
+    monthIndex: 1,
+    status: "VERIFIED",
+    totalMeal: 2310,
+    totalBudget: 70120000,
+  },
+  {
+    id: "periodic-003",
+    url: "https://example.com/reports/2026-03.pdf",
+    periode: "Maret 2026",
+    monthIndex: 2,
+    status: "NOT_VERIFIED",
+    totalMeal: 1185,
+    totalBudget: 36890000,
+  },
+];
+
+export const adminStatistics: TAdminStatistics = {
+  reports: {
+    total: 342,
+  },
+  sppg: {
+    total: 27,
+  },
+  school: {
+    total: 112,
+  },
+  public: {
+    total: 1840,
+  },
+  reviews: {
+    school: 91,
+    public: 286,
+    total: 377,
+  },
+  sppgWarnings: {
+    total: 2,
+    sppgs: {
+      id: sppgs[2].sppgId,
+      name: sppgs[2].sppgName,
+      detail: "Belum mengunggah laporan harian selama 2 hari berturut-turut.",
+    },
+  },
+};
+
+export const publicReviewHistory: TPublicReviewHistory = {
+  reviews: publicReviews,
+};
+
+export const mockData = {
+  roles,
+  users,
+  sppgs,
+  schools,
+  nutritionalFacts,
+  sppgReports,
+  publicReviews,
+  budgets,
+  sppgReportDetails,
+  sppgStatistics,
+  sppgPeriodicReports,
+  adminStatistics,
+  publicReviewHistory,
+};
+
+export const sppgReportData = {
+  author: sppgReports[0].author.sppgName,
+  timeSincePosted: "2 jam lalu",
+  origin: schools[0].schoolName,
+  title: sppgReports[0].title,
+  content: sppgReports[0].content,
+  likes: 124,
+  comments: 18,
+  image: sppgReports[0].imageUrl,
+  rawNutritionalFacts: {
+    caloriesKcal:
+      sppgReports[0].nutritionalFacts.find((item) => item.label === "Kalori")
+        ?.value ?? 0,
+    proteinGrams:
+      sppgReports[0].nutritionalFacts.find((item) => item.label === "Protein")
+        ?.value ?? 0,
+    carbGrams:
+      sppgReports[0].nutritionalFacts.find(
+        (item) => item.label === "Karbohidrat",
+      )?.value ?? 0,
+    fatGrams:
+      sppgReports[0].nutritionalFacts.find((item) => item.label === "Lemak")
+        ?.value ?? 0,
+  },
+};

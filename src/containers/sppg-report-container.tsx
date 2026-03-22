@@ -1,5 +1,5 @@
 import { SppgReportCard } from "@/components/reports/sppg-report-card";
-import { sppgReports } from "../../mock-data";
+import { sppgReports } from "../mock-data";
 
 export function SppgReportContainer() {
   const report = sppgReports[0];

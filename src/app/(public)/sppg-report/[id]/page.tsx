@@ -1,4 +1,3 @@
-import { sppgReportDetails } from "mock-data";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import {
@@ -14,6 +13,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Progress } from "@/components/ui/multi-segment-progress";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { sppgReportDetails } from "@/mock-data";
 import type { TBudget, TNutritionalFacts, TSppgReport } from "@/types";
 
 type SppgReportDetailPageProps = {

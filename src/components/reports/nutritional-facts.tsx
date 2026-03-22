@@ -1,10 +1,7 @@
-export interface NutritionalFact {
-  label: string;
-  value: string | number;
-}
+import type { TNutritionalFact } from "@/types";
 
 export interface NutritionalFactsProps {
-  facts: NutritionalFact[];
+  facts: TNutritionalFact[];
 }
 
 export function NutritionalFacts({ facts }: NutritionalFactsProps) {
@@ -19,7 +16,9 @@ export function NutritionalFacts({ facts }: NutritionalFactsProps) {
             <p className="text-foreground/30 text-body-3 uppercase">
               {fact.label}
             </p>
-            <p className="font-black text-body-3 lg:text-h4">{fact.value}</p>
+            <p className="font-black text-body-3 lg:text-h4">
+              {fact.value} {fact.unit}
+            </p>
           </div>
         ))}
       </div>

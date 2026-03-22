@@ -1,7 +1,8 @@
 "use client";
 
 import { debounce, parseAsInteger, useQueryState } from "nuqs";
-import { useCallback } from "react";
+import type { ComponentProps } from "react";
+import { Suspense, useCallback } from "react";
 import { SearchInput } from "../search-input";
 import {
   Combobox,
@@ -24,7 +25,31 @@ const kecamatanList: KecamatanFilterEntry[] = [
   { value: 3, label: "Kecamatan 3" },
 ];
 
+interface SearchReportControlsProps {
+  items: KecamatanFilterEntry[];
+  searchInputProps?: ComponentProps<typeof SearchInput>;
+  selectedKecamatan?: KecamatanFilterEntry | null;
+  onSelectedKecamatanChange?: (value: KecamatanFilterEntry) => void;
+}
+
 export function SearchReport() {
+  return (
+    <Suspense fallback={<SearchReportFallback />}>
+      {<InnerSearchReport />}
+    </Suspense>
+  );
+}
+
+function SearchReportFallback() {
+  return (
+    <SearchReportControls
+      items={[]}
+      searchInputProps={{ value: "", readOnly: true }}
+    />
+  );
+}
+
+function InnerSearchReport() {
   const [search, setSearch] = useQueryState("search", {
     defaultValue: "",
     limitUrlUpdates: debounce(500),
@@ -42,30 +67,51 @@ export function SearchReport() {
 
   // FIXME: this has bad tab-navigation
   return (
+    <SearchReportControls
+      items={kecamatanList}
+      searchInputProps={{
+        value: search,
+        onChange: (e) => setSearch(e.target.value),
+      }}
+      selectedKecamatan={getEntryFromKecamatanId(kecamatanId)}
+      onSelectedKecamatanChange={(value) => setKecamatanId(value.value)}
+    />
+  );
+}
+
+function SearchReportControls({
+  items,
+  searchInputProps,
+  selectedKecamatan = null,
+  onSelectedKecamatanChange,
+}: SearchReportControlsProps) {
+  return (
     <>
-      <SearchInput value={search} onChange={(e) => setSearch(e.target.value)} />
+      <SearchInput {...searchInputProps} />
       <Combobox
-        items={kecamatanList}
+        items={items}
         itemToStringValue={(k: KecamatanFilterEntry) => k.label}
-        value={getEntryFromKecamatanId(kecamatanId)}
-        onValueChange={(k) => {
-          if (k) {
-            setKecamatanId(k?.value);
+        value={selectedKecamatan}
+        onValueChange={(value) => {
+          if (value) {
+            onSelectedKecamatanChange?.(value);
           }
         }}
       >
         <ComboboxInput
-          className={"bg-background"}
+          className="bg-background"
           placeholder="Pilih kecamatan"
         />
         <ComboboxContent>
           <ComboboxEmpty>Tidak ada kecamatan yang cocok</ComboboxEmpty>
           <ComboboxList>
-            {(kec: KecamatanFilterEntry) => (
-              <ComboboxItem key={kec.value} value={kec}>
-                {kec.label}
-              </ComboboxItem>
-            )}
+            {(kec: KecamatanFilterEntry) =>
+              items.length > 0 ? (
+                <ComboboxItem key={kec.value} value={kec}>
+                  {kec.label}
+                </ComboboxItem>
+              ) : null
+            }
           </ComboboxList>
         </ComboboxContent>
       </Combobox>

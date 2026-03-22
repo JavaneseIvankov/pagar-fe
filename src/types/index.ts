@@ -23,11 +23,23 @@ export type TSchool = TUser & {
   address: string;
 };
 
-export type TNutritionalFact = {
-  label: string;
-  value: number;
-  unit: string;
-  dciPercent: number;
+export type TNutritionalFacts = {
+  calories: {
+    inKcal: number;
+    inDciPercent: number;
+  };
+  proteinGrams: {
+    inGrams: number;
+    inDciPercent: number;
+  };
+  carbGrams: {
+    inGrams: number;
+    inDciPercent: number;
+  };
+  fatGrams: {
+    inGrams: number;
+    inDciPercent: number;
+  };
 };
 
 export type TSppgReport = {
@@ -37,7 +49,7 @@ export type TSppgReport = {
   mealTime: string;
   imageUrl: string;
   postedAt: Date;
-  nutritionalFacts: TNutritionalFact[];
+  nutritionalFacts: TNutritionalFacts;
   content: string;
 };
 

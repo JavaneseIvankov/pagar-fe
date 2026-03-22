@@ -1,7 +1,7 @@
 import type {
   TAdminStatistics,
   TBudget,
-  TNutritionalFact,
+  TNutritionalFacts,
   TPublicReview,
   TPublicReviewHistory,
   TRole,
@@ -85,32 +85,24 @@ export const schools: TSchool[] = [
   },
 ];
 
-export const nutritionalFacts: TNutritionalFact[] = [
-  {
-    label: "Kalori",
-    value: 710,
-    unit: "kkal",
-    dciPercent: 36,
+export const nutritionalFacts: TNutritionalFacts = {
+  calories: {
+    inKcal: 710,
+    inDciPercent: 36,
   },
-  {
-    label: "Protein",
-    value: 35,
-    unit: "gram",
-    dciPercent: 58,
+  proteinGrams: {
+    inGrams: 35,
+    inDciPercent: 58,
   },
-  {
-    label: "Karbohidrat",
-    value: 65,
-    unit: "gram",
-    dciPercent: 22,
+  carbGrams: {
+    inGrams: 65,
+    inDciPercent: 22,
   },
-  {
-    label: "Lemak",
-    value: 24,
-    unit: "gram",
-    dciPercent: 31,
+  fatGrams: {
+    inGrams: 24,
+    inDciPercent: 31,
   },
-];
+};
 
 export const sppgReports: TSppgReport[] = [
   {
@@ -131,32 +123,24 @@ export const sppgReports: TSppgReport[] = [
     mealTime: "Makan Siang",
     imageUrl: "https://placehold.co/1200x800?text=SPPG+Report+2",
     postedAt: new Date("2026-03-19T11:45:00+07:00"),
-    nutritionalFacts: [
-      {
-        label: "Kalori",
-        value: 680,
-        unit: "kkal",
-        dciPercent: 34,
+    nutritionalFacts: {
+      calories: {
+        inKcal: 680,
+        inDciPercent: 34,
       },
-      {
-        label: "Protein",
-        value: 32,
-        unit: "gram",
-        dciPercent: 53,
+      proteinGrams: {
+        inGrams: 32,
+        inDciPercent: 53,
       },
-      {
-        label: "Karbohidrat",
-        value: 61,
-        unit: "gram",
-        dciPercent: 20,
+      carbGrams: {
+        inGrams: 61,
+        inDciPercent: 20,
       },
-      {
-        label: "Lemak",
-        value: 22,
-        unit: "gram",
-        dciPercent: 28,
+      fatGrams: {
+        inGrams: 22,
+        inDciPercent: 28,
       },
-    ],
+    },
     content:
       "Ayam bakar disajikan bersama tumis buncis wortel, nasi, dan jeruk. Porsi protein disesuaikan dengan kelompok usia siswa.",
   },
@@ -167,32 +151,24 @@ export const sppgReports: TSppgReport[] = [
     mealTime: "Sarapan",
     imageUrl: "https://placehold.co/1200x800?text=SPPG+Report+3",
     postedAt: new Date("2026-03-18T08:00:00+07:00"),
-    nutritionalFacts: [
-      {
-        label: "Kalori",
-        value: 590,
-        unit: "kkal",
-        dciPercent: 30,
+    nutritionalFacts: {
+      calories: {
+        inKcal: 590,
+        inDciPercent: 30,
       },
-      {
-        label: "Protein",
-        value: 27,
-        unit: "gram",
-        dciPercent: 45,
+      proteinGrams: {
+        inGrams: 27,
+        inDciPercent: 45,
       },
-      {
-        label: "Karbohidrat",
-        value: 54,
-        unit: "gram",
-        dciPercent: 18,
+      carbGrams: {
+        inGrams: 54,
+        inDciPercent: 18,
       },
-      {
-        label: "Lemak",
-        value: 18,
-        unit: "gram",
-        dciPercent: 23,
+      fatGrams: {
+        inGrams: 18,
+        inDciPercent: 23,
       },
-    ],
+    },
     content:
       "Menu sarapan ringan dengan fokus protein dan sayuran. Capcay dibuat dengan sedikit minyak untuk menjaga keseimbangan gizi.",
   },
@@ -397,18 +373,9 @@ export const sppgReportData = {
   comments: 18,
   image: sppgReports[0].imageUrl,
   rawNutritionalFacts: {
-    caloriesKcal:
-      sppgReports[0].nutritionalFacts.find((item) => item.label === "Kalori")
-        ?.value ?? 0,
-    proteinGrams:
-      sppgReports[0].nutritionalFacts.find((item) => item.label === "Protein")
-        ?.value ?? 0,
-    carbGrams:
-      sppgReports[0].nutritionalFacts.find(
-        (item) => item.label === "Karbohidrat",
-      )?.value ?? 0,
-    fatGrams:
-      sppgReports[0].nutritionalFacts.find((item) => item.label === "Lemak")
-        ?.value ?? 0,
+    caloriesKcal: sppgReports[0].nutritionalFacts.calories.inKcal,
+    proteinGrams: sppgReports[0].nutritionalFacts.proteinGrams.inGrams,
+    carbGrams: sppgReports[0].nutritionalFacts.carbGrams.inGrams,
+    fatGrams: sppgReports[0].nutritionalFacts.fatGrams.inGrams,
   },
 };

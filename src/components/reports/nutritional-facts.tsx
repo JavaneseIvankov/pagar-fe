@@ -25,13 +25,13 @@ export function NutritionalFactItem({
   return (
     <div
       className={cn(
-        "bg-muted border-0 px-2 py-2 rounded-lg text-center",
+        "rounded-lg border-0 bg-muted px-2 py-2 text-center",
         className,
       )}
     >
       <p
         className={cn(
-          "text-foreground/30 text-body-3 uppercase",
+          "text-body-3 text-foreground/30 uppercase",
           labelClassName,
         )}
       >

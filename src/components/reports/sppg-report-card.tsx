@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardAction,
@@ -40,12 +40,12 @@ export function SppgReportCard({ report }: SppgReportCardProps) {
     <Card className="w-full max-w-[933px]">
       <CardHeader className="space-between flex flex-row items-center pt-1">
         <div className="flex w-full flex-row items-center gap-3">
-          <Avatar className="max-w-[60px] max-h-[60px] w-10 h-10">
+          <Avatar className="h-10 max-h-[60px] w-10 max-w-[60px]">
             <AvatarFallback>{author.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
           <div>
             <h4 className="font-semibold text-h4">{author}</h4>
-            <p className="text-muted-foreground text-body-3">
+            <p className="text-body-3 text-muted-foreground">
               {postedAt} • {report.mealTime}
             </p>
           </div>
@@ -78,7 +78,7 @@ export function SppgReportCard({ report }: SppgReportCardProps) {
             className="object-cover"
           />
         </div>
-        <div className="w-full flex flex-col gap-4">
+        <div className="flex w-full flex-col gap-4">
           <h3 className="font-semibold @xs/card-content:text-h2 text-body">
             {report.title}
           </h3>
@@ -94,7 +94,7 @@ export function SppgReportCard({ report }: SppgReportCardProps) {
             className={buttonVariants({
               variant: "tertiary",
               className:
-                "p-4 font-semibold hover:bg-primary hover:text-primary-foreground hover:cursor-pointer",
+                "p-4 font-semibold hover:cursor-pointer hover:bg-primary hover:text-primary-foreground",
             })}
           >
             Lihat Detail

@@ -1,6 +1,6 @@
 "use client";
 
-import { FileVerifiedIcon, People } from "@hugeicons/core-free-icons";
+import { FileVerifiedIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

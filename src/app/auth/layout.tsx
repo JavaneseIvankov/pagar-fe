@@ -54,7 +54,7 @@ export default function AuthLayout({
   const content = authContent[pathname] || authContent["/auth/login"];
 
   return (
-    <div className="grid grid-rows-1 grid-cols-2 w-full h-[100dvh]">
+    <div className="grid h-[100dvh] w-full grid-cols-2 grid-rows-1">
       <section className="auth-thumbnail relative bg-blue-400">
         <Image
           src={content.image}
@@ -63,13 +63,13 @@ export default function AuthLayout({
           className="object-cover"
           priority
         />
-        <div className="absolute left-6 right-6 bottom-16 xl:bottom-24 xl:left-10 xl:right-10 text-white z-10">
+        <div className="absolute right-6 bottom-16 left-6 z-10 text-white xl:right-10 xl:bottom-24 xl:left-10">
           <h1 className="text-h1">{content.title}</h1>
           <p className="text-body">{content.subtitle}</p>
         </div>
-        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent h-1/2" />
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/75 to-transparent" />
       </section>
-      <section className="flex justify-center items-center mx-6">
+      <section className="mx-6 flex items-center justify-center">
         {children}
       </section>
     </div>

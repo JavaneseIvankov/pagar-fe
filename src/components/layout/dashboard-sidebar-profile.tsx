@@ -23,11 +23,11 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from "@/components/ui/sidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function DashboardSidebarProfile() {
-  const { isMobile, state } = useSidebar();
+  const isMobile = useIsMobile();
 
   return (
     <SidebarMenu>
@@ -36,7 +36,7 @@ export function DashboardSidebarProfile() {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground rounded-xl h-14 w-full"
+              className="h-14 w-full rounded-xl data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-full">
                 <AvatarImage
@@ -47,7 +47,7 @@ export function DashboardSidebarProfile() {
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
                 <span className="truncate font-medium">Hayden Bleasel</span>
-                <span className="truncate text-xs text-muted-foreground">
+                <span className="truncate text-muted-foreground text-xs">
                   hello@haydenbleasel.com
                 </span>
               </div>
@@ -75,7 +75,7 @@ export function DashboardSidebarProfile() {
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">Hayden Bleasel</span>
-                  <span className="truncate text-xs text-muted-foreground">
+                  <span className="truncate text-muted-foreground text-xs">
                     hello@haydenbleasel.com
                   </span>
                 </div>

@@ -73,9 +73,9 @@ export function SchoolProfileForm({
   };
 
   return (
-    <div className="w-full max-w-xl p-8 bg-white border border-gray-200 rounded-xl shadow-sm">
-      <div className="flex flex-col items-center mb-8">
-        <div className="w-24 h-24 bg-gray-300 rounded-full flex items-center justify-center mb-2">
+    <div className="w-full max-w-xl rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
+      <div className="mb-8 flex flex-col items-center">
+        <div className="mb-2 flex h-24 w-24 items-center justify-center rounded-full bg-gray-300">
           <HugeiconsIcon icon={User} size={48} className="text-white" />
         </div>
       </div>
@@ -135,8 +135,8 @@ export function SchoolProfileForm({
               />
             </Field>
           ) : (
-            <div className="flex flex-col gap-6 pt-2 border-t border-gray-100 mt-2">
-              <h3 className="text-sm font-medium text-foreground">
+            <div className="mt-2 flex flex-col gap-6 border-gray-100 border-t pt-2">
+              <h3 className="font-medium text-foreground text-sm">
                 Ubah Kata Sandi (Opsional)
               </h3>
 
@@ -190,7 +190,7 @@ export function SchoolProfileForm({
           {!isEditing ? (
             <Button
               type="button"
-              className="w-full bg-green-600 hover:bg-green-700 text-white"
+              className="w-full bg-green-600 text-white hover:bg-green-700"
               onClick={(e) => {
                 e.preventDefault();
                 setIsEditing(true);
@@ -202,7 +202,7 @@ export function SchoolProfileForm({
             <>
               <Button
                 type="submit"
-                className="w-full bg-green-600 hover:bg-green-700 text-white"
+                className="w-full bg-green-600 text-white hover:bg-green-700"
                 disabled={isSubmitting}
               >
                 Simpan Perubahan

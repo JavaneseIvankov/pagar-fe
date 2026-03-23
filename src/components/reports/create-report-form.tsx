@@ -79,7 +79,7 @@ export function CreateReportForm() {
           )}
         </Field>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {/* Quality Rating */}
           <Field data-invalid={!!errors.rating} className="space-y-3">
             <FieldLabel className="font-bold text-base">
@@ -143,7 +143,7 @@ export function CreateReportForm() {
       {/* Submit */}
       <Button
         type="submit"
-        className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90"
+        className="h-12 w-full bg-primary font-semibold text-base hover:bg-primary/90"
       >
         Kirim Laporan Sekarang
         <HugeiconsIcon icon={Navigation03Icon} className="ml-2 rotate-90" />

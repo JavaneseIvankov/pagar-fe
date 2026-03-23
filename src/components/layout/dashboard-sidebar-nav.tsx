@@ -1,11 +1,5 @@
 "use client";
 
-import {
-  DashboardSquare01Icon,
-  File01Icon,
-  Restaurant01Icon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -51,7 +45,7 @@ export function DashboardSidebarNav() {
                 size="lg"
                 isActive={isActive}
                 tooltip={item.title}
-                className="font-bold data-[active=true]:font-black data-[active=true]:text-primary px-4 rounded-lg data-[active=true]:bg-transparent hover:bg-muted/50 transition-colors h-11"
+                className="h-11 rounded-lg px-4 font-bold transition-colors hover:bg-muted/50 data-[active=true]:bg-transparent data-[active=true]:font-black data-[active=true]:text-primary"
               >
                 <Link href={item.href} className="flex items-center gap-3">
                   <item.icon />

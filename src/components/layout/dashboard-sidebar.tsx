@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AppLogo, AppLogoImage } from "@/components/app-logo";
+import { AppLogo } from "@/components/app-logo";
 import {
   Sidebar,
   SidebarContent,
@@ -13,12 +13,12 @@ import { DashboardSidebarProfile } from "./dashboard-sidebar-profile";
 export function DashboardSidebar() {
   return (
     <Sidebar className="border-r-0" collapsible="icon">
-      <SidebarHeader className="p-4 flex justify-center h-20 border-0 group-data-[collapsible=icon]:p-2">
+      <SidebarHeader className="flex h-20 justify-center border-0 p-4 group-data-[collapsible=icon]:p-2">
         <Link
           href="/dashboard/sppg"
-          className="flex justify-center items-center"
+          className="flex items-center justify-center"
         >
-          <AppLogo className="w-8/12 h-16 relative group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 transition-all overflow-hidden" />
+          <AppLogo className="relative h-16 w-8/12 overflow-hidden transition-all group-data-[collapsible=icon]:h-8 group-data-[collapsible=icon]:w-8" />
         </Link>
       </SidebarHeader>
 

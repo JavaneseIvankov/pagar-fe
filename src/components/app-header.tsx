@@ -7,7 +7,7 @@ import { buttonVariants } from "./ui/button";
 export function AppHeader() {
   return (
     <header className="w-full bg-card">
-      <div className="container min-h-16 flex items-center gap-2">
+      <div className="container flex min-h-16 items-center gap-2">
         <AppLogo className="h-18 pr-2" />
         <SearchReport />
         <Link

@@ -75,7 +75,7 @@ export function RegisterSchoolForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-6 p-4 rounded-md"
+      className="flex flex-col gap-6 rounded-md p-4"
     >
       <FieldGroup>
         <Field data-invalid={!!errors.username}>
@@ -158,8 +158,8 @@ export function RegisterSchoolForm() {
       <Button type="submit" className="w-full">
         Daftar
       </Button>
-      <div className="flex justify-end w-full">
-        <Link href="/auth/login" className="underline text-body-4">
+      <div className="flex w-full justify-end">
+        <Link href="/auth/login" className="text-body-4 underline">
           Sudah Punya Akun?{" "}
           <span className="font-semibold text-primary">Masuk</span>
         </Link>

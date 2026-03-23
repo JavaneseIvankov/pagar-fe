@@ -22,14 +22,14 @@ export function PublicReportCard({ review }: PublicReportCardProps) {
   return (
     <Card className="w-full max-w-[933px]">
       <CardHeader className="flex flex-row items-center gap-3 pt-1">
-        <Avatar className="max-w-[60px] max-h-[60px] w-10 h-10">
+        <Avatar className="h-10 max-h-[60px] w-10 max-w-[60px]">
           <AvatarFallback>{author.slice(0, 2).toUpperCase()}</AvatarFallback>
         </Avatar>
 
         <div>
           <h4 className="font-semibold text-h4">{author}</h4>
 
-          <p className="text-muted-foreground text-body-3">
+          <p className="text-body-3 text-muted-foreground">
             {formatPostedAt(review.postedAt)}
           </p>
         </div>
@@ -45,14 +45,14 @@ export function PublicReportCard({ review }: PublicReportCardProps) {
           />
         </div>
 
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <StarRating value={review.ratingScore} />
             <span className="text-muted-foreground text-sm">
               {review.ratingScore}/5
             </span>
           </div>
-          <p className="text-body-3 font-semibold">{review.forSppg.sppgName}</p>
+          <p className="font-semibold text-body-3">{review.forSppg.sppgName}</p>
         </div>
 
         <div className="space-y-2">

@@ -26,7 +26,7 @@ export function ProfileContainer() {
   };
 
   return (
-    <div className="w-full flex justify-center py-8">
+    <div className="flex w-full justify-center py-8">
       {mockSessionUser.role === "SCHOOL" && (
         <SchoolProfileForm
           initialData={mockSessionUser as TSchool}

@@ -9,6 +9,14 @@ export type TUser = {
   //   registrationCode: string;  // TODO: confirm, what is this?
 };
 
+export type TAdmin = TUser & {
+  role: "ADMIN";
+}; // TODO: complete this, sync with backend model
+
+export type TPublic = TUser & {
+  role: "PUBLIC";
+};
+
 export type TSppg = TUser & {
   role: "SPPG";
   sppgId: string;

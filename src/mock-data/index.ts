@@ -1,7 +1,9 @@
 import type {
+  TAdmin,
   TAdminStatistics,
   TBudget,
   TNutritionalFacts,
+  TPublic,
   TPublicReview,
   TPublicReviewHistory,
   TRole,
@@ -16,27 +18,49 @@ import type {
 
 export const roles: TRole[] = ["ADMIN", "PUBLIC", "SCHOOL", "SPPG"];
 
-export const users: TUser[] = [
+export const admins: TAdmin[] = [
   {
     id: "user-admin-001",
     role: "ADMIN",
     username: "admin.pagar",
   },
+];
+
+export const publicUsers: TPublic[] = [
   {
     id: "user-public-001",
     role: "PUBLIC",
     username: "warga.malang",
   },
+];
+
+export const schoolUsers: TSchool[] = [
   {
     id: "user-school-001",
+    schoolId: "SCH-MLG-001",
+    schoolName: "SDN Kauman 1 Malang",
     role: "SCHOOL",
     username: "sdn-kauman-1",
+    address: "Jl. Basuki Rahmat No. 7, Malang",
   },
+];
+
+export const sppgUsers: TSppg[] = [
   {
     id: "user-sppg-001",
     role: "SPPG",
     username: "sppg-berkah-nutrisi",
+    address: "Jl. Soekarno Hatta No. 18, Malang",
+    sppgId: "SPPG-MLG-001",
+    sppgName: "SPPG Berkah Nutrisi",
   },
+];
+
+export const users: TUser[] = [
+  ...admins,
+  ...publicUsers,
+  ...schoolUsers,
+  ...sppgUsers,
 ];
 
 export const sppgs: TSppg[] = [

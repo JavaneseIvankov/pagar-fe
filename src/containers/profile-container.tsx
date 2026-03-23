@@ -1,36 +1,44 @@
 "use client";
+
 import { toast } from "sonner";
 import {
-  ProfileForm,
-  type ProfileFormValues,
-} from "@/components/profile/profile-form";
-
-export interface Profile {
-  username: string;
-  namaSekolah: string;
-  alamatSekolah: string;
-  kodeRegistrasi: string;
-}
+  PublicProfileForm,
+  type PublicProfileFormValues,
+} from "@/components/profile/public-profile-form";
+import {
+  SchoolProfileForm,
+  type SchoolProfileFormValues,
+} from "@/components/profile/school-profile-form";
+import { schoolUsers } from "@/mock-data";
+import type { TSchool, TUser } from "@/types/index";
 
 export function ProfileContainer() {
-  // Mock data representing what would normally come from an RPC call
-  const mockProfile: Profile = {
-    username: "SDN123",
-    namaSekolah: "SDN 01 Malang",
-    alamatSekolah: "Jl. Veteran UB",
-    kodeRegistrasi: "000111",
+  const mockSessionUser: TUser = schoolUsers[0];
+
+  const handleSchoolSubmit = (data: SchoolProfileFormValues) => {
+    console.log("School Submit data", data);
+    toast.success("Profil sekolah berhasil diperbarui!");
   };
 
-  const handleSubmit = (data: ProfileFormValues) => {
-    console.log("Submit data", data);
-
-    // Simulate API call
+  const handlePublicSubmit = (data: PublicProfileFormValues) => {
+    console.log("Public Submit data", data);
     toast.success("Profil berhasil diperbarui!");
   };
 
   return (
     <div className="w-full flex justify-center py-8">
-      <ProfileForm initialData={mockProfile} onSubmit={handleSubmit} />
+      {mockSessionUser.role === "SCHOOL" && (
+        <SchoolProfileForm
+          initialData={mockSessionUser as TSchool}
+          onSubmit={handleSchoolSubmit}
+        />
+      )}
+      {mockSessionUser.role === "PUBLIC" && (
+        <PublicProfileForm
+          initialData={mockSessionUser as TUser}
+          onSubmit={handlePublicSubmit}
+        />
+      )}
     </div>
   );
 }

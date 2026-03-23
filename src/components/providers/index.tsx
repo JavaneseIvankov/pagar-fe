@@ -4,6 +4,7 @@ import { debounce } from "nuqs";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { useState } from "react";
 import { Toaster } from "sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const createQueryClient = () => {
   return new QueryClient();
@@ -18,8 +19,10 @@ export default function Providers({
   return (
     <QueryClientProvider client={qc}>
       <NuqsAdapter defaultOptions={{ limitUrlUpdates: debounce(500) }}>
-        <Toaster />
-        {children}
+        <TooltipProvider>
+          <Toaster />
+          {children}
+        </TooltipProvider>
       </NuqsAdapter>
     </QueryClientProvider>
   );

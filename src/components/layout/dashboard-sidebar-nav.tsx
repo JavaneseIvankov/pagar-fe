@@ -16,22 +16,23 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { DashboardIcon, ForkAndSpoonIcon, ReportIcon } from "../exported-icons";
 
 const sidebarItems = [
   {
     title: "Dashboard",
     href: "/dashboard/sppg",
-    icon: DashboardSquare01Icon,
+    icon: DashboardIcon,
   },
   {
     title: "Manajemen Laporan",
     href: "/dashboard/sppg/manajemen-laporan",
-    icon: Restaurant01Icon,
+    icon: ForkAndSpoonIcon,
   },
   {
     title: "Laporan Periodik",
     href: "/dashboard/sppg/laporan-periodik",
-    icon: File01Icon,
+    icon: ReportIcon,
   },
 ];
 
@@ -50,23 +51,12 @@ export function DashboardSidebarNav() {
                 size="lg"
                 isActive={isActive}
                 tooltip={item.title}
-                className="font-semibold px-4 rounded-lg data-[active=true]:bg-transparent data-[active=true]:text-emerald-500 hover:bg-muted/50 transition-colors h-11"
+                className="font-bold data-[active=true]:font-black data-[active=true]:text-primary px-4 rounded-lg data-[active=true]:bg-transparent hover:bg-muted/50 transition-colors h-11"
               >
                 <Link href={item.href} className="flex items-center gap-3">
-                  <HugeiconsIcon
-                    icon={item.icon}
-                    size={20}
-                    className={
-                      isActive
-                        ? "text-emerald-500 stroke-2"
-                        : "text-muted-foreground stroke-2"
-                    }
-                  />
+                  <item.icon />
                   <span
-                    className={cn(
-                      "group-data-[collapsible=icon]:opacity-0",
-                      isActive ? "text-emerald-500" : "text-muted-foreground",
-                    )}
+                    className={cn("group-data-[collapsible=icon]:opacity-0")}
                   >
                     {item.title}
                   </span>

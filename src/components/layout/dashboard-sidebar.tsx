@@ -12,18 +12,13 @@ import { DashboardSidebarProfile } from "./dashboard-sidebar-profile";
 
 export function DashboardSidebar() {
   return (
-    <Sidebar
-      className="border-r-0 md:border-r border-border bg-white"
-      collapsible="icon"
-    >
-      <SidebarHeader className="p-4 flex justify-center h-20 border-b group-data-[collapsible=icon]:p-2">
+    <Sidebar className="border-r-0" collapsible="icon">
+      <SidebarHeader className="p-4 flex justify-center h-20 border-0 group-data-[collapsible=icon]:p-2">
         <Link
           href="/dashboard/sppg"
-          className="flex justify-start items-center"
+          className="flex justify-center items-center"
         >
-          <AppLogo className="w-24 h-8 relative group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 transition-all overflow-hidden" />
-          {/* <AppLogoImage />
-          </div> */}
+          <AppLogo className="w-8/12 h-16 relative group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 transition-all overflow-hidden" />
         </Link>
       </SidebarHeader>
 

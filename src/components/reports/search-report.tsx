@@ -98,10 +98,7 @@ function SearchReportControls({
           }
         }}
       >
-        <ComboboxInput
-          className="bg-background"
-          placeholder="Pilih kecamatan"
-        />
+        <ComboboxInput placeholder="Pilih kecamatan" />
         <ComboboxContent>
           <ComboboxEmpty>Tidak ada kecamatan yang cocok</ComboboxEmpty>
           <ComboboxList>

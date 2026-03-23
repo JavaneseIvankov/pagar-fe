@@ -8,7 +8,6 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { cn } from "@/lib/utils";
 
 export interface SearchInputProps extends React.ComponentProps<"input"> {
   inputClassName?: string;
@@ -26,7 +25,7 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
     ref,
   ) => {
     return (
-      <InputGroup className={cn("bg-background", className)}>
+      <InputGroup className={className}>
         <InputGroupAddon>
           <HugeiconsIcon icon={Search01FreeIcons} />
         </InputGroupAddon>

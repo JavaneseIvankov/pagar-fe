@@ -1,8 +1,8 @@
 "use client";
 
 import { debounce, parseAsInteger, useQueryState } from "nuqs";
-import type { ComponentProps } from "react";
-import { Suspense, useCallback } from "react";
+import { Suspense, useMemo } from "react";
+import { cn } from "@/lib/utils";
 import { SearchInput } from "../search-input";
 import {
   Combobox,
@@ -19,37 +19,37 @@ type KecamatanFilterEntry = {
 };
 
 // FIXME: temporary data
-const kecamatanList: KecamatanFilterEntry[] = [
+const KECAMATAN_LIST: KecamatanFilterEntry[] = [
   { value: 1, label: "Kecamatan 1" },
   { value: 2, label: "Kecamatan 2" },
   { value: 3, label: "Kecamatan 3" },
 ];
 
-interface SearchReportControlsProps {
-  items: KecamatanFilterEntry[];
-  searchInputProps?: ComponentProps<typeof SearchInput>;
-  selectedKecamatan?: KecamatanFilterEntry | null;
-  onSelectedKecamatanChange?: (value: KecamatanFilterEntry) => void;
+export interface SearchReportProps {
+  className?: string;
 }
 
-export function SearchReport() {
+export function SearchReport({ className }: SearchReportProps) {
   return (
-    <Suspense fallback={<SearchReportFallback />}>
-      {<InnerSearchReport />}
+    <Suspense fallback={<SearchReportFallback className={className} />}>
+      <SearchReportContainer className={className} />
     </Suspense>
   );
 }
 
-function SearchReportFallback() {
+function SearchReportFallback({ className }: { className?: string }) {
   return (
-    <SearchReportControls
+    <SearchReportLayout
+      className={className}
+      searchValue=""
+      isReadOnly={true}
+      selectedKecamatan={null}
       items={[]}
-      searchInputProps={{ value: "", readOnly: true }}
     />
   );
 }
 
-function InnerSearchReport() {
+function SearchReportContainer({ className }: { className?: string }) {
   const [search, setSearch] = useQueryState("search", {
     defaultValue: "",
     limitUrlUpdates: debounce(500),
@@ -60,45 +60,62 @@ function InnerSearchReport() {
     parseAsInteger,
   );
 
-  const getEntryFromKecamatanId = useCallback((id: number | null) => {
-    if (id === null) return null;
-    return kecamatanList.find((k) => k.value === id);
-  }, []);
+  const selectedKecamatan = useMemo(() => {
+    return KECAMATAN_LIST.find((k) => k.value === kecamatanId) ?? null;
+  }, [kecamatanId]);
 
-  // FIXME: this has bad tab-navigation
   return (
-    <SearchReportControls
-      items={kecamatanList}
-      searchInputProps={{
-        value: search,
-        onChange: (e) => setSearch(e.target.value),
-      }}
-      selectedKecamatan={getEntryFromKecamatanId(kecamatanId)}
-      onSelectedKecamatanChange={(value) => setKecamatanId(value.value)}
+    <SearchReportLayout
+      className={className}
+      searchValue={search}
+      onSearchChange={(value) => setSearch(value)}
+      selectedKecamatan={selectedKecamatan}
+      onKecamatanChange={(value) => setKecamatanId(value.value)}
+      items={KECAMATAN_LIST}
     />
   );
 }
 
-function SearchReportControls({
+interface SearchReportLayoutProps {
+  className?: string;
+  items: KecamatanFilterEntry[];
+  searchValue: string;
+  isReadOnly?: boolean;
+  onSearchChange?: (value: string) => void;
+  selectedKecamatan: KecamatanFilterEntry | null;
+  onKecamatanChange?: (value: KecamatanFilterEntry) => void;
+}
+
+function SearchReportLayout({
+  className,
   items,
-  searchInputProps,
-  selectedKecamatan = null,
-  onSelectedKecamatanChange,
-}: SearchReportControlsProps) {
+  searchValue,
+  isReadOnly = false,
+  onSearchChange,
+  selectedKecamatan,
+  onKecamatanChange,
+}: SearchReportLayoutProps) {
+  // FIXME: this has bad tab-navigation
   return (
-    <>
-      <SearchInput {...searchInputProps} />
+    <div
+      className={cn("flex w-full items-center justify-center gap-2", className)}
+    >
+      <SearchInput
+        value={searchValue}
+        onChange={(e) => onSearchChange?.(e.target.value)}
+        readOnly={isReadOnly}
+      />
       <Combobox
         items={items}
         itemToStringValue={(k: KecamatanFilterEntry) => k.label}
         value={selectedKecamatan}
         onValueChange={(value) => {
-          if (value) {
-            onSelectedKecamatanChange?.(value);
+          if (value && onKecamatanChange) {
+            onKecamatanChange(value);
           }
         }}
       >
-        <ComboboxInput placeholder="Pilih kecamatan" />
+        <ComboboxInput placeholder="Pilih kecamatan" disabled={isReadOnly} />
         <ComboboxContent>
           <ComboboxEmpty>Tidak ada kecamatan yang cocok</ComboboxEmpty>
           <ComboboxList>
@@ -112,6 +129,6 @@ function SearchReportControls({
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
-    </>
+    </div>
   );
 }

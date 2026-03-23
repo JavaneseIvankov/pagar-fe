@@ -1,37 +1,53 @@
 "use client";
 
+import { Add01Icon, Home01Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 import { AppLogo } from "./app-logo";
 import ProfileButton from "./profile/profile-button";
 import { SearchReport } from "./reports/search-report";
 import { buttonVariants } from "./ui/button";
 
+const SEARCH_ENABLED_ROUTES = ["/public-report", "/sppg-report"];
+
 export function AppHeader() {
   const pathname = usePathname();
-  const showBrandAndSearch =
-    pathname === "/public-report" || pathname === "/sppg-report";
+  const showBrandAndSearch = SEARCH_ENABLED_ROUTES.some((route) =>
+    pathname.startsWith(route),
+  );
 
   return (
     <header className="w-full bg-card">
-      <div
-        className={cn(
-          "container flex min-h-16 items-center gap-2",
-          showBrandAndSearch ? "justify-start" : "justify-between",
+      <div className="container flex min-h-16 items-center gap-4">
+        <AppLogo className="xl:p-2 h-18 pr-2" />
+
+        {showBrandAndSearch && (
+          <SearchReport className="max-w-[517px] mx-auto" />
         )}
-      >
-        <AppLogo className="h-18 pr-2 py-2" />
-        {showBrandAndSearch && <SearchReport />}
-        <div className="flex gap-2 items-center">
+
+        <div className="flex items-center gap-2">
           <Link
-            className={buttonVariants({ variant: "ghost" })}
-            href={"/create-report"}
+            className={buttonVariants({
+              variant: "ghost",
+              className: "gap-2 px-2 md:px-4",
+            })}
+            href={"/"}
+            title="Beranda"
           >
-            Beranda
+            <HugeiconsIcon icon={Home01Icon} className="md:hidden" />
+            <span className="hidden md:inline">Beranda</span>
           </Link>
-          <Link className={buttonVariants({ variant: "ghost" })} href={"/"}>
-            Tambah Laporan
+          <Link
+            className={buttonVariants({
+              variant: "ghost",
+              className: "gap-2 px-2 md:px-4",
+            })}
+            href={"/create-report"}
+            title="Tambah Laporan"
+          >
+            <HugeiconsIcon icon={Add01Icon} className="md:hidden" />
+            <span className="hidden md:inline">Tambah Laporan</span>
           </Link>
           <ProfileButton />
         </div>

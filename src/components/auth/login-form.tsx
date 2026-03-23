@@ -28,7 +28,6 @@ export function LoginForm() {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    // FIXME: fix this type issue (potentially caused by version mismatch)
     resolver: zodResolver(loginSchema),
     defaultValues: {
       username: "",

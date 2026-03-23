@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import * as z from "zod/v4";
+import * as z from "zod/v3";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -54,8 +54,7 @@ export function RegisterSchoolForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<RegisterFormValues>({
-    // biome-ignore lint/suspicious/noExplicitAny: <Zod 4 type mismatch>
-    resolver: zodResolver(registerSchema as any),
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       username: "",
       schoolName: "",

@@ -41,8 +41,7 @@ export function CreateReportForm() {
     register,
     formState: { errors },
   } = useForm<FormValues>({
-    // biome-ignore lint/suspicious/noExplicitAny: <Zod 4 type mismatch>
-    resolver: zodResolver(formSchema as any),
+    resolver: zodResolver(formSchema),
     defaultValues: {
       rating: 0,
       location: "",

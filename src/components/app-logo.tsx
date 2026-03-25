@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Logo from "@/components/svgs/app-logo.svg";
+import LogoSymbol from "@/components/svgs/app-logo-symbol.svg";
 import { cn } from "@/lib/utils";
 
 export function AppLogoImage({ className }: { className?: string }) {
@@ -15,6 +16,14 @@ export function AppLogoImage({ className }: { className?: string }) {
   );
 }
 
-export function AppLogo({ className }: { className?: string }) {
+type AppLogoProps = {
+  className?: string;
+  variant?: "symbol" | "full";
+};
+
+export function AppLogo({ className, variant = "full" }: AppLogoProps) {
+  if (variant === "symbol") {
+    return <LogoSymbol className={className} />;
+  }
   return <Logo className={className} />;
 }

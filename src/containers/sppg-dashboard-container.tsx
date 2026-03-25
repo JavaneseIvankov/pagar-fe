@@ -79,7 +79,7 @@ export function SppgDashboardContainer() {
   const currentUser = sppgs[0];
 
   return (
-    <div className="mx-auto flex max-w-7xl flex-col gap-8 p-8">
+    <div className="mx-auto flex flex-col gap-8">
       {/* Header */}
       <div>
         <h2 className="text-[28px] font-bold tracking-tight text-foreground">

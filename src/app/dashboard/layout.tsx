@@ -11,7 +11,9 @@ export default function DashboardLayout({
       <div className="flex h-screen w-full">
         <DashboardSidebar />
         <SidebarInset className="overflow-hidden peer-data-[variant=inset]:min-h-svh">
-          <main className="flex-1 overflow-y-auto">{children}</main>
+          <main className="flex-1 overflow-y-auto max-w-7xl p-8">
+            {children}
+          </main>
         </SidebarInset>
       </div>
     </SidebarProvider>

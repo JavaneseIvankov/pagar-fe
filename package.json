@@ -8,6 +8,7 @@
     "start": "next start",
     "format": "biome format --write",
     "lint": "biome lint",
+    "lint:strict": "biome lint --error-on-warnings",
     "prepare": "husky"
   },
   "dependencies": {

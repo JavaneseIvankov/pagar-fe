@@ -1,8 +1,6 @@
 "use client";
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
 import {
   SidebarGroup,
   SidebarMenu,
@@ -10,7 +8,12 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-import { DashboardIcon, ForkAndSpoonIcon, ReportIcon } from "../exported-icons";
+import {
+  DashboardIcon,
+  ForkAndSpoonIcon,
+  PersonIcon,
+  ReportIcon,
+} from "../exported-icons";
 
 const sidebarItems = [
   {
@@ -28,15 +31,33 @@ const sidebarItems = [
     href: "/dashboard/sppg/laporan-periodik",
     icon: ReportIcon,
   },
+  {
+    title: "Dashboard",
+    href: "/dashboard/admin",
+    icon: DashboardIcon,
+  },
+  {
+    title: "Kelola Akun",
+    href: "/dashboard/admin/kelola-akun",
+    icon: PersonIcon,
+  },
 ];
+
+const visibleNavItems = (pathname: string) => {
+  const segment = pathname.split("/")[2]; // "sppg" | "admin"
+  return sidebarItems.filter((item) =>
+    item.href.includes(`/dashboard/${segment}`),
+  );
+};
 
 export function DashboardSidebarNav() {
   const pathname = usePathname();
+  const navItems = visibleNavItems(pathname);
 
   return (
     <SidebarGroup>
       <SidebarMenu className="gap-2">
-        {sidebarItems.map((item) => {
+        {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
             <SidebarMenuItem key={item.href}>

@@ -146,9 +146,21 @@ export type TAdminStatistics = {
     sppgs: {
       id: TSppg["sppgId"];
       name: TSppg["sppgName"];
-      detail: string;
-    };
+      rating: number;
+      reportsCount: number;
+    }[];
   };
+};
+
+export type TAdminComplaintStatus = "PENDING" | "INVESTIGATING" | "RESOLVED";
+
+export type TAdminComplaint = {
+  id: string;
+  authorName: string;
+  title: string;
+  vendorName: string;
+  imageUrl: string;
+  status: TAdminComplaintStatus;
 };
 
 export type TPublicReviewHistory = {

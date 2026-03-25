@@ -359,11 +359,14 @@ export const adminStatistics: TAdminStatistics = {
   },
   sppgWarnings: {
     total: 2,
-    sppgs: {
-      id: sppgs[2].sppgId,
-      name: sppgs[2].sppgName,
-      detail: "Belum mengunggah laporan harian selama 2 hari berturut-turut.",
-    },
+    sppgs: [
+      {
+        id: sppgs[2].sppgId,
+        name: sppgs[2].sppgName,
+        rating: 1.8,
+        reportsCount: 12,
+      },
+    ],
   },
 };
 

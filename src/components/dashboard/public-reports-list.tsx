@@ -14,7 +14,7 @@ export function PublicReportsList({ reports }: PublicReportsListProps) {
   return (
     <DashboardCard>
       <div className="flex items-center justify-between px-6 py-5">
-        <h3 className="text-lg font-bold">Laporan Masyarakat</h3>
+        <h3 className="font-bold text-lg">Laporan Masyarakat</h3>
         <Button
           variant="ghost"
           className="h-auto gap-2 p-0 font-semibold text-emerald-600 hover:bg-transparent hover:text-emerald-700"
@@ -23,7 +23,7 @@ export function PublicReportsList({ reports }: PublicReportsListProps) {
         </Button>
       </div>
       <div className="flex flex-col gap-6 px-6 pb-6">
-        <div className="mb-2 grid grid-cols-12 gap-4 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+        <div className="mb-2 grid grid-cols-12 gap-4 font-medium text-muted-foreground text-xs uppercase tracking-wider">
           <div className="col-span-3">PELAPOR</div>
           <div className="col-span-7">LAPORAN & VENDOR</div>
           <div className="col-span-2 text-right">BUKTI FOTO</div>
@@ -37,16 +37,16 @@ export function PublicReportsList({ reports }: PublicReportsListProps) {
                   <PersonIcon className="text-foreground/30" />
                 </AvatarFallback>
               </Avatar>
-              <span className="text-sm font-medium">
+              <span className="font-medium text-sm">
                 {/* FIXME: reporterName is not available in TPublicReview */}
                 Anonim
               </span>
             </div>
             <div className="col-span-7">
-              <p className="text-sm font-medium leading-relaxed">
+              <p className="font-medium text-sm leading-relaxed">
                 {report.content}
               </p>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-1 text-muted-foreground text-xs">
                 {report.forSppg.sppgName}
               </p>
             </div>
@@ -54,7 +54,9 @@ export function PublicReportsList({ reports }: PublicReportsListProps) {
               <div className="relative h-16 w-24 overflow-hidden rounded-md bg-muted">
                 {/* Placeholder for image */}
                 {report.imageUrl ? (
+                  // FIXME: migrate to next/image
                   // biome-ignore lint/a11y/useAltText: external data does not guarantee alt text
+                  // biome-ignore lint/performance/noImgElement: temporary
                   <img
                     src={report.imageUrl}
                     className="h-full w-full object-cover"

@@ -82,7 +82,7 @@ export function SppgDashboardContainer() {
     <div className="mx-auto flex flex-col gap-8">
       {/* Header */}
       <div>
-        <h2 className="text-[28px] font-bold tracking-tight text-foreground">
+        <h2 className="font-bold text-[28px] text-foreground tracking-tight">
           Selamat Datang! {currentUser.sppgName}!
         </h2>
         <p className="mt-1 text-muted-foreground">

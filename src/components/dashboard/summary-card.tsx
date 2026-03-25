@@ -36,7 +36,7 @@ export function SummaryCard({
           <Badge
             variant="secondary"
             className={cn(
-              "h-full min-w-[30%] rounded-full px-4 py-1 text-sm font-semibold",
+              "h-full min-w-[30%] rounded-full px-4 py-1 font-semibold text-sm",
               badgeClassName,
             )}
           >
@@ -44,10 +44,10 @@ export function SummaryCard({
           </Badge>
         </div>
         <div>
-          <p className="text-body-4 mb-1 font-medium text-muted-foreground">
+          <p className="mb-1 font-medium text-body-4 text-muted-foreground">
             {title}
           </p>
-          <p className="text-h4 font-bold">{value}</p>
+          <p className="font-bold text-h4">{value}</p>
         </div>
       </CardContent>
     </DashboardCard>

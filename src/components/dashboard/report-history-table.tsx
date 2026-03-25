@@ -21,9 +21,9 @@ interface ReportHistoryTableProps {
 export function ReportHistoryTable({ reports }: ReportHistoryTableProps) {
   return (
     <DashboardCard className="overflow-hidden">
-      <div className="flex items-center gap-4 border-b border-muted/50 px-6 py-5">
+      <div className="flex items-center gap-4 border-muted/50 border-b px-6 py-5">
         <ReportIcon className="text-[#008445]" />
-        <h3 className="text-lg font-bold">Riwayat Laporan</h3>
+        <h3 className="font-bold text-lg">Riwayat Laporan</h3>
       </div>
       <div className="p-2 px-4">
         <Table>
@@ -65,7 +65,7 @@ export function ReportHistoryTable({ reports }: ReportHistoryTableProps) {
                   {/* FIXME: Status field is missing in TSppgReport */}
                   <Badge
                     variant="secondary"
-                    className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-600 hover:bg-emerald-50"
+                    className="rounded-full bg-emerald-50 px-3 py-1 font-semibold text-emerald-600 text-xs hover:bg-emerald-50"
                   >
                     Terkirim
                   </Badge>

@@ -3,7 +3,6 @@ import {
   ArrowRight01Icon,
   Building04Icon,
   ChartHistogramIcon,
-  Delete01Icon,
   PencilEdit01Icon,
   TruckIcon,
   UserIcon,
@@ -11,11 +10,10 @@ import {
   ViewIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import Image from "next/image";
 import Link from "next/link";
 import { DashboardCard } from "@/components/dashboard/dashboard-card";
 import { SummaryCard } from "@/components/dashboard/summary-card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -136,13 +134,13 @@ export default function AdminDashboardPage() {
     (MOCK_ADMIN_STATS.reviews.public / totalReviews) * 100,
   );
   return (
-    <div className="mx-auto flex w-full  flex-col gap-8">
+    <div className="mx-auto flex w-full flex-col gap-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">
+        <h1 className="font-bold text-3xl tracking-tight">
           Panel Monitoring Pusat
         </h1>
-        <p className="text-muted-foreground mt-2">
+        <p className="mt-2 text-muted-foreground">
           Pantau real-time transparansi gizi dan realisasi anggaran publik
         </p>
       </div>
@@ -165,10 +163,10 @@ export default function AdminDashboardPage() {
       {/* Recent Complaints */}
       <DashboardCard className="overflow-hidden p-6">
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-xl font-bold">Keluhan Terbaru</h2>
+          <h2 className="font-bold text-xl">Keluhan Terbaru</h2>
           <Link
             href="/dashboard/admin/keluhan"
-            className="flex items-center gap-2 text-sm font-semibold text-emerald-600 hover:text-emerald-700"
+            className="flex items-center gap-2 font-semibold text-emerald-600 text-sm hover:text-emerald-700"
           >
             Lihat Semua <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
           </Link>
@@ -176,19 +174,19 @@ export default function AdminDashboardPage() {
         <Table>
           <TableHeader>
             <TableRow className="border-none hover:bg-transparent">
-              <TableHead className="font-medium text-muted-foreground uppercase text-xs tracking-wider">
+              <TableHead className="font-medium text-muted-foreground text-xs uppercase tracking-wider">
                 PELAPOR
               </TableHead>
-              <TableHead className="font-medium text-muted-foreground uppercase text-xs tracking-wider">
+              <TableHead className="font-medium text-muted-foreground text-xs uppercase tracking-wider">
                 LAPORAN & VENDOR
               </TableHead>
-              <TableHead className="font-medium text-muted-foreground uppercase text-xs tracking-wider">
+              <TableHead className="font-medium text-muted-foreground text-xs uppercase tracking-wider">
                 BUKTI FOTO
               </TableHead>
-              <TableHead className="font-medium text-muted-foreground uppercase text-xs tracking-wider text-center">
+              <TableHead className="text-center font-medium text-muted-foreground text-xs uppercase tracking-wider">
                 STATUS
               </TableHead>
-              <TableHead className="text-right font-medium text-muted-foreground uppercase text-xs tracking-wider">
+              <TableHead className="text-right font-medium text-muted-foreground text-xs uppercase tracking-wider">
                 AKSI
               </TableHead>
             </TableRow>
@@ -220,7 +218,7 @@ export default function AdminDashboardPage() {
                   <TableCell className="py-4 align-top">
                     <div className="flex flex-col">
                       <span className="font-medium">{complaint.title}</span>
-                      <span className="text-xs text-muted-foreground mt-1">
+                      <span className="mt-1 text-muted-foreground text-xs">
                         {complaint.vendorName}
                       </span>
                     </div>
@@ -231,28 +229,28 @@ export default function AdminDashboardPage() {
                       <div className="h-full w-full bg-slate-800" />
                     </div>
                   </TableCell>
-                  <TableCell className="py-4 align-top text-center">
+                  <TableCell className="py-4 text-center align-top">
                     <Badge
                       variant="secondary"
                       className={cn(
-                        "rounded-md px-4 py-1.5 text-xs font-semibold whitespace-nowrap",
+                        "whitespace-nowrap rounded-md px-4 py-1.5 font-semibold text-xs",
                         statusUI?.className,
                       )}
                     >
                       {statusUI?.label}
                     </Badge>
                   </TableCell>
-                  <TableCell className="py-4 align-top text-right">
+                  <TableCell className="py-4 text-right align-top">
                     <div className="flex justify-end gap-2">
                       <button
                         type="button"
-                        className="rounded p-2 hover:bg-gray-100 text-gray-600 transition-colors"
+                        className="rounded p-2 text-gray-600 transition-colors hover:bg-gray-100"
                       >
                         <HugeiconsIcon icon={PencilEdit01Icon} size={20} />
                       </button>
                       <button
                         type="button"
-                        className="rounded p-2 hover:bg-gray-100 text-gray-600 transition-colors"
+                        className="rounded p-2 text-gray-600 transition-colors hover:bg-gray-100"
                       >
                         <HugeiconsIcon icon={ViewIcon} size={20} />
                       </button>
@@ -277,13 +275,13 @@ export default function AdminDashboardPage() {
           </div>
 
           <div className="flex items-center gap-8">
-            <div className="text-6xl font-black">
+            <div className="font-black text-6xl">
               {MOCK_ADMIN_STATS.reviews.total}
             </div>
 
-            <div className="flex-1 flex flex-col gap-4">
+            <div className="flex flex-1 flex-col gap-4">
               <div className="flex flex-col gap-1.5">
-                <div className="flex justify-between text-xs font-medium">
+                <div className="flex justify-between font-medium text-xs">
                   <span>Sekolah</span>
                   <span className="text-muted-foreground">
                     {schoolPercent}%
@@ -292,14 +290,14 @@ export default function AdminDashboardPage() {
                 {/* Custom Progress Bar */}
                 <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100">
                   <div
-                    className="h-full bg-emerald-500 rounded-full"
+                    className="h-full rounded-full bg-emerald-500"
                     style={{ width: `${schoolPercent}%` }}
                   />
                 </div>
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <div className="flex justify-between text-xs font-medium">
+                <div className="flex justify-between font-medium text-xs">
                   <span>Umum</span>
                   <span className="text-muted-foreground">
                     {publicPercent}%
@@ -308,7 +306,7 @@ export default function AdminDashboardPage() {
                 {/* Custom Progress Bar */}
                 <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100">
                   <div
-                    className="h-full bg-amber-400 rounded-full"
+                    className="h-full rounded-full bg-amber-400"
                     style={{ width: `${publicPercent}%` }}
                   />
                 </div>
@@ -330,11 +328,11 @@ export default function AdminDashboardPage() {
             {MOCK_ADMIN_STATS.sppgWarnings.sppgs.map((vendor) => (
               <div
                 key={vendor.id}
-                className="flex items-center justify-between rounded-xl bg-red-50 p-4 transition-colors hover:bg-red-100/80 cursor-pointer"
+                className="flex cursor-pointer items-center justify-between rounded-xl bg-red-50 p-4 transition-colors hover:bg-red-100/80"
               >
                 <div>
                   <h4 className="font-bold text-gray-900">{vendor.name}</h4>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-gray-500 text-sm">
                     Rating : {vendor.rating} ({vendor.reportsCount} Laporan
                     Baru)
                   </p>

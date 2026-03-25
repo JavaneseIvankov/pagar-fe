@@ -20,10 +20,10 @@ export function AppHeader() {
   return (
     <header className="w-full bg-card">
       <div className="container flex min-h-16 items-center gap-4">
-        <AppLogo className="xl:p-2 h-18 pr-2" />
+        <AppLogo className="h-18 pr-2 xl:p-2" />
 
         {showBrandAndSearch && (
-          <SearchReport className="max-w-[517px] mx-auto" />
+          <SearchReport className="mx-auto max-w-[517px]" />
         )}
 
         <div className="flex items-center gap-2">

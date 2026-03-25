@@ -1,5 +1,4 @@
-import { Alert01Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { WarningIcon } from "../exported-icons";
 import { DashboardCard } from "./dashboard-card";
 
 export interface AdminComplaintsOverviewProps {
@@ -17,7 +16,7 @@ export function AdminComplaintsOverview({
     <DashboardCard className="p-6">
       <div className="mb-6 flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-100 text-red-600">
-          <HugeiconsIcon icon={Alert01Icon} size={24} />
+          <WarningIcon />
         </div>
         <h3 className="font-bold">Total Keluhan</h3>
       </div>

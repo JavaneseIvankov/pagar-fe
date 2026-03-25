@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Camera01Icon, Trash, Upload01Icon } from "@hugeicons/core-free-icons";
+import { Camera01Icon, Delete02Icon, Trash, Upload01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -90,7 +90,7 @@ function UploadedFilePreview({
                 onRemove(fileKey);
               }}
             >
-              <HugeiconsIcon icon={Trash} className="h-4 w-4" />
+              <HugeiconsIcon icon={Delete02Icon} className="h-4 w-4" />
             </Button>
           </div>
 

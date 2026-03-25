@@ -3,14 +3,16 @@
 import {
   Delete02Icon,
   InformationCircleIcon,
-  Money03Icon,
-  Restaurant01Icon,
-  SentIcon,
-  VegetarianFoodIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Controller } from "react-hook-form";
 import { DashboardCard } from "@/components/dashboard/dashboard-card";
+import {
+  ForkAndSpoonIcon,
+  HeartWithHaloIcon,
+  MoneyIcon,
+  SendIcon,
+} from "@/components/exported-icons";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -59,11 +61,7 @@ export function CreateReportForm() {
         {/* SECTION 1: Informasi Menu Utama */}
         <DashboardCard className="p-6">
           <div className="mb-6 flex items-center gap-3">
-            <HugeiconsIcon
-              icon={Restaurant01Icon}
-              className="text-emerald-500"
-              size={24}
-            />
+            <ForkAndSpoonIcon className="size-5 text-emerald-500" />
             <h2 className="font-bold text-xl">Informasi Menu Utama</h2>
           </div>
 
@@ -91,9 +89,6 @@ export function CreateReportForm() {
                     {...register("waktuMakan")}
                     aria-invalid={!!errors.waktuMakan}
                   />
-                  <div className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground">
-                    <HugeiconsIcon icon={InformationCircleIcon} size={20} />
-                  </div>
                 </div>
                 {errors.waktuMakan && (
                   <FieldError>{errors.waktuMakan.message}</FieldError>
@@ -150,11 +145,7 @@ export function CreateReportForm() {
         {/* SECTION 3: Kandungan Gizi */}
         <DashboardCard className="p-6">
           <div className="mb-6 flex items-center gap-3">
-            <HugeiconsIcon
-              icon={VegetarianFoodIcon}
-              className="text-emerald-500"
-              size={24}
-            />
+            <HeartWithHaloIcon className="size-5 text-emerald-500" />
             <h2 className="font-bold text-xl">Kandungan Gizi (Per Porsi)</h2>
           </div>
 
@@ -223,11 +214,7 @@ export function CreateReportForm() {
         <DashboardCard className="p-6">
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <HugeiconsIcon
-                icon={Money03Icon}
-                className="text-emerald-500"
-                size={24}
-              />
+              <MoneyIcon className="size-5 text-emerald-500" />
               <h2 className="font-bold text-xl">Rincian Anggaran</h2>
             </div>
             <Button
@@ -390,10 +377,10 @@ export function CreateReportForm() {
 
           <Button
             type="submit"
-            className="mb-4 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 text-base text-white hover:bg-emerald-600"
+            className="mb-4 flex h-12 w-full items-center justify-center gap-3 rounded-xl bg-emerald-500 text-base text-white hover:bg-emerald-600"
           >
             Kirim Laporan
-            <HugeiconsIcon icon={SentIcon} size={20} />
+            <SendIcon className="size-4" />
           </Button>
 
           <div className="flex gap-3 rounded-xl border border-sky-100 bg-sky-50 p-4 text-sky-600 text-sm">

@@ -1,9 +1,4 @@
-import {
-  ArrowRight01Icon,
-  PencilEdit01Icon,
-  UserIcon,
-  ViewIcon,
-} from "@hugeicons/core-free-icons";
+import { ArrowRight01Icon, ViewIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -17,9 +12,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { DashboardCard } from "./dashboard-card";
-
 import type { TAdminComplaint } from "@/types";
+import { PencilIcon, PersonIcon } from "../exported-icons";
+import { DashboardCard } from "./dashboard-card";
 
 export interface AdminComplaintStatusUi {
   className: string;
@@ -81,9 +76,9 @@ export function AdminComplaintsTable({
             >
               <TableCell className="py-4 align-top">
                 <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10 bg-gray-100">
-                    <AvatarFallback className="bg-gray-100 text-gray-500">
-                      <HugeiconsIcon icon={UserIcon} size={20} />
+                  <Avatar className="h-10 w-10">
+                    <AvatarFallback className="bg-muted">
+                      <PersonIcon className="text-foreground/30" />
                     </AvatarFallback>
                   </Avatar>
                   <span className="font-medium">{complaint.authorName}</span>
@@ -119,7 +114,8 @@ export function AdminComplaintsTable({
                     type="button"
                     className="rounded p-2 text-gray-600 transition-colors hover:bg-gray-100"
                   >
-                    <HugeiconsIcon icon={PencilEdit01Icon} size={20} />
+                    {/* <HugeiconsIcon icon={PencilEdit01Icon} size={20} /> */}
+                    <PencilIcon className="size-4" />
                   </button>
                   <button
                     type="button"

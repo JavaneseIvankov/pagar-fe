@@ -1,8 +1,8 @@
-import { Alert01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons";
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { DashboardCard } from "./dashboard-card";
-
 import type { TAdminStatistics } from "@/types";
+import { WarningIcon } from "../exported-icons";
+import { DashboardCard } from "./dashboard-card";
 
 type VendorWarning = TAdminStatistics["sppgWarnings"]["sppgs"][number];
 
@@ -15,7 +15,7 @@ export function AdminVendorWarnings({ warnings }: AdminVendorWarningsProps) {
     <DashboardCard className="border border-red-100 p-6">
       <div className="mb-6 flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-100 text-red-600">
-          <HugeiconsIcon icon={Alert01Icon} size={24} />
+          <WarningIcon />
         </div>
         <h3 className="font-bold text-red-600">Peringatan Vendor</h3>
       </div>

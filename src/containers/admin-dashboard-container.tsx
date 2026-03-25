@@ -1,10 +1,3 @@
-import {
-  Building04Icon,
-  ChartHistogramIcon,
-  TruckIcon,
-  UserMultiple02Icon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { AdminComplaintsOverview } from "@/components/dashboard/admin-complaints-overview";
 import {
   type AdminComplaintStatusUi,
@@ -16,8 +9,13 @@ import {
   AdminSummaryStats,
 } from "@/components/dashboard/admin-summary-stats";
 import { AdminVendorWarnings } from "@/components/dashboard/admin-vendor-warnings";
+import {
+  PeopleIcon,
+  ReportIcon,
+  SchoolIcon,
+  TruckIcon,
+} from "@/components/exported-icons";
 import { adminStatistics } from "@/mock-data";
-
 import type { TAdminComplaint, TAdminStatistics } from "@/types";
 
 const MOCK_COMPLAINTS: TAdminComplaint[] = [
@@ -72,7 +70,8 @@ function getComplaintStatusUi(
 function mapSummaryStats(statistics: TAdminStatistics): AdminSummaryStatItem[] {
   return [
     {
-      icon: <HugeiconsIcon icon={ChartHistogramIcon} size={20} />,
+      // icon: <HugeiconsIcon icon={ChartHistogramIcon} size={20} />,
+      icon: <ReportIcon className="size-6" />,
       iconClassName: "bg-orange-100 text-orange-600",
       badgeText: "LAPORAN",
       badgeClassName: "bg-orange-50 text-orange-600 hover:bg-orange-50",
@@ -80,7 +79,8 @@ function mapSummaryStats(statistics: TAdminStatistics): AdminSummaryStatItem[] {
       value: statistics.reports.total.toLocaleString(),
     },
     {
-      icon: <HugeiconsIcon icon={TruckIcon} size={20} />,
+      // icon: <HugeiconsIcon icon={TruckIcon} size={20} />,
+      icon: <TruckIcon className="size-6" />,
       iconClassName: "bg-sky-100 text-sky-600",
       badgeText: "SPPG",
       badgeClassName: "bg-sky-50 text-sky-600 hover:bg-sky-50",
@@ -88,7 +88,7 @@ function mapSummaryStats(statistics: TAdminStatistics): AdminSummaryStatItem[] {
       value: `${statistics.sppg.total} Vendor`,
     },
     {
-      icon: <HugeiconsIcon icon={Building04Icon} size={20} />,
+      icon: <SchoolIcon className="size-6" />,
       iconClassName: "bg-emerald-100 text-emerald-600",
       badgeText: "SEKOLAH",
       badgeClassName: "bg-emerald-50 text-emerald-600 hover:bg-emerald-50",
@@ -96,7 +96,7 @@ function mapSummaryStats(statistics: TAdminStatistics): AdminSummaryStatItem[] {
       value: `${statistics.school.total} Sekolah`,
     },
     {
-      icon: <HugeiconsIcon icon={UserMultiple02Icon} size={20} />,
+      icon: <PeopleIcon className="size-6" />,
       iconClassName: "bg-purple-100 text-purple-600",
       badgeText: "UMUM",
       badgeClassName: "bg-purple-50 text-purple-600 hover:bg-purple-50",

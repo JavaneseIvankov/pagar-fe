@@ -18,7 +18,7 @@ const mapSummaryMetrics = (statistics: TSppgStatistics) => [
       ? "Laporan Terkirim"
       : "Belum Terkirim",
     badgeText: statistics.isDailyReportSubmitted ? "SELESAI" : "BELUM",
-    icon: <CheckCircleIcon />,
+    icon: <CheckCircleIcon className="size-6" />,
     iconClassName: statistics.isDailyReportSubmitted
       ? "bg-emerald-100 text-emerald-600"
       : "bg-red-100 text-red-600",
@@ -31,7 +31,7 @@ const mapSummaryMetrics = (statistics: TSppgStatistics) => [
     title: "Rata-rata Kalori (Minggu ini)",
     value: `${statistics.weeklyCalories.average} kkal`,
     badgeText: `${statistics.weeklyCalories.percentFromLastWeek > 0 ? "+" : ""}${statistics.weeklyCalories.percentFromLastWeek}%`,
-    icon: <HeartIcon />,
+    icon: <HeartIcon className="size-6" />,
     iconClassName: "bg-blue-100 text-blue-500",
     badgeClassName: "bg-blue-50 text-blue-500 hover:bg-blue-50",
   },
@@ -44,7 +44,7 @@ const mapSummaryMetrics = (statistics: TSppgStatistics) => [
       maximumFractionDigits: 0,
     }).format(statistics.budget.monthly.remaining),
     badgeText: statistics.budget.monthly.status === "SAFE" ? "AMAN" : "BAHAYA",
-    icon: <MoneyIcon />,
+    icon: <MoneyIcon className="size-6" />,
     iconClassName:
       statistics.budget.monthly.status === "SAFE"
         ? "bg-orange-100 text-orange-500"
@@ -59,7 +59,7 @@ const mapSummaryMetrics = (statistics: TSppgStatistics) => [
     title: "Laporan Masyarakat",
     value: `${statistics.publicReviews.total} Laporan`,
     badgeText: "MASUK",
-    icon: <ReportIcon />,
+    icon: <ReportIcon className="size-6" />,
     iconClassName: "bg-purple-100 text-purple-600",
     badgeClassName: "bg-purple-50 text-purple-600 hover:bg-purple-50",
   },

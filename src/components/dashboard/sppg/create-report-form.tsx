@@ -7,11 +7,10 @@ import {
   Money03Icon,
   Restaurant01Icon,
   SentIcon,
-  Upload01Icon,
   VegetarianFoodIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod/v3";
 import { DashboardCard } from "@/components/dashboard/dashboard-card";
@@ -33,7 +32,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
 
 export const createReportSchema = z.object({
   namaMenu: z.string().min(3, "Nama menu minimal 3 karakter"),
@@ -64,7 +62,6 @@ export function CreateReportForm() {
     register,
     handleSubmit,
     control,
-    setValue,
     watch,
     formState: { errors },
   } = useForm<TCreateReportForm>({
@@ -82,9 +79,9 @@ export function CreateReportForm() {
         karbohidrat: undefined,
       },
       rincianAnggaran: [
-        { komponenBiaya: "Bahan Baku Utama", biayaSatuan: 12500 },
-        { komponenBiaya: "Sayur & Buah-buahan", biayaSatuan: 10500 },
-        { komponenBiaya: "Bumbu & Operasional Memasak", biayaSatuan: 15000 },
+        // { komponenBiaya: "Bahan Baku Utama", biayaSatuan: 12500 },
+        // { komponenBiaya: "Sayur & Buah-buahan", biayaSatuan: 10500 },
+        // { komponenBiaya: "Bumbu & Operasional Memasak", biayaSatuan: 15000 },
       ],
       buktiAnggaran: [],
     },
@@ -178,13 +175,24 @@ export function CreateReportForm() {
 
         {/* SECTION 2: Unggah Foto Makanan */}
         <div className="w-full">
-          <FileUpload
-            maxFiles={1}
-            maxSizeMB={10}
-            onChange={(files) =>
-              setValue("fotoMakanan", files, { shouldValidate: true })
-            }
-            className={cn(errors.fotoMakanan && "border-red-500")}
+          <Controller
+            name="fotoMakanan"
+            control={control}
+            render={({ field }) => (
+              <FileUpload
+                maxFiles={1}
+                maxSizeMB={10}
+                value={field.value ?? []}
+                onChange={field.onChange}
+                dropzoneClassName={
+                  errors.fotoMakanan
+                    ? "border-destructive bg-destructive/5 hover:bg-destructive/10"
+                    : undefined
+                }
+                title="Unggah Foto Makanan"
+                helperText="Pastikan foto jelas dan memperlihatkan seluruh porsi makanan (Maks. 10MB)"
+              />
+            )}
           />
           {errors.fotoMakanan && (
             <p className="mt-2 text-destructive text-sm">
@@ -386,35 +394,26 @@ export function CreateReportForm() {
 
         {/* SECTION 5: Bukti Rincian Anggaran */}
         <div className="w-full">
-          <FileUpload
-            maxFiles={1}
-            maxSizeMB={10}
-            accept=".pdf,.xlsx,.xls,.png,.jpg,.jpeg"
-            onChange={(files) =>
-              setValue("buktiAnggaran", files, { shouldValidate: true })
-            }
-            className={cn(errors.buktiAnggaran && "border-red-500")}
+          <Controller
+            name="buktiAnggaran"
+            control={control}
+            render={({ field }) => (
+              <FileUpload
+                maxFiles={1}
+                maxSizeMB={10}
+                accept=".pdf,.xlsx,.xls,.png,.jpg,.jpeg"
+                value={field.value ?? []}
+                onChange={field.onChange}
+                dropzoneClassName={
+                  errors.buktiAnggaran
+                    ? "border-destructive bg-destructive/5 hover:bg-destructive/10"
+                    : undefined
+                }
+                title="Unggah Bukti Rincian Anggaran"
+                helperText="Format file bisa berupa .excel, .pdf, .jpg, .png maksimal 10MB"
+              />
+            )}
           />
-          {/* Override titles manually to match design */}
-          <div className="pointer-events-none relative z-10 -mt-36 mb-16 hidden text-center lg:block">
-            <h3 className="mb-1 font-bold text-lg">
-              Unggah Bukti Rincian Anggaran
-            </h3>
-            <p className="mb-4 text-foreground/70 text-sm">
-              Klik untuk pilih dari perangkat Anda
-            </p>
-            <Button
-              type="button"
-              className="mb-4 bg-primary pr-4 pl-6 hover:bg-primary/90"
-              tabIndex={-1}
-            >
-              Upload
-              <HugeiconsIcon icon={Upload01Icon} className="ml-2" />
-            </Button>
-            <p className="text-muted-foreground/60 text-xs">
-              Format file bisa berupa .excel, .pdf, .jpg, .png maksimal 10MB
-            </p>
-          </div>
           {errors.buktiAnggaran && (
             <p className="mt-2 text-destructive text-sm">
               {errors.buktiAnggaran.message as string}

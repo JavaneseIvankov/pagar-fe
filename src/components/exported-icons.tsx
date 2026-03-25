@@ -413,3 +413,75 @@ export function PersonIcon({
     </svg>
   );
 }
+
+export function EyeIcon({
+  className,
+  svgProps,
+}: {
+  className?: string;
+  svgProps?: React.SVGProps<SVGSVGElement>;
+}) {
+  return (
+    <svg
+      width="20"
+      height="19"
+      viewBox="0 0 20 19"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      {...svgProps}
+    >
+      <path d="M-2 -2.5H22V21.5H-2V-2.5Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+export function PencilIcon({
+  className,
+  svgProps,
+}: {
+  className?: string;
+  svgProps?: React.SVGProps<SVGSVGElement>;
+}) {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      {...svgProps}
+    >
+      <path
+        d="M0 18V13.75L13.2 0.575C13.4 0.391667 13.621 0.25 13.863 0.15C14.105 0.0500001 14.359 0 14.625 0C14.891 0 15.1493 0.0500001 15.4 0.15C15.6507 0.25 15.8673 0.4 16.05 0.6L17.425 2C17.625 2.18333 17.771 2.4 17.863 2.65C17.955 2.9 18.0007 3.15 18 3.4C18 3.66667 17.9543 3.921 17.863 4.163C17.7717 4.405 17.6257 4.62567 17.425 4.825L4.25 18H0ZM14.6 4.8L16 3.4L14.6 2L13.2 3.4L14.6 4.8Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+export function WarningIcon({
+  className,
+  svgProps,
+}: {
+  className?: string;
+  svgProps?: React.SVGProps<SVGSVGElement>;
+}) {
+  return (
+    <svg
+      width="28"
+      height="24"
+      viewBox="0 0 28 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      {...svgProps}
+    >
+      <path
+        d="M0 24L14 0L28 24H0ZM14.9075 19.848C15.151 19.6055 15.2727 19.3053 15.2727 18.9474C15.2727 18.5895 15.1505 18.2897 14.9062 18.048C14.6618 17.8063 14.3598 17.6851 14 17.6842C13.6402 17.6834 13.3382 17.8046 13.0938 18.048C12.8495 18.2914 12.7273 18.5912 12.7273 18.9474C12.7273 19.3036 12.8495 19.6038 13.0938 19.848C13.3382 20.0922 13.6402 20.2131 14 20.2105C14.3598 20.208 14.6622 20.088 14.9075 19.848ZM12.7273 16.4211H15.2727V10.1053H12.7273V16.4211Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}

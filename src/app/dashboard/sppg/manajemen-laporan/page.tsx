@@ -2,7 +2,7 @@ import { CreateReportForm } from "@/components/dashboard/sppg/create-report-form
 
 export default function CreateReportPage() {
   return (
-    <div className="mx-auto flex max-w-[1200px] flex-col gap-8 p-8">
+    <div className="flex flex-col gap-8 p-8">
       {/* Header */}
       <div>
         <h1 className="font-bold text-3xl tracking-tight">

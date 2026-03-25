@@ -31,7 +31,7 @@ interface PeriodicReportTableProps {
 export function PeriodicReportTable({ data }: PeriodicReportTableProps) {
   // These are intentionally kept for future functional hooking.
   // TODO: confirm, what are the enum for this?
-  const [periode, setPeriode] = useState<"Bulanan" | "Mingguan">("Bulanan");
+  const [periode, setPeriode] = useState<string>("Bulanan");
   const [year, setYear] = useState<string>("");
 
   return (

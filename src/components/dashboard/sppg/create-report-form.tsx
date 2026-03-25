@@ -1,6 +1,5 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Delete02Icon,
   InformationCircleIcon,
@@ -10,10 +9,9 @@ import {
   VegetarianFoodIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { toast } from "sonner";
-import z from "zod/v3";
+import { Controller } from "react-hook-form";
 import { DashboardCard } from "@/components/dashboard/dashboard-card";
+import { usePersistedSppgCreateReportForm } from "@/hooks/use-persisted-sppg-create-report-form";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -33,75 +31,23 @@ import {
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 
-export const createReportSchema = z.object({
-  namaMenu: z.string().min(3, "Nama menu minimal 3 karakter"),
-  waktuMakan: z.string().min(1, "Pilih waktu makan"),
-  deskripsi: z.string().optional(),
-  fotoMakanan: z.array(z.any()).min(1, "Wajib mengunggah 1 foto makanan"),
-  gizi: z.object({
-    energi: z.number({ message: "Wajib diisi" }).min(0),
-    protein: z.number({ message: "Wajib diisi" }).min(0),
-    lemak: z.number({ message: "Wajib diisi" }).min(0),
-    karbohidrat: z.number({ message: "Wajib diisi" }).min(0),
-  }),
-  rincianAnggaran: z
-    .array(
-      z.object({
-        komponenBiaya: z.string().min(1, "Komponen wajib diisi"),
-        biayaSatuan: z.number({ message: "Biaya wajib diisi" }).min(0),
-      }),
-    )
-    .min(1, "Minimal 1 rincian anggaran"),
-  buktiAnggaran: z.array(z.any()).min(1, "Wajib mengunggah bukti anggaran"),
-});
-
-export type TCreateReportForm = z.infer<typeof createReportSchema>;
-
 export function CreateReportForm() {
   const {
-    register,
+    append,
+    control,
+    errors,
+    fields,
     handleSubmit,
-    control,
-    watch,
-    formState: { errors },
-  } = useForm<TCreateReportForm>({
-    // biome-ignore lint/suspicious/noExplicitAny: <Zod 4 type mismatch>
-    resolver: zodResolver(createReportSchema as any),
-    defaultValues: {
-      namaMenu: "",
-      waktuMakan: "",
-      deskripsi: "",
-      fotoMakanan: [],
-      gizi: {
-        energi: undefined,
-        protein: undefined,
-        lemak: undefined,
-        karbohidrat: undefined,
-      },
-      rincianAnggaran: [
-        // { komponenBiaya: "Bahan Baku Utama", biayaSatuan: 12500 },
-        // { komponenBiaya: "Sayur & Buah-buahan", biayaSatuan: 10500 },
-        // { komponenBiaya: "Bumbu & Operasional Memasak", biayaSatuan: 15000 },
-      ],
-      buktiAnggaran: [],
-    },
-  });
+    isHydrating,
+    onSubmit,
+    register,
+    remove,
+    totalAnggaranPerPorsi,
+  } = usePersistedSppgCreateReportForm();
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "rincianAnggaran",
-  });
-
-  const rincianAnggaran = watch("rincianAnggaran");
-  const totalAnggaranPerPorsi = rincianAnggaran.reduce(
-    (acc, curr) => acc + (Number(curr.biayaSatuan) || 0),
-    0,
-  );
-
-  const onSubmit = (data: TCreateReportForm) => {
-    console.log(data);
-    toast.success("Laporan berhasil dikirim!");
-  };
+  if (isHydrating) {
+    return null;
+  }
 
   return (
     <form

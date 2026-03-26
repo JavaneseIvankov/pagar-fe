@@ -5,6 +5,8 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { useState } from "react";
 import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { GlobalAlertDialog } from "@/hooks/use-alert-dialog";
+import GlobalDialog from "@/hooks/use-dialog";
 
 const createQueryClient = () => {
   return new QueryClient();
@@ -22,6 +24,8 @@ export default function Providers({
         <TooltipProvider>
           <Toaster />
           {children}
+          <GlobalDialog />
+          <GlobalAlertDialog />
         </TooltipProvider>
       </NuqsAdapter>
     </QueryClientProvider>

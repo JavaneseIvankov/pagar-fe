@@ -42,7 +42,9 @@ src/
     ui/           # shadcn/ui primitives — DO NOT manually edit these files
   containers/     # Smart components (data fetching, orchestration, minimal styling)
   hooks/          # Custom hooks (TanStack Query wrappers, Zustand stores)
-  lib/            # Utilities (cn(), query-keys)
+  lib/            # Utilities (cn(), query-keys, shared helpers)
+    formatters/   # Date, currency, string formatting helpers
+    ui-mappers/   # Status/enum to UI representation mappers
   rpc/            # Unified API/RPC layer (network calls + internal mocks)
   types/          # DTOs (Zod schemas), domain models, mappers
 ```
@@ -53,7 +55,59 @@ See `FRONTEND_ARCH_PATTERNS.md` for the full rationale. The key rules:
 
 ### 1. Anti-Corruption Layer (Zod DTOs)
 
-Every API response MUST be validated through a Zod schema before use. Define DTO schemas in `src/types/`, infer TS types from them with `z.infer<>`, then map to UI domain models with pure mapper functions.
+Every API response MUST be validated through a Zod schema before use. **The RPC layer establishes the anti-corruption boundary**: RPC functions validate and map before returning domain models to consumers.
+
+#### Implementation Pattern
+
+```typescript
+// src/rpc/reports.ts
+import { delayedValue } from "@/lib/utils";
+import { ReportDTOSchema, mapReportDtoToDomain } from "@/types";
+import type { TSppgReport } from "@/types";
+
+/**
+ * Fetches SPPG reports with full details.
+ * Returns canonical domain model - consumers never see DTO.
+ */
+export async function fetchSppgReports(): Promise<TSppgReport[]> {
+  // TODO: Replace with real fetch when backend ready
+  // const response = await fetch('/api/sppg/reports');
+  // const json = await response.json();
+  
+  // Mock data using delayedValue for realistic async behavior
+  const mockData = await delayedValue([
+    {
+      id: "1",
+      title: "Nasi Goreng",
+      image_url: "/images/nasi-goreng.jpg",
+      created_at: "2024-03-15T10:30:00Z",
+      // ... other DTO fields (snake_case, raw backend format)
+    }
+  ], 800);
+  
+  // Anti-corruption layer: validate + map
+  const dto = ReportDTOSchema.parse(mockData);
+  return dto.map(mapReportDtoToDomain);
+}
+```
+
+**Key Rules:**
+1. **RPC functions MUST return domain models** - never expose DTOs to consumers
+2. **Zod validation is mandatory** - use `.parse()` to fail fast on schema mismatches
+3. **Mapping happens inside RPC** - consumers only work with clean domain models
+4. **Use `delayedValue()` for mocks** - simulates network latency during development
+
+When backend is ready, swap the mock with real fetch - consumers remain unchanged:
+
+```typescript
+// After backend is ready - just replace the mock section
+const response = await fetch('/api/sppg/reports');
+const json = await response.json();
+
+// Validation + mapping stays the same
+const dto = ReportDTOSchema.parse(json);
+return dto.map(mapReportDtoToDomain);
+```
 
 ### 2. Smart / Dumb Component Split
 
@@ -67,8 +121,10 @@ All network calls live in `src/rpc/`. When the backend is unavailable, mock resp
 ### 4. Data Flow
 
 ```
-Backend API -> RPC Layer -> Zod validation -> Mapper -> TanStack Query hook -> Container -> Component
+Backend API -> RPC Layer (Zod validation + Mapping) -> Domain Model -> TanStack Query hook -> Container -> Component
 ```
+
+The anti-corruption boundary is established at the RPC layer's return value. Everything after RPC works with clean domain models.
 
 ## Code Style Guidelines
 
@@ -111,6 +167,45 @@ Backend API -> RPC Layer -> Zod validation -> Mapper -> TanStack Query hook -> C
 - Use `"use client"` directive only when the component requires client-side interactivity (state, effects, event handlers)
 - Default to server components (no directive needed)
 
+#### Component Props Pattern (Pragmatic Default)
+
+**Default: Accept domain objects as props** for domain-specific components:
+
+```typescript
+// src/components/reports/sppg-report-card.tsx
+import { formatShortDate } from "@/lib/formatters/date";
+import type { TSppgReport } from "@/types";
+
+export interface SppgReportCardProps {
+  report: TSppgReport; // Accept full domain object
+}
+
+export function SppgReportCard({ report }: SppgReportCardProps) {
+  // Use shared helpers for transformations
+  const postedAt = formatShortDate(report.postedAt);
+  const author = report.author.sppgName;
+
+  return (
+    <Card>
+      <h3>{report.title}</h3>
+      <p>{author} • {postedAt}</p>
+      <NutritionalFacts facts={report.nutritionalFacts} />
+    </Card>
+  );
+}
+```
+
+**Rules:**
+1. **Components accept domain objects** - this keeps call sites simple: `<SppgReportCard report={report} />`
+2. **Use shared helpers for transformations** - never duplicate formatting logic (date, currency, status)
+3. **Extract helpers when you see duplication** - if the same transformation appears in 2+ places, create a helper in `src/lib/formatters/` or `src/lib/ui-mappers/`
+4. **Components can access nested properties** - `report.author.sppgName` is fine
+5. **Keep components focused** - if a component needs extensive data reshaping, consider if it should be split
+
+**Helper Organization:**
+- `src/lib/formatters/` - Pure data transformations (dates, currency, strings)
+- `src/lib/ui-mappers/` - Domain-to-UI mappings (status → badge variant, enum → label)
+
 ### shadcn/ui Components
 
 - **PRIORITIZE SHADCN/UI:** Whenever building UI, you MUST prioritize using and composing `shadcn/ui` components over building custom elements from scratch. I have provided a `shadcn/ui` skill for this project—use it to search, add, and correctly implement components.
@@ -150,11 +245,70 @@ import { HugeiconsIcon } from '@hugeicons/react';
 
 ## Adding a New Feature (Checklist)
 
-1. Define Zod DTO schema in `src/types/` and infer the TS type
-2. Create a pure mapper function (DTO -> domain model)
-3. Add the RPC function in `src/rpc/` (mock if backend unavailable)
-4. Create a TanStack Query hook in `src/hooks/`
-5. Add query key to `src/lib/query-keys.ts`
-6. Build the container in `src/containers/` call needed hooks (if client side) or fetch (if server-side) and orchestate required ui-states
-7. Build the presentational component in `src/components/` (props only)
-8. Run `pnpm format && pnpm build` to verify
+1. **Define DTO schema** in `src/types/dto.ts` and infer the TS type with `z.infer<>`
+2. **Create mapper function** in `src/types/mappers.ts` (DTO → domain model, pure function)
+3. **Create RPC function** in `src/rpc/` that:
+   - Uses `delayedValue()` for mock data during development
+   - Validates with Zod `.parse()`
+   - Maps DTO to domain model
+   - Returns domain model (never exposes DTO)
+4. **Create TanStack Query hook** in `src/hooks/` that calls the RPC function
+5. **Add query key** to `src/lib/query-keys.ts`
+6. **Build container** in `src/containers/`:
+   - Calls hook (client-side) or RPC directly (server-side)
+   - Handles loading/error/empty states
+   - Passes domain objects to components
+7. **Build component** in `src/components/`:
+   - Accepts domain objects as props
+   - Uses shared helpers from `src/lib/formatters/` or `src/lib/ui-mappers/`
+   - Extracts new helpers if you see duplication
+8. **Run verification**: `pnpm format && pnpm build`
+
+### Example: Adding a Reports Feature
+
+```typescript
+// 1. src/types/dto.ts
+export const ReportDTOSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  created_at: z.string(),
+  image_url: z.string(),
+});
+export type ReportDTO = z.infer<typeof ReportDTOSchema>;
+
+// 2. src/types/mappers.ts
+export const mapReportDtoToDomain = (dto: ReportDTO): TSppgReport => ({
+  id: dto.id,
+  title: dto.title,
+  createdAt: new Date(dto.created_at), // Transform to Date
+  imageUrl: dto.image_url, // camelCase
+});
+
+// 3. src/rpc/reports.ts
+export async function fetchSppgReports(): Promise<TSppgReport[]> {
+  const mockData = await delayedValue([/* mock */], 800);
+  const dto = ReportDTOSchema.array().parse(mockData);
+  return dto.map(mapReportDtoToDomain);
+}
+
+// 4. src/hooks/use-sppg-reports.ts
+export function useSppgReports() {
+  return useQuery({
+    queryKey: queryKeys.reports.list(),
+    queryFn: fetchSppgReports,
+  });
+}
+
+// 5. src/containers/sppg-report-container.tsx
+export function SppgReportContainer() {
+  const { data: reports, isLoading } = useSppgReports();
+  if (isLoading) return <Skeleton />;
+  return reports?.map(report => <SppgReportCard report={report} />);
+}
+
+// 6. src/components/reports/sppg-report-card.tsx
+export function SppgReportCard({ report }: { report: TSppgReport }) {
+  const postedAt = formatShortDate(report.postedAt); // Shared helper
+  return <Card>{/* render */}</Card>;
+}
+```

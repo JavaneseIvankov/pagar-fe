@@ -20,9 +20,28 @@ To achieve this, we are enforcing strict architectural rules:
 
 We avoid over-engineering the mock vs. real implementation by keeping a single, unified `rpc` module. Instead of maintaining parallel architectural layers (e.g., `_mock` and `_real` directories), we expose a single set of fetching functions.
 
-- When backend endpoints are unavailable, we mock the responses manually within the RPC functions using Promise utilities (`Promise.resolve`, `setTimeout`, etc.).
-- Once the real backend is ready, we simply swap the internal mock returning a Promise with the actual `fetch` or `axios` call inside the same function.
+- When backend endpoints are unavailable, we mock the responses using `delayedValue()` utility from `@/lib/utils` to simulate network latency.
+- Once the real backend is ready, we simply swap the `delayedValue()` call with the actual `fetch` call inside the same function.
 - The components and hooks consuming these RPC functions remain entirely unaffected.
+
+**Example:**
+
+```typescript
+// During development (backend unavailable)
+export async function fetchSppgReports(): Promise<TSppgReport[]> {
+  const mockData = await delayedValue([{ id: "1", title: "..." }], 800);
+  const dto = ReportDTOSchema.parse(mockData);
+  return dto.map(mapReportDtoToDomain);
+}
+
+// After backend is ready (just replace mock section)
+export async function fetchSppgReports(): Promise<TSppgReport[]> {
+  const response = await fetch('/api/sppg/reports');
+  const json = await response.json();
+  const dto = ReportDTOSchema.parse(json);
+  return dto.map(mapReportDtoToDomain);
+}
+```
 
 ### 2. Anti-Corruption Layer: Zod for DTO Validation
 
@@ -33,9 +52,18 @@ Backend contracts can drift, leading to silent UI bugs or crashes. To prevent th
 - **Fail Fast:** If the backend response signature changes (e.g., a field is renamed, or `null` is returned instead of a string), the Zod validation will throw an error immediately at the network boundary, catching schema drift early.
 - We infer TypeScript types directly from these Zod schemas to ensure absolute sync between runtime validation and compile-time types.
 
+**CRITICAL:** The anti-corruption boundary is established at the RPC function's return value. RPC functions MUST:
+1. Validate with Zod `.parse()`
+2. Map DTO to domain model
+3. Return domain model (never expose DTO to consumers)
+
+This ensures that hooks, containers, and components only work with clean domain models.
+
 ### 3. Pure TypeScript Mappers to Domain Models
 
-Backend API schemas shouldn't dictate how our UI components manage data. We decouple the backend structure from the frontend structure using a mapping pattern:
+Backend API schemas shouldn't dictate how our UI components manage data. We decouple the backend structure from the frontend structure using a mapping pattern.
+
+**Mappers are ONLY called inside RPC functions:**
 
 ```typescript
 import { z } from 'zod';
@@ -53,14 +81,24 @@ export interface Report {
    createdAt: Date; // UI prefers camelCase and Date objects
 }
 
-// 3. Pure Mapper: Validated DTO flows in (parsed at lower layer), Domain Model flows out
-export const mapReportDtoToUi = (dto: ReportDTO): Report => {
+// 3. Pure Mapper: DTO → Domain Model transformation
+export const mapReportDtoToDomain = (dto: ReportDTO): Report => {
    return {
       id: dto.id,
       createdAt: new Date(dto.created_at),
    };
 };
+
+// 4. RPC function uses mapper and returns domain model
+export async function fetchReports(): Promise<Report[]> {
+   const response = await fetch('/api/reports');
+   const json = await response.json();
+   const dto = ReportDTOSchema.array().parse(json);
+   return dto.map(mapReportDtoToDomain); // Returns domain model
+}
 ```
+
+**Key principle:** DTOs are private implementation details of the RPC layer. Consumers (hooks, containers, components) never see DTOs.
 
 ### 4. Smart / Dumb Component Pattern
 
@@ -84,6 +122,65 @@ Located in `src/components/`.
 - They are highly reusable and visually focused (e.g., shadcn/ui components).
 - They remain completely stateless regarding backend data. All data and event handlers come exclusively via `props`.
 - **Rule:** Never import a hook that fetches data (`useQuery`, stores, etc.) directly into a presentational component.
+
+**Component Props Pattern:**
+- Components accept domain objects as props by default (e.g., `report: TSppgReport`)
+- Use shared helper functions for transformations (dates, currency, status)
+- Extract helpers to `src/lib/formatters/` or `src/lib/ui-mappers/` when duplication is found
+- Components can access nested properties (`report.author.sppgName`)
+
+---
+
+## 🔧 Helper Functions Pattern
+
+To avoid duplication of transformation logic across components, we extract common patterns into helper functions:
+
+### Formatters (`src/lib/formatters/`)
+
+Pure data transformations for common formats:
+
+```typescript
+// src/lib/formatters/date.ts
+export function formatShortDate(date: Date): string {
+  return new Intl.DateTimeFormat("id-ID", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
+
+// src/lib/formatters/currency.ts
+export function formatCurrency(amount: number): string {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+```
+
+### UI Mappers (`src/lib/ui-mappers/`)
+
+Domain-to-UI transformations (status → badge variant, enum → label):
+
+```typescript
+// src/lib/ui-mappers/status.ts
+export function getComplaintStatusUi(status: "PENDING" | "INVESTIGATING" | "RESOLVED") {
+  switch (status) {
+    case "PENDING":
+      return { label: "Menunggu", className: "bg-sky-50 text-sky-600" };
+    case "INVESTIGATING":
+      return { label: "Investigasi", className: "bg-orange-50 text-orange-600" };
+    case "RESOLVED":
+      return { label: "Selesai", className: "bg-emerald-50 text-emerald-600" };
+  }
+}
+```
+
+**When to extract:**
+- If the same transformation appears in 2+ places
+- If the logic is complex (more than a simple property access)
+- If it represents a domain concept (status mapping, formatting rules)
 
 ---
 
@@ -127,6 +224,9 @@ src/
  │   ├─ mappers.ts # Pure functions mapping backend DTOs to UI Models
  │   └─ ui.ts      # Frontend domain models/interfaces
  │   └─ index.ts   # Barrel exports
+ ├─ lib/           # Shared utilities
+ │   ├─ formatters/# Pure data transformations (date, currency, string)
+ │   └─ ui-mappers/# Domain-to-UI mappings (status, enums)
  ├─ hooks/         # TanStack Query standard and custom hooks
  ├─ containers/    # Smart components (Data orchestrators)
  └─ components/    # Dumb components (UI primitives and layouts)

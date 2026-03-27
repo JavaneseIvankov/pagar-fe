@@ -139,6 +139,7 @@ export const sppgReports: TSppgReport[] = [
     nutritionalFacts,
     content:
       "Menu hari ini terdiri dari nasi putih, ikan goreng, sayur bening bayam, tahu, dan buah pisang. Distribusi berjalan lancar dan mayoritas siswa menghabiskan porsi.",
+    status: "SUBMITTED",
   },
   {
     id: "report-002",
@@ -167,6 +168,7 @@ export const sppgReports: TSppgReport[] = [
     },
     content:
       "Ayam bakar disajikan bersama tumis buncis wortel, nasi, dan jeruk. Porsi protein disesuaikan dengan kelompok usia siswa.",
+    status: "SUBMITTED",
   },
   {
     id: "report-003",
@@ -195,6 +197,7 @@ export const sppgReports: TSppgReport[] = [
     },
     content:
       "Menu sarapan ringan dengan fokus protein dan sayuran. Capcay dibuat dengan sedikit minyak untuk menjaga keseimbangan gizi.",
+    status: "SUBMITTED",
   },
 ];
 
@@ -205,6 +208,7 @@ export const publicReviews: TPublicReview[] = [
     imageUrl: "https://placehold.co/1200x800?text=Public+Review+1",
     postedAt: new Date("2026-03-20T13:10:00+07:00"),
     ratingScore: 4.5,
+    reporterName: "Anonim",
     forSppg: {
       id: sppgs[0].id,
       username: sppgs[0].username,
@@ -220,6 +224,7 @@ export const publicReviews: TPublicReview[] = [
     imageUrl: "https://placehold.co/1200x800?text=Public+Review+2",
     postedAt: new Date("2026-03-19T14:25:00+07:00"),
     ratingScore: 4.8,
+    reporterName: "Anonim",
     forSppg: {
       id: sppgs[1].id,
       username: sppgs[1].username,
@@ -235,6 +240,7 @@ export const publicReviews: TPublicReview[] = [
     imageUrl: "https://placehold.co/1200x800?text=Public+Review+3",
     postedAt: new Date("2026-03-18T09:30:00+07:00"),
     ratingScore: 3.9,
+    reporterName: "Anonim",
     forSppg: {
       id: sppgs[2].id,
       username: sppgs[2].username,

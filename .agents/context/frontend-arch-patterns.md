@@ -57,6 +57,8 @@ Backend contracts can drift, leading to silent UI bugs or crashes. To prevent th
 2. Map DTO to domain model
 3. Return domain model (never expose DTO to consumers)
 
+**Contract ownership rule:** `src/types/dto/index.ts` is the shared frontend/backend contract surface. Do not add fictional or frontend-only DTOs there unless explicitly asked. If a backend contract does not exist yet, keep the mock schema local to the RPC module or model the temporary shape through stable frontend domain types in `src/types/ui.ts`.
+
 This ensures that hooks, containers, and components only work with clean domain models.
 
 ### 3. Pure TypeScript Mappers to Domain Models

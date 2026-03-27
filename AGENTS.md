@@ -96,6 +96,7 @@ export async function fetchSppgReports(): Promise<TSppgReport[]> {
 2. **Zod validation is mandatory** - use `.parse()` to fail fast on schema mismatches
 3. **Mapping happens inside RPC** - consumers only work with clean domain models
 4. **Use `delayedValue()` for mocks** - simulates network latency during development
+5. **`src/types/dto/index.ts` is backend-owned contract space** - NEVER modify it unless the user explicitly asks; for frontend-only mock shapes, keep the mock schema local to the RPC module or model the mock through stable frontend domain types in `src/types/ui.ts`
 
 When backend is ready, swap the mock with real fetch - consumers remain unchanged:
 
@@ -316,7 +317,7 @@ export function SppgReportCard({ report }: { report: TSppgReport }) {
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **pagar-fe** (588 symbols, 1259 relationships, 11 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **pagar-fe** (759 symbols, 1745 relationships, 48 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 

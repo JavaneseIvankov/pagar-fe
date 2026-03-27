@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import type { TUser } from "@/types/index";
+import type { TUser } from "@/types";
 import { createPasswordSchema } from "./profile-schema";
 
 const publicProfileFormSchema = z

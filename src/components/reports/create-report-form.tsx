@@ -1,11 +1,15 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Location01Icon, Navigation03Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Controller, useForm } from "react-hook-form";
-import * as z from "zod/v3";
-
+import { Controller } from "react-hook-form";
+import type {
+  Control,
+  FieldErrors,
+  SubmitHandler,
+  UseFormHandleSubmit,
+  UseFormRegister,
+} from "react-hook-form";
 import StarRating from "@/components/reports/star-rating";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,43 +27,34 @@ import {
 } from "@/components/ui/input-group";
 import { Textarea } from "@/components/ui/textarea";
 
-const formSchema = z.object({
-  photo: z.any().optional(),
-  rating: z
-    .number()
-    .min(1, "Berikan penilaian kualitas makanan (minimal 1 bintang)"),
-  location: z.string().min(3, "Lokasi minimal 3 karakter"),
-  details: z.string().min(10, "Ulasan minimal 10 karakter"),
-});
+export interface PublicCreateReportFormValues {
+  photo?: File;
+  rating: number;
+  location: string;
+  details: string;
+}
 
-type FormValues = z.infer<typeof formSchema>;
+interface PublicCreateReportFormProps {
+  control: Control<PublicCreateReportFormValues>;
+  errors: FieldErrors<PublicCreateReportFormValues>;
+  handleSubmit: UseFormHandleSubmit<PublicCreateReportFormValues>;
+  onSubmit: SubmitHandler<PublicCreateReportFormValues>;
+  register: UseFormRegister<PublicCreateReportFormValues>;
+}
 
-export function CreateReportForm() {
-  const {
-    handleSubmit,
-    control,
-    register,
-    formState: { errors },
-  } = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      rating: 0,
-      location: "",
-      details: "",
-    },
-  });
-
-  const onSubmit = (data: FormValues) => {
-    console.log("Form Data:", data);
-  };
-
+export function CreateReportForm({
+  control,
+  errors,
+  handleSubmit,
+  onSubmit,
+  register,
+}: PublicCreateReportFormProps) {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="mx-auto max-w-4xl space-y-8"
     >
       <FieldGroup className="space-y-8">
-        {/* Upload Box */}
         <Field data-invalid={!!errors.photo}>
           <Controller
             name="photo"
@@ -79,7 +74,6 @@ export function CreateReportForm() {
         </Field>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {/* Quality Rating */}
           <Field data-invalid={!!errors.rating} className="space-y-3">
             <FieldLabel className="font-bold text-base">
               Penilaian Kualitas
@@ -99,7 +93,6 @@ export function CreateReportForm() {
             {errors.rating && <FieldError>{errors.rating.message}</FieldError>}
           </Field>
 
-          {/* Location Input */}
           <Field data-invalid={!!errors.location} className="space-y-3">
             <FieldLabel htmlFor="location" className="font-bold text-base">
               Lokasi Temuan
@@ -123,7 +116,6 @@ export function CreateReportForm() {
           </Field>
         </div>
 
-        {/* Detailed Review */}
         <Field data-invalid={!!errors.details} className="space-y-3">
           <FieldLabel htmlFor="details" className="font-bold text-base">
             Ulasan Detail
@@ -139,7 +131,6 @@ export function CreateReportForm() {
         </Field>
       </FieldGroup>
 
-      {/* Submit */}
       <Button
         type="submit"
         className="h-12 w-full bg-primary font-semibold text-base hover:bg-primary/90"

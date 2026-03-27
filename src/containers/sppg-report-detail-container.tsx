@@ -6,16 +6,16 @@ import { SppgReportHero } from "@/components/sppg-report-detail/sppg-report-hero
 import { SppgReportNutritionCard } from "@/components/sppg-report-detail/sppg-report-nutrition-card";
 import { SppgReportRelatedReports } from "@/components/sppg-report-detail/sppg-report-related-reports";
 import { SppgReportVendorCard } from "@/components/sppg-report-detail/sppg-report-vendor-card";
-import { sppgReportDetails } from "@/mock-data";
+import { fetchSppgReportDetail } from "@/rpc";
 
 export interface SppgReportDetailContainerProps {
   id: string;
 }
 
-export function SppgReportDetailContainer({
+export async function SppgReportDetailContainer({
   id,
 }: SppgReportDetailContainerProps) {
-  const report = sppgReportDetails.find((item) => item.id === id);
+  const report = await fetchSppgReportDetail(id);
 
   if (!report) {
     notFound();

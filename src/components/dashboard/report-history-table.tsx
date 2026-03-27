@@ -11,11 +11,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { TSppgReport } from "@/types";
+import { formatLongDate } from "@/lib/formatters";
+import type { TSppgReportSummary } from "@/types";
 import { DashboardCard } from "./dashboard-card";
 
 interface ReportHistoryTableProps {
-  reports: TSppgReport[];
+  reports: TSppgReportSummary[];
 }
 
 export function ReportHistoryTable({ reports }: ReportHistoryTableProps) {
@@ -55,19 +56,14 @@ export function ReportHistoryTable({ reports }: ReportHistoryTableProps) {
               >
                 <TableCell className="py-4">{report.title}</TableCell>
                 <TableCell className="py-4 font-medium">
-                  {report.postedAt.toLocaleDateString("id-ID", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
+                  {formatLongDate(report.postedAt)}
                 </TableCell>
                 <TableCell className="py-4">
-                  {/* FIXME: Status field is missing in TSppgReport */}
                   <Badge
                     variant="secondary"
                     className="rounded-full bg-emerald-50 px-3 py-1 font-semibold text-emerald-600 text-xs hover:bg-emerald-50"
                   >
-                    Terkirim
+                    {report.status === "SUBMITTED" ? "Terkirim" : report.status}
                   </Badge>
                 </TableCell>
                 <TableCell className="py-4 text-right">

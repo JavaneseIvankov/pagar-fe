@@ -1,3 +1,5 @@
+"use client";
+
 import { PublicReportsList } from "@/components/dashboard/public-reports-list";
 import { ReportHistoryTable } from "@/components/dashboard/report-history-table";
 import { SummaryCard } from "@/components/dashboard/summary-card";
@@ -7,7 +9,8 @@ import {
   MoneyIcon,
   ReportIcon,
 } from "@/components/exported-icons";
-import { publicReviews, sppgReports, sppgStatistics, sppgs } from "@/mock-data";
+import { useSppgDashboard } from "@/hooks/use-sppg-dashboard";
+import { formatCurrencyIdr, formatLongDate } from "@/lib/formatters";
 import type { TSppgStatistics } from "@/types";
 
 const mapSummaryMetrics = (statistics: TSppgStatistics) => [
@@ -38,11 +41,7 @@ const mapSummaryMetrics = (statistics: TSppgStatistics) => [
   {
     id: "metric-3",
     title: "Sisa Anggaran Bulanan",
-    value: new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      maximumFractionDigits: 0,
-    }).format(statistics.budget.monthly.remaining),
+    value: formatCurrencyIdr(statistics.budget.monthly.remaining),
     badgeText: statistics.budget.monthly.status === "SAFE" ? "AMAN" : "BAHAYA",
     icon: <MoneyIcon className="size-6" />,
     iconClassName:
@@ -66,24 +65,29 @@ const mapSummaryMetrics = (statistics: TSppgStatistics) => [
 ];
 
 export function SppgDashboardContainer() {
-  const SUMMARY_METRICS = mapSummaryMetrics(sppgStatistics);
+  const { data, isLoading, isError } = useSppgDashboard();
 
-  // FIXME: extract this into util later
-  const currentDate = new Date().toLocaleDateString("id-ID", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+  if (isLoading) {
+    return (
+      <div className="py-8 text-muted-foreground">Memuat dashboard SPPG...</div>
+    );
+  }
 
-  // FIXME: Replace with actual current user from auth context later
-  const currentUser = sppgs[0];
+  if (isError || !data) {
+    return (
+      <div className="py-8 text-destructive">Gagal memuat dashboard SPPG.</div>
+    );
+  }
+
+  const summaryMetrics = mapSummaryMetrics(data.statistics);
+  const currentDate = formatLongDate(new Date());
 
   return (
     <div className="mx-auto flex flex-col gap-8">
       {/* Header */}
       <div>
         <h2 className="font-bold text-[28px] text-foreground tracking-tight">
-          Selamat Datang! {currentUser.sppgName}!
+          Selamat Datang! {data.sppgName}!
         </h2>
         <p className="mt-1 text-muted-foreground">
           Berikut adalah ringkasan pengelolaan makanan hari ini, {currentDate}
@@ -92,7 +96,7 @@ export function SppgDashboardContainer() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-        {SUMMARY_METRICS.map((metric) => (
+        {summaryMetrics.map((metric) => (
           <SummaryCard
             key={metric.id}
             icon={metric.icon}
@@ -106,10 +110,10 @@ export function SppgDashboardContainer() {
       </div>
 
       {/* Riwayat Laporan */}
-      <ReportHistoryTable reports={sppgReports} />
+      <ReportHistoryTable reports={data.recentReports} />
 
       {/* Laporan Masyarakat */}
-      <PublicReportsList reports={publicReviews} />
+      <PublicReportsList reports={data.publicReviews} />
     </div>
   );
 }

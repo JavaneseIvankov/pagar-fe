@@ -1,9 +1,14 @@
 import { SppgReportCard } from "@/components/reports/sppg-report-card";
-import { sppgReports } from "../mock-data";
+import { fetchSppgReports } from "@/rpc";
 
-export function SppgReportContainer() {
-  const report = sppgReports[0];
+export async function SppgReportContainer() {
+  const reports = await fetchSppgReports();
 
-  // TASK: implement infinite scroll here (later after backend contract and frontend domain types are stable)
-  return <SppgReportCard report={report} />;
+  return (
+    <div className="flex w-full max-w-[933px] flex-col gap-6">
+      {reports.map((report) => (
+        <SppgReportCard key={report.id} report={report} />
+      ))}
+    </div>
+  );
 }

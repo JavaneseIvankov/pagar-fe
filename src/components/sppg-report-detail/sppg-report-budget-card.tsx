@@ -1,6 +1,7 @@
 import { MoneyIcon } from "@/components/exported-icons";
 import { CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { formatCurrencyIdr } from "@/lib/formatters";
 import type { TBudget } from "@/types";
 import {
   SppgDetailSectionCard,
@@ -9,14 +10,6 @@ import {
 
 export interface SppgReportBudgetCardProps {
   budget: TBudget;
-}
-
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    maximumFractionDigits: 0,
-  }).format(value);
 }
 
 export function SppgReportBudgetCard({ budget }: SppgReportBudgetCardProps) {
@@ -38,7 +31,7 @@ export function SppgReportBudgetCard({ budget }: SppgReportBudgetCardProps) {
                 {item.name}
               </span>
               <span className="whitespace-nowrap font-bold">
-                {formatCurrency(item.price)}
+                {formatCurrencyIdr(item.price)}
               </span>
             </div>
           ))}
@@ -49,7 +42,7 @@ export function SppgReportBudgetCard({ budget }: SppgReportBudgetCardProps) {
         <div className="flex items-center justify-between pb-0 font-extrabold text-sm md:text-base">
           <span>Total Harga Per Porsi</span>
           <span className="text-base text-green-500 md:text-lg">
-            {formatCurrency(budget.totalPrice)}
+            {formatCurrencyIdr(budget.totalPrice)}
           </span>
         </div>
       </CardContent>

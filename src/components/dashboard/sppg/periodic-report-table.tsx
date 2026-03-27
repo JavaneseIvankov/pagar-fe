@@ -22,6 +22,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { formatCurrencyIdr } from "@/lib/formatters";
+import { getPeriodicReportVerificationStatusUi } from "@/lib/ui-mappers";
 import type { TSppgPeriodicReport } from "@/types";
 
 interface PeriodicReportTableProps {
@@ -106,16 +108,17 @@ export function PeriodicReportTable({ data }: PeriodicReportTableProps) {
                   {report.totalMeal} Buah
                 </TableCell>
                 <TableCell className="py-5 font-medium text-[15px]">
-                  Rp {report.totalBudget.toLocaleString("id-ID")}
+                  {formatCurrencyIdr(report.totalBudget)}
                 </TableCell>
                 <TableCell className="py-5">
                   <Badge
                     variant="secondary"
-                    className="whitespace-nowrap rounded-md border-none bg-emerald-50 px-4 py-1.5 font-semibold text-emerald-600 text-sm hover:bg-emerald-50"
+                    className={
+                      getPeriodicReportVerificationStatusUi(report.status)
+                        .className
+                    }
                   >
-                    {report.status === "VERIFIED"
-                      ? "Terverifikasi"
-                      : "Belum Verifikasi"}
+                    {getPeriodicReportVerificationStatusUi(report.status).label}
                   </Badge>
                 </TableCell>
                 <TableCell className="py-5 text-right">

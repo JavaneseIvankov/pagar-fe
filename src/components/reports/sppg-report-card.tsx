@@ -17,6 +17,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { formatShortDate } from "@/lib/formatters";
 import type { TSppgReport } from "@/types";
 import { NutritionalFacts } from "./nutritional-facts";
 
@@ -24,17 +25,9 @@ export interface SppgReportCardProps {
   report: TSppgReport;
 }
 
-function formatPostedAt(date: Date) {
-  return new Intl.DateTimeFormat("id-ID", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(date);
-}
-
 export function SppgReportCard({ report }: SppgReportCardProps) {
   const author = report.author.sppgName;
-  const postedAt = formatPostedAt(report.postedAt);
+  const postedAt = formatShortDate(report.postedAt);
 
   return (
     <Card className="w-full max-w-[933px]">

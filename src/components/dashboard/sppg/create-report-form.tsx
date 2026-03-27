@@ -31,22 +31,40 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
-import { usePersistedSppgCreateReportForm } from "@/hooks/use-persisted-sppg-create-report-form";
+import type {
+  Control,
+  FieldErrors,
+  SubmitHandler,
+  UseFormHandleSubmit,
+  UseFormRegister,
+} from "react-hook-form";
+import type { TCreateReportForm } from "@/hooks/use-persisted-sppg-create-report-form";
 
-export function CreateReportForm() {
-  const {
-    append,
-    control,
-    errors,
-    fields,
-    handleSubmit,
-    isHydrating,
-    onSubmit,
-    register,
-    remove,
-    totalAnggaranPerPorsi,
-  } = usePersistedSppgCreateReportForm();
+interface DashboardCreateReportFormProps {
+  append: (value: { komponenBiaya: string; biayaSatuan: number }) => void;
+  control: Control<TCreateReportForm>;
+  errors: FieldErrors<TCreateReportForm>;
+  fields: Array<{ id: string }>;
+  handleSubmit: UseFormHandleSubmit<TCreateReportForm>;
+  isHydrating: boolean;
+  onSubmit: SubmitHandler<TCreateReportForm>;
+  register: UseFormRegister<TCreateReportForm>;
+  remove: (index: number) => void;
+  totalAnggaranPerPorsi: number;
+}
 
+export function CreateReportForm({
+  append,
+  control,
+  errors,
+  fields,
+  handleSubmit,
+  isHydrating,
+  onSubmit,
+  register,
+  remove,
+  totalAnggaranPerPorsi,
+}: DashboardCreateReportFormProps) {
   if (isHydrating) {
     return null;
   }

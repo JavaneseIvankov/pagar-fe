@@ -1,4 +1,4 @@
-import { CreateReportForm } from "@/components/reports/create-report-form";
+import { PublicCreateReportContainer } from "@/containers/public-create-report-container";
 
 export default function CreateReportPage() {
   return (
@@ -12,7 +12,7 @@ export default function CreateReportPage() {
           melaporkan temuan Anda di lapangan.
         </p>
       </div>
-      <CreateReportForm />
+      <PublicCreateReportContainer />
     </div>
   );
 }

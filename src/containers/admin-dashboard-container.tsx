@@ -1,8 +1,7 @@
+"use client";
+
 import { AdminComplaintsOverview } from "@/components/dashboard/admin-complaints-overview";
-import {
-  type AdminComplaintStatusUi,
-  AdminComplaintsTable,
-} from "@/components/dashboard/admin-complaints-table";
+import { AdminComplaintsTable } from "@/components/dashboard/admin-complaints-table";
 import { AdminDashboardHeader } from "@/components/dashboard/admin-dashboard-header";
 import {
   type AdminSummaryStatItem,
@@ -15,57 +14,9 @@ import {
   SchoolIcon,
   TruckIcon,
 } from "@/components/exported-icons";
-import { adminStatistics } from "@/mock-data";
-import type { TAdminComplaint, TAdminStatistics } from "@/types";
-
-const MOCK_COMPLAINTS: TAdminComplaint[] = [
-  {
-    id: "1",
-    authorName: "Rasya Fariz",
-    title: "Sayuran kurang matang",
-    vendorName: "PT. Gizi Nutrisi",
-    imageUrl: "/images/food-placeholder.png",
-    status: "PENDING",
-  },
-  {
-    id: "2",
-    authorName: "SDN 01 Malang",
-    title: "Nasi keras & kurang banyak",
-    vendorName: "PT. Sehat Bergizi",
-    imageUrl: "/images/food-placeholder.png",
-    status: "INVESTIGATING",
-  },
-  {
-    id: "3",
-    authorName: "Jule",
-    title: "Hambar & bumbu tidak meresap",
-    vendorName: "PT. Gizi Nutrisi",
-    imageUrl: "/images/food-placeholder.png",
-    status: "RESOLVED",
-  },
-];
-
-function getComplaintStatusUi(
-  status: TAdminComplaint["status"],
-): AdminComplaintStatusUi {
-  switch (status) {
-    case "PENDING":
-      return {
-        label: "Menunggu",
-        className: "bg-sky-50 text-sky-600 hover:bg-sky-50",
-      };
-    case "INVESTIGATING":
-      return {
-        label: "Investigasi",
-        className: "bg-orange-50 text-orange-600 hover:bg-orange-50",
-      };
-    case "RESOLVED":
-      return {
-        label: "Selesai",
-        className: "bg-emerald-50 text-emerald-600 hover:bg-emerald-50",
-      };
-  }
-}
+import { useAdminDashboard } from "@/hooks/use-admin-dashboard";
+import { getAdminComplaintStatusUi } from "@/lib/ui-mappers";
+import type { TAdminStatistics } from "@/types";
 
 function mapSummaryStats(statistics: TAdminStatistics): AdminSummaryStatItem[] {
   return [
@@ -107,18 +58,34 @@ function mapSummaryStats(statistics: TAdminStatistics): AdminSummaryStatItem[] {
 }
 
 export function AdminDashboardContainer() {
-  const summaryStats = mapSummaryStats(adminStatistics);
-  const complaints = MOCK_COMPLAINTS.map((complaint) => ({
+  const { data, isLoading, isError } = useAdminDashboard();
+
+  if (isLoading) {
+    return (
+      <div className="py-8 text-muted-foreground">
+        Memuat dashboard admin...
+      </div>
+    );
+  }
+
+  if (isError || !data) {
+    return (
+      <div className="py-8 text-destructive">Gagal memuat dashboard admin.</div>
+    );
+  }
+
+  const summaryStats = mapSummaryStats(data.statistics);
+  const complaints = data.complaints.map((complaint) => ({
     ...complaint,
-    statusUi: getComplaintStatusUi(complaint.status),
+    statusUi: getAdminComplaintStatusUi(complaint.status),
   }));
 
-  const totalReviews = adminStatistics.reviews.total || 1;
+  const totalReviews = data.statistics.reviews.total || 1;
   const schoolPercent = Math.round(
-    (adminStatistics.reviews.school / totalReviews) * 100,
+    (data.statistics.reviews.school / totalReviews) * 100,
   );
   const publicPercent = Math.round(
-    (adminStatistics.reviews.public / totalReviews) * 100,
+    (data.statistics.reviews.public / totalReviews) * 100,
   );
 
   return (
@@ -134,11 +101,11 @@ export function AdminDashboardContainer() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_2fr]">
         <AdminComplaintsOverview
-          total={adminStatistics.reviews.total}
+          total={data.statistics.reviews.total}
           schoolPercent={schoolPercent}
           publicPercent={publicPercent}
         />
-        <AdminVendorWarnings warnings={adminStatistics.sppgWarnings.sppgs} />
+        <AdminVendorWarnings warnings={data.warnings} />
       </div>
     </div>
   );

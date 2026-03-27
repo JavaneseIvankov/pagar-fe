@@ -1,9 +1,14 @@
 import { PublicReportCard } from "@/components/reports/public-report-card";
-import { publicReviews } from "../mock-data";
+import { fetchPublicReviews } from "@/rpc";
 
-export function PublicReportContainer() {
-  const review = publicReviews[0];
+export async function PublicReportContainer() {
+  const reviews = await fetchPublicReviews();
 
-  // TASK: later, we would need to implement infinite scroll here
-  return <PublicReportCard review={review} />;
+  return (
+    <div className="flex w-full max-w-[933px] flex-col gap-6">
+      {reviews.map((review) => (
+        <PublicReportCard key={review.id} review={review} />
+      ))}
+    </div>
+  );
 }

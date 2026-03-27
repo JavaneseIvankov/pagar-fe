@@ -1,5 +1,6 @@
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import Image from "next/image";
 import { PersonIcon } from "@/components/exported-icons";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -37,10 +38,7 @@ export function PublicReportsList({ reports }: PublicReportsListProps) {
                   <PersonIcon className="text-foreground/30" />
                 </AvatarFallback>
               </Avatar>
-              <span className="font-medium text-sm">
-                {/* FIXME: reporterName is not available in TPublicReview */}
-                Anonim
-              </span>
+              <span className="font-medium text-sm">{report.reporterName}</span>
             </div>
             <div className="col-span-7">
               <p className="font-medium text-sm leading-relaxed">
@@ -52,14 +50,12 @@ export function PublicReportsList({ reports }: PublicReportsListProps) {
             </div>
             <div className="col-span-2 flex justify-end">
               <div className="relative h-16 w-24 overflow-hidden rounded-md bg-muted">
-                {/* Placeholder for image */}
                 {report.imageUrl ? (
-                  // FIXME: migrate to next/image
-                  // biome-ignore lint/a11y/useAltText: external data does not guarantee alt text
-                  // biome-ignore lint/performance/noImgElement: temporary
-                  <img
+                  <Image
                     src={report.imageUrl}
-                    className="h-full w-full object-cover"
+                    alt={report.title}
+                    fill
+                    className="object-cover"
                   />
                 ) : (
                   <div className="absolute inset-0 bg-slate-200" />

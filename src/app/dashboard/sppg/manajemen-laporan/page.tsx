@@ -1,4 +1,4 @@
-import { CreateReportForm } from "@/components/dashboard/sppg/create-report-form";
+import { SppgCreateReportContainer } from "@/containers/sppg-create-report-container";
 
 export default function CreateReportPage() {
   return (
@@ -13,7 +13,7 @@ export default function CreateReportPage() {
         </p>
       </div>
 
-      <CreateReportForm />
+      <SppgCreateReportContainer />
     </div>
   );
 }

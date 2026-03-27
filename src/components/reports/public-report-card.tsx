@@ -2,22 +2,15 @@ import Image from "next/image";
 import StarRating from "@/components/reports/star-rating";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { formatShortDate } from "@/lib/formatters";
 import type { TPublicReview } from "@/types";
 
 export interface PublicReportCardProps {
   review: TPublicReview;
 }
 
-function formatPostedAt(date: Date) {
-  return new Intl.DateTimeFormat("id-ID", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  }).format(date);
-}
-
 export function PublicReportCard({ review }: PublicReportCardProps) {
-  const author = "Anonim";
+  const author = review.reporterName;
 
   return (
     <Card className="w-full max-w-[933px]">
@@ -30,7 +23,7 @@ export function PublicReportCard({ review }: PublicReportCardProps) {
           <h4 className="font-semibold text-h4">{author}</h4>
 
           <p className="text-body-3 text-muted-foreground">
-            {formatPostedAt(review.postedAt)}
+            {formatShortDate(review.postedAt)}
           </p>
         </div>
       </CardHeader>

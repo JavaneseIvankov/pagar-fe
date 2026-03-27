@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
     "format": "biome format --write",
     "lint": "biome lint",
+    "lint:strict": "biome lint --error-on-warnings",
     "prepare": "husky"
   },
   "dependencies": {
@@ -15,11 +16,13 @@
     "@hookform/resolvers": "^5.2.2",
     "@hugeicons/core-free-icons": "^4.0.0",
     "@hugeicons/react": "^1.1.5",
+    "@radix-ui/react-progress": "^1.1.8",
     "@tanstack/react-query": "^5.90.21",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "next": "16.1.6",
     "next-themes": "^0.4.6",
+    "nuqs": "^2.8.9",
     "radix-ui": "^1.4.3",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -33,6 +36,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.6",
+    "@svgr/webpack": "^8.1.0",
     "@tailwindcss/postcss": "^4",
     "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^20",

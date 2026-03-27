@@ -9,8 +9,26 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "placehold.co",
       },
+      {
+        protocol: "https",
+        hostname: "bhnybebpsxnfyazsjxtk.supabase.co",
+      },
+      // FIXME: temporary
+      {
+        protocol: "https",
+        hostname: "example.com",
+      },
     ],
   },
+  turbopack: {
+    rules: {
+      "*.svg": {
+        loaders: ["@svgr/webpack"],
+        as: "*.js",
+      },
+    },
+  },
+  typedRoutes: false,
 };
 
 export default nextConfig;

@@ -1,36 +1,199 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pagar Frontend
 
-## Getting Started
+Pagar is a Next.js 16 frontend for a food and nutrition reporting platform. The UI language is Indonesian. This repository currently runs against a frontend-owned mock RPC layer while keeping a strict anti-corruption boundary through Zod DTO validation and domain mapping.
 
-First, run the development server:
+## Stack
+
+- Next.js 16 App Router
+- React 19
+- TypeScript
+- Tailwind CSS v4
+- shadcn/ui
+- TanStack Query
+- Zustand
+- react-hook-form + Zod
+- Biome
+- pnpm
+
+## Scripts
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
 pnpm dev
-# or
-bun dev
+pnpm build
+pnpm start
+pnpm format
+pnpm lint
+pnpm lint:strict
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+There is currently no test runner configured.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Running Locally
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Install dependencies:
 
-## Learn More
+```bash
+pnpm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+2. Start the app:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3. Open `http://localhost:3000`.
 
-## Deploy on Vercel
+## Current Route Behavior
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The app does not serve a content page at `/` for now.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `/` redirects to `/laporan-masyarakat` for unauthenticated users.
+- `/` redirects to the authenticated landing page for signed-in users.
+- `/dashboard` redirects to the correct dashboard landing page or `/auth/masuk`.
+
+This interception is handled by [`src/proxy.ts`](./src/proxy.ts).
+
+## Route Overview
+
+Public surfaces:
+
+- `/laporan-masyarakat`
+- `/laporan-sppg`
+- `/laporan-sppg/[id]`
+- `/auth/masuk`
+- `/auth/daftar`
+- `/auth/daftar/publik`
+- `/auth/daftar/sekolah`
+- `/auth/daftar/sppg`
+- `/auth/lupa-kata-sandi`
+
+Protected public-role surfaces:
+
+- `/profil`
+- `/tambah-laporan`
+
+SPPG dashboard:
+
+- `/dashboard/sppg`
+- `/dashboard/sppg/manajemen-laporan`
+- `/dashboard/sppg/laporan-periodik`
+- `/dashboard/sppg/profil`
+
+Admin dashboard:
+
+- `/dashboard/admin`
+- `/dashboard/admin/kelola-akun`
+- `/dashboard/admin/profil`
+
+## Authentication
+
+Authentication currently uses:
+
+- server actions in [`src/lib/auth/actions.ts`](./src/lib/auth/actions.ts)
+- a server-owned session cookie
+- route gating in [`src/proxy.ts`](./src/proxy.ts)
+- navigation policy in [`src/lib/auth/navigation.ts`](./src/lib/auth/navigation.ts)
+
+The session cookie is parsed and serialized in [`src/lib/auth/cookie.ts`](./src/lib/auth/cookie.ts).
+
+### Mock Credentials
+
+Use these accounts locally:
+
+- `admin.pagar` / `Admin123`
+- `sppg-berkah-nutrisi` / `Sppg1234`
+- `sdn-kauman-1` / `School123`
+- `warga.malang` / `Public123`
+
+### Important Limitation
+
+The auth backend is still mock-only.
+
+- login and registration run through [`src/rpc/auth.ts`](./src/rpc/auth.ts)
+- user records are stored in module memory, not a real database
+- new registrations are not a production-ready persistence model
+
+This means auth behavior is shaped like a real app boundary, but the backing store is temporary.
+
+## Architecture
+
+The main application flow is:
+
+```text
+Backend or Mock Source
+-> RPC Layer
+-> Zod Validation
+-> DTO to Domain Mapping
+-> Query Hook / Server Read
+-> Container
+-> Presentational Component
+```
+
+Core rules in this repo:
+
+- RPC functions validate and map before returning data.
+- Components in `src/components/` stay presentational.
+- Smart orchestration belongs in `src/containers/` and hooks.
+- Frontend-only mock modeling belongs in frontend-owned modules, not backend contract files.
+- `src/types/dto/index.ts` is treated as backend-owned contract space.
+
+## Project Structure
+
+```text
+src/
+  app/          Next.js routes and layouts
+  components/   Presentational UI
+  containers/   Smart orchestration components
+  hooks/        Custom hooks
+  lib/          Shared utilities and auth module
+  rpc/          RPC layer and mock backend boundaries
+  types/        DTO schemas, domain types, and mappers
+```
+
+Relevant current modules:
+
+- [`src/lib/auth/`](./src/lib/auth)
+- [`src/rpc/`](./src/rpc)
+- [`src/types/`](./src/types)
+
+## RPC and Mock Data
+
+The current RPC layer includes:
+
+- [`src/rpc/auth.ts`](./src/rpc/auth.ts)
+- [`src/rpc/reports.ts`](./src/rpc/reports.ts)
+- [`src/rpc/profile.ts`](./src/rpc/profile.ts)
+- [`src/rpc/sppg-dashboard.ts`](./src/rpc/sppg-dashboard.ts)
+- [`src/rpc/admin-dashboard.ts`](./src/rpc/admin-dashboard.ts)
+- [`src/rpc/admin-accounts.ts`](./src/rpc/admin-accounts.ts)
+- [`src/rpc/periodic-reports.ts`](./src/rpc/periodic-reports.ts)
+
+Shared mock response shaping for non-auth areas lives in [`src/rpc/mock-backend.ts`](./src/rpc/mock-backend.ts).
+
+## UI Notes
+
+- The public header is session-aware and reads session data from the server layout.
+- Dashboard navigation is also session-aware.
+- `/laporan-masyarakat` is the effective unauthenticated landing surface.
+
+## Known Gaps
+
+These areas are still not fully production-ready:
+
+- auth still uses a mock in-memory user store
+- forgot-password is an honest placeholder, not a real recovery flow
+- profile update flows are still incomplete for some sppg and admin
+- several dashboard/report areas still use mock RPC data
+
+## Verification
+
+Before committing, run:
+
+```bash
+pnpm format
+pnpm lint
+pnpm build
+```
+
+The Husky pre-commit hook also runs `pnpm format && pnpm lint`.

@@ -1,92 +1,199 @@
-# Pagar – Frontend Early Stage Architecture Proposal
+# Pagar Frontend
 
-> Note to Jury: This repository will serve as the actual frontend codebase for Pagar. However, the current architecture decisions are based on our present needs, constraints, and some patterns we want to experiment with during development. As we learn more about the product and its technical challenges, some of these decisions may evolve or be refactored.
+Pagar is a Next.js 16 frontend for a food and nutrition reporting platform. The UI language is Indonesian. This repository currently runs against a frontend-owned mock RPC layer while keeping a strict anti-corruption boundary through Zod DTO validation and domain mapping.
 
-The focus of this document is to explain the reasoning behind our current structure, especially around data flow, type safety, and maintainability, rather than presenting a finalized or rigid architecture
+## Stack
 
-## 🎯 Vision
+- Next.js 16 App Router
+- React 19
+- TypeScript
+- Tailwind CSS v4
+- shadcn/ui
+- TanStack Query
+- Zustand
+- react-hook-form + Zod
+- Biome
+- pnpm
 
-Our main goal with this exploration is to design a frontend that stays stable even when backend responses change, while also keeping the codebase maintainable as the project grows.
+## Scripts
 
-We also want to reduce tight coupling between UI components and backend responses, since this usually becomes painful to refactor later. At the same time, we care a lot about developer experience, especially around type safety and debugging.
-
-## 🏗️ Proposed Architecture
-
-We are experimenting with a layered approach where data responsibilities are clearly separated instead of letting components directly handle everything.
-
-### 1. Data Flow Concept
-
-Instead of letting React components fetch and process data directly, we propose this flow:
-
+```bash
+pnpm dev
+pnpm build
+pnpm start
+pnpm format
+pnpm lint
+pnpm lint:strict
 ```
-Backend API → RPC Layer → Validation & Transformation (Zod) → TanStack Query & Custom Hooks → Container (Smart) Components → Presentational (Dumb) Components
+
+There is currently no test runner configured.
+
+## Running Locally
+
+1. Install dependencies:
+
+```bash
+pnpm install
 ```
 
-The idea is simple:
+2. Start the app:
 
-* RPC layer handles communication
-* Zod ensures data is valid and reshapes it if needed
-* TanStack Query handles caching and async state
-* Components only focus on rendering
-
-This way components don't need to worry about inconsistent API responses or data formatting.
-
-### 2. Zod for DTO Validation & Pure TypeScript Mappers
-
-One pattern we want to explore is treating Zod purely as the validation boundary between the backend and frontend, while keeping data transformation as pure TypeScript.
-
-Normally we would:
-* Define TypeScript interfaces for backend responses
-* Write mapper functions
-* Hope backend responses stay consistent (leading to silent UI bugs, or even crashes if they don't)
-
-Instead, we want to:
-1. Define DTO schemas directly in Zod to ensure runtime safety at the network fetch layer.
-2. Infer the safe DTO type strictly from the Zod schema.
-3. Use explicit, pure TypeScript functions to map the validated DTO into frontend-friendly presentational shapes (Domain models).
-
-**Concept example:**
-
-```typescript
-import { z } from "zod";
-
-// 1. Zod Schema: Validates the backend response (Anti-Corruption Layer)
-export const ReportDTOSchema = z.object({
-  id: z.string(),
-  created_at: z.string(),
-});
-
-// 2. Inferred DTO Type
-export type ReportDTO = z.infer<typeof ReportDTOSchema>;
-
-// 3. UI/Domain Shape (What our React components actually use)
-export interface Report {
-  id: string;
-  createdAt: Date;
-}
-
-// 4. Pure Mapper Function: Transforms data after Zod guarantees its shape
-export const mapReportDTOToUI = (dto: ReportDTO): Report => ({
-  id: dto.id,
-  createdAt: new Date(dto.created_at),
-});
+```bash
+pnpm dev
 ```
-This way we can enforce runtime type-safety and stability.
-One parsed DTO can be mapped into multiple presentational types (which can contain transformed/derived properties). 
 
-### 3. Folder Structure & Organization
+3. Open `http://localhost:3000`.
 
-Currently, we are intentionally **not** using a strict feature-based project structure (e.g., Feature Sliced Design). 
+## Current Route Behavior
 
-To prioritize development speed and reduce "options fatigue" (spending too much time debating where a specific file belongs), we are sticking to a simpler, flatter structure grouped by technical grouping (e.g., global components, hooks, types). 
-Later if the needs for better separation exists, we can refactor project directory structure.
+The app does not serve a content page at `/` for now.
 
-### 4. Smart/Dumb Component Pattern (Container & Presentational)
+- `/` redirects to `/laporan-masyarakat` for unauthenticated users.
+- `/` redirects to the authenticated landing page for signed-in users.
+- `/dashboard` redirects to the correct dashboard landing page or `/auth/masuk`.
 
-To keep our UI components highly reusable and independent, we are adopting the Smart/Dumb component pattern.
+This interception is handled by [`src/proxy.ts`](./src/proxy.ts).
 
-* **Smart Components (Containers):** Responsible for *how things work*. They fetch data (using our TanStack Query hooks), manage complex state, handle side effects, and coordinate interactions. They generally avoid containing layout styles or complex DOM markup.
-* **Dumb Components (Presentational):** Responsible for *how things look*. They are largely stateless, receive data and callbacks exclusively via props, and have no dependencies on the rest of the application (like data fetching or global stores).
+## Route Overview
 
+Public surfaces:
 
-We believe this is the most pragmatic approach for the early phases of development. However, we will continuously monitor the codebase and are fully prepared to refactor into a feature-based structure in the future if the project size and complexity demand it.
+- `/laporan-masyarakat`
+- `/laporan-sppg`
+- `/laporan-sppg/[id]`
+- `/auth/masuk`
+- `/auth/daftar`
+- `/auth/daftar/publik`
+- `/auth/daftar/sekolah`
+- `/auth/daftar/sppg`
+- `/auth/lupa-kata-sandi`
+
+Protected public-role surfaces:
+
+- `/profil`
+- `/tambah-laporan`
+
+SPPG dashboard:
+
+- `/dashboard/sppg`
+- `/dashboard/sppg/manajemen-laporan`
+- `/dashboard/sppg/laporan-periodik`
+- `/dashboard/sppg/profil`
+
+Admin dashboard:
+
+- `/dashboard/admin`
+- `/dashboard/admin/kelola-akun`
+- `/dashboard/admin/profil`
+
+## Authentication
+
+Authentication currently uses:
+
+- server actions in [`src/lib/auth/actions.ts`](./src/lib/auth/actions.ts)
+- a server-owned session cookie
+- route gating in [`src/proxy.ts`](./src/proxy.ts)
+- navigation policy in [`src/lib/auth/navigation.ts`](./src/lib/auth/navigation.ts)
+
+The session cookie is parsed and serialized in [`src/lib/auth/cookie.ts`](./src/lib/auth/cookie.ts).
+
+### Mock Credentials
+
+Use these accounts locally:
+
+- `admin.pagar` / `Admin123`
+- `sppg-berkah-nutrisi` / `Sppg1234`
+- `sdn-kauman-1` / `School123`
+- `warga.malang` / `Public123`
+
+### Important Limitation
+
+The auth backend is still mock-only.
+
+- login and registration run through [`src/rpc/auth.ts`](./src/rpc/auth.ts)
+- user records are stored in module memory, not a real database
+- new registrations are not a production-ready persistence model
+
+This means auth behavior is shaped like a real app boundary, but the backing store is temporary.
+
+## Architecture
+
+The main application flow is:
+
+```text
+Backend or Mock Source
+-> RPC Layer
+-> Zod Validation
+-> DTO to Domain Mapping
+-> Query Hook / Server Read
+-> Container
+-> Presentational Component
+```
+
+Core rules in this repo:
+
+- RPC functions validate and map before returning data.
+- Components in `src/components/` stay presentational.
+- Smart orchestration belongs in `src/containers/` and hooks.
+- Frontend-only mock modeling belongs in frontend-owned modules, not backend contract files.
+- `src/types/dto/index.ts` is treated as backend-owned contract space.
+
+## Project Structure
+
+```text
+src/
+  app/          Next.js routes and layouts
+  components/   Presentational UI
+  containers/   Smart orchestration components
+  hooks/        Custom hooks
+  lib/          Shared utilities and auth module
+  rpc/          RPC layer and mock backend boundaries
+  types/        DTO schemas, domain types, and mappers
+```
+
+Relevant current modules:
+
+- [`src/lib/auth/`](./src/lib/auth)
+- [`src/rpc/`](./src/rpc)
+- [`src/types/`](./src/types)
+
+## RPC and Mock Data
+
+The current RPC layer includes:
+
+- [`src/rpc/auth.ts`](./src/rpc/auth.ts)
+- [`src/rpc/reports.ts`](./src/rpc/reports.ts)
+- [`src/rpc/profile.ts`](./src/rpc/profile.ts)
+- [`src/rpc/sppg-dashboard.ts`](./src/rpc/sppg-dashboard.ts)
+- [`src/rpc/admin-dashboard.ts`](./src/rpc/admin-dashboard.ts)
+- [`src/rpc/admin-accounts.ts`](./src/rpc/admin-accounts.ts)
+- [`src/rpc/periodic-reports.ts`](./src/rpc/periodic-reports.ts)
+
+Shared mock response shaping for non-auth areas lives in [`src/rpc/mock-backend.ts`](./src/rpc/mock-backend.ts).
+
+## UI Notes
+
+- The public header is session-aware and reads session data from the server layout.
+- Dashboard navigation is also session-aware.
+- `/laporan-masyarakat` is the effective unauthenticated landing surface.
+
+## Known Gaps
+
+These areas are still not fully production-ready:
+
+- auth still uses a mock in-memory user store
+- forgot-password is an honest placeholder, not a real recovery flow
+- profile update flows are still incomplete for some sppg and admin
+- several dashboard/report areas still use mock RPC data
+
+## Verification
+
+Before committing, run:
+
+```bash
+pnpm format
+pnpm lint
+pnpm build
+```
+
+The Husky pre-commit hook also runs `pnpm format && pnpm lint`.

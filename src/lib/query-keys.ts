@@ -17,5 +17,7 @@ export const queryKeys = {
   },
   profile: {
     current: () => ["profile", "current"] as const,
+    sppg: () => ["profile", "sppg"] as const,
+    admin: () => ["profile", "admin"] as const,
   },
 };

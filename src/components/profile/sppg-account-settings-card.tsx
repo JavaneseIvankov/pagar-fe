@@ -1,11 +1,18 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { UserIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { UserIcon } from "@hugeicons/core-free-icons";
 
-// FIXME: refactor, this should be a from component
-export function SppgAccountSettingsCard() {
+export interface SppgAccountSettingsCardProps {
+  email: string;
+  username: string;
+}
+
+export function SppgAccountSettingsCard({
+  email,
+  username,
+}: SppgAccountSettingsCardProps) {
   return (
     <Card className="flex h-full flex-col border-0 shadow-sm ring-0">
       <CardHeader className="p-6 pb-4">
@@ -27,8 +34,9 @@ export function SppgAccountSettingsCard() {
           <Input
             id="email"
             type="email"
-            placeholder="Masukkan Email"
+            defaultValue={email}
             className="bg-background"
+            readOnly
           />
         </Field>
         <Field className="flex flex-col gap-2">
@@ -40,8 +48,9 @@ export function SppgAccountSettingsCard() {
           </FieldLabel>
           <Input
             id="username"
-            placeholder="Masukkan username"
+            defaultValue={username}
             className="bg-background"
+            readOnly
           />
         </Field>
         <Field className="flex flex-col gap-2">
@@ -54,8 +63,9 @@ export function SppgAccountSettingsCard() {
           <Input
             id="password"
             type="password"
-            placeholder="Masukkan kata sandi"
+            placeholder="Kata sandi disimpan secara terpisah"
             className="bg-background"
+            readOnly
           />
         </Field>
       </CardContent>

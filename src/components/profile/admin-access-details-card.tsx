@@ -1,15 +1,10 @@
 import { UserGroupIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
-
+import { HugeiconsIcon } from "@hugeicons/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-export interface AccessDetailItem {
-  label: string;
-  icon: IconSvgElement;
-}
+import type { AdminAccessDetailUi } from "@/lib/ui-mappers";
 
 export interface AdminAccessDetailsCardProps {
-  accessDetails: AccessDetailItem[];
+  accessDetails: AdminAccessDetailUi[];
 }
 
 export function AdminAccessDetailsCard({
@@ -26,10 +21,9 @@ export function AdminAccessDetailsCard({
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col gap-4 p-6 pt-2">
-        {accessDetails.map((detail, index) => (
+        {accessDetails.map((detail) => (
           <div
-            // biome-ignore lint/suspicious/noArrayIndexKey: stable index
-            key={index}
+            key={detail.id}
             className="flex items-center gap-4 rounded-xl bg-[#e8f5ef] p-4 font-semibold text-foreground text-sm"
           >
             <div className="flex size-10 items-center justify-center rounded-lg bg-[#0eb363] text-white">

@@ -1,46 +1,42 @@
-// src/containers/sppg-profile-container.tsx
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { ProfileHeaderCard } from "@/components/profile/profile-header-card";
 import { SppgProfessionalInfoCard } from "@/components/profile/sppg-professional-info-card";
 import { SppgAccountSettingsCard } from "@/components/profile/sppg-account-settings-card";
+import { useCurrentSppgProfile } from "@/hooks/use-current-profile";
 
 export function SppgProfileContainer() {
-  const profileData = {
-    name: "CV. Berkah Nutrisi",
-    description:
-      "Penyedia nutrisi presisi tersertifikasi untuk program kesehatan nasional dengan fokus pada transparansi rantai pasok.",
-    location: "Kota Malang, Kec. Kedungkandang",
-  };
+  const { data: currentProfile, isError, isLoading } = useCurrentSppgProfile();
 
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-  };
+  if (isLoading) {
+    return <div className="py-8 text-muted-foreground">Memuat profil...</div>;
+  }
+
+  if (isError || !currentProfile) {
+    return <div className="py-8 text-destructive">Gagal memuat profil.</div>;
+  }
 
   return (
-    <form onSubmit={onSubmit} className="flex h-full w-full flex-col pb-10">
+    <div className="flex h-full w-full flex-col pb-10">
       <div className="mb-6">
-        <ProfileHeaderCard
-          name={profileData.name}
-          description={profileData.description}
-          location={profileData.location}
-        />
+        <ProfileHeaderCard profile={currentProfile} />
       </div>
 
       <div className="grid grid-cols-1 items-stretch gap-6 md:grid-cols-2">
-        <SppgProfessionalInfoCard />
-        <SppgAccountSettingsCard />
+        <SppgProfessionalInfoCard
+          address={currentProfile.address}
+          registrationCode={currentProfile.registrationCode}
+        />
+        <SppgAccountSettingsCard
+          email={currentProfile.email}
+          username={currentProfile.username}
+        />
       </div>
 
-      <div className="mt-8">
-        <Button
-          type="submit"
-          className="w-full rounded-lg bg-[#0eb363] py-6 font-semibold text-lg text-white hover:bg-[#0aa65a]"
-        >
-          Simpan
-        </Button>
-      </div>
-    </form>
+      <p className="mt-8 text-center text-muted-foreground text-sm">
+        Halaman ini masih bersifat baca-saja sampai kontrak pembaruan profil
+        SPPG tersedia.
+      </p>
+    </div>
   );
 }

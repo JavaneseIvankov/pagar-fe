@@ -1,11 +1,18 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { InformationCircleIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { InformationCircleIcon } from "@hugeicons/core-free-icons";
 
-// FIXME: refactor, this should be a form component
-export function SppgProfessionalInfoCard() {
+export interface SppgProfessionalInfoCardProps {
+  address: string;
+  registrationCode: string;
+}
+
+export function SppgProfessionalInfoCard({
+  address,
+  registrationCode,
+}: SppgProfessionalInfoCardProps) {
   return (
     <Card className="flex h-full flex-col border-0 shadow-sm ring-0">
       <CardHeader className="p-6 pb-4">
@@ -26,9 +33,9 @@ export function SppgProfessionalInfoCard() {
           </FieldLabel>
           <Input
             id="registrationCode"
-            placeholder="001000111"
+            defaultValue={registrationCode}
             className="bg-background"
-            disabled
+            readOnly
           />
         </Field>
         <Field className="flex flex-col gap-2">
@@ -40,8 +47,9 @@ export function SppgProfessionalInfoCard() {
           </FieldLabel>
           <Input
             id="address"
-            placeholder="Masukkan Alamat"
+            defaultValue={address}
             className="bg-background"
+            readOnly
           />
         </Field>
       </CardContent>

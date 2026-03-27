@@ -1,19 +1,25 @@
-import {
-  AnalyticsUpIcon,
-  Store01Icon,
-  UserIcon,
-} from "@hugeicons/core-free-icons";
+"use client";
 
 import { AdminAccessDetailsCard } from "@/components/profile/admin-access-details-card";
 import { AdminAccountSettingsCard } from "@/components/profile/admin-account-settings-card";
-
-const MOCK_ACCESS_DETAILS = [
-  { label: "Mengelola Vendor SPPG", icon: Store01Icon },
-  { label: "Mengelola Akun", icon: UserIcon },
-  { label: "Memantau Data", icon: AnalyticsUpIcon },
-];
+import { useCurrentAdminProfile } from "@/hooks/use-current-profile";
+import { mapAdminAccessDetailToUi } from "@/lib/ui-mappers";
 
 export function AdminProfileContainer() {
+  const { data: currentProfile, isError, isLoading } = useCurrentAdminProfile();
+
+  if (isLoading) {
+    return <div className="py-8 text-muted-foreground">Memuat profil...</div>;
+  }
+
+  if (isError || !currentProfile) {
+    return <div className="py-8 text-destructive">Gagal memuat profil.</div>;
+  }
+
+  const accessDetails = currentProfile.accessDetails.map(
+    mapAdminAccessDetailToUi,
+  );
+
   return (
     <div className="flex flex-col gap-6 pb-10">
       <div className="flex flex-col gap-1 pt-2">
@@ -24,9 +30,14 @@ export function AdminProfileContainer() {
       </div>
 
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1.5fr_1fr]">
-        <AdminAccountSettingsCard />
-        <AdminAccessDetailsCard accessDetails={MOCK_ACCESS_DETAILS} />
+        <AdminAccountSettingsCard profile={currentProfile} />
+        <AdminAccessDetailsCard accessDetails={accessDetails} />
       </div>
+
+      <p className="text-center text-muted-foreground text-sm">
+        Halaman ini masih bersifat baca-saja sampai kontrak pembaruan profil
+        admin tersedia.
+      </p>
     </div>
   );
 }

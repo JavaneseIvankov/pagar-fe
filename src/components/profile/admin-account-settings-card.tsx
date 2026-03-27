@@ -1,14 +1,18 @@
 import { UserIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
+import type { TAdminProfile } from "@/types";
 
-// FIXME: refactor, this should be a form component
-export function AdminAccountSettingsCard() {
+export interface AdminAccountSettingsCardProps {
+  profile: Pick<TAdminProfile, "email" | "name" | "username">;
+}
+
+export function AdminAccountSettingsCard({
+  profile,
+}: AdminAccountSettingsCardProps) {
   return (
     <Card className="flex h-full flex-col border-0 shadow-sm ring-0">
       <CardHeader className="p-6 pb-4">
@@ -30,8 +34,9 @@ export function AdminAccountSettingsCard() {
             </FieldLabel>
             <Input
               id="nama"
-              placeholder="Masukan Nama"
+              defaultValue={profile.name}
               className="bg-background"
+              readOnly
             />
           </Field>
 
@@ -45,8 +50,9 @@ export function AdminAccountSettingsCard() {
             <Input
               id="email"
               type="email"
-              placeholder="Masukkan Email"
+              defaultValue={profile.email}
               className="bg-background"
+              readOnly
             />
           </Field>
 
@@ -59,8 +65,9 @@ export function AdminAccountSettingsCard() {
             </FieldLabel>
             <Input
               id="username"
-              placeholder="Masukkan username"
+              defaultValue={profile.username}
               className="bg-background"
+              readOnly
             />
           </Field>
 
@@ -73,17 +80,13 @@ export function AdminAccountSettingsCard() {
             </FieldLabel>
             <PasswordInput
               id="password"
-              placeholder="Masukkan kata sandi"
+              defaultValue="********"
               className="bg-background"
+              disabled
+              readOnly
             />
           </Field>
         </FieldGroup>
-
-        <div className="mt-4 flex">
-          <Button className="w-full bg-[#0eb363] font-semibold text-white hover:bg-[#0eb363]/90">
-            Simpan
-          </Button>
-        </div>
       </CardContent>
     </Card>
   );

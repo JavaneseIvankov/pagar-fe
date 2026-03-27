@@ -2,11 +2,14 @@
 
 import { toast } from "sonner";
 import {
+  PublicProfileForm,
+  type PublicProfileFormValues,
+} from "@/components/profile/public-profile-form";
+import {
   SchoolProfileForm,
   type SchoolProfileFormValues,
 } from "@/components/profile/school-profile-form";
 import { useCurrentProfile } from "@/hooks/use-current-profile";
-import type { TSchool } from "@/types";
 
 export function ProfileContainer() {
   const { data: currentUser, isLoading, isError } = useCurrentProfile();
@@ -24,12 +27,28 @@ export function ProfileContainer() {
     toast.success("Profil sekolah berhasil diperbarui!");
   };
 
+  const handlePublicSubmit = (data: PublicProfileFormValues) => {
+    console.log("Public Submit data", data);
+    toast.success("Profil pengguna berhasil diperbarui!");
+  };
+
   return (
     <div className="flex w-full justify-center py-8">
-      <SchoolProfileForm
-        initialData={currentUser as TSchool}
-        onSubmit={handleSchoolSubmit}
-      />
+      {currentUser.role === "SCHOOL" ? (
+        <SchoolProfileForm
+          initialData={currentUser}
+          onSubmit={handleSchoolSubmit}
+        />
+      ) : currentUser.role === "PUBLIC" ? (
+        <PublicProfileForm
+          initialData={currentUser}
+          onSubmit={handlePublicSubmit}
+        />
+      ) : (
+        <div className="py-8 text-muted-foreground">
+          Tipe profil ini belum didukung di halaman publik.
+        </div>
+      )}
     </div>
   );
 }

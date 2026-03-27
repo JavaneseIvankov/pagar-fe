@@ -83,19 +83,19 @@ export function SppgDashboardContainer() {
   const currentDate = formatLongDate(new Date());
 
   return (
-    <div className="mx-auto flex flex-col gap-8">
+    <div className="page-enter mx-auto flex flex-col gap-6 sm:gap-8">
       {/* Header */}
-      <div>
-        <h2 className="font-bold text-[28px] text-foreground tracking-tight">
+      <div className="max-w-3xl">
+        <h2 className="text-balance font-bold text-2xl text-foreground tracking-tight sm:text-[28px] lg:text-[32px]">
           Selamat Datang! {data.sppgName}!
         </h2>
-        <p className="mt-1 text-muted-foreground">
+        <p className="mt-2 text-pretty text-muted-foreground">
           Berikut adalah ringkasan pengelolaan makanan hari ini, {currentDate}
         </p>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {summaryMetrics.map((metric) => (
           <SummaryCard
             key={metric.id}
@@ -110,10 +110,14 @@ export function SppgDashboardContainer() {
       </div>
 
       {/* Riwayat Laporan */}
-      <ReportHistoryTable reports={data.recentReports} />
+      <div className="page-enter page-enter-delay-1">
+        <ReportHistoryTable reports={data.recentReports} />
+      </div>
 
       {/* Laporan Masyarakat */}
-      <PublicReportsList reports={data.publicReviews} />
+      <div className="page-enter page-enter-delay-2">
+        <PublicReportsList reports={data.publicReviews} />
+      </div>
     </div>
   );
 }

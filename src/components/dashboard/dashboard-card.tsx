@@ -7,6 +7,12 @@ export function DashboardCard({
   ...props
 }: ComponentProps<typeof Card>) {
   return (
-    <Card className={cn("rounded-xl border-0 ring-0", className)} {...props} />
+    <Card
+      className={cn(
+        "card-surface rounded-[24px] border border-border/60 ring-0",
+        className,
+      )}
+      {...props}
+    />
   );
 }

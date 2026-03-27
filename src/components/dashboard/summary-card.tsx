@@ -22,12 +22,12 @@ export function SummaryCard({
   value,
 }: SummaryCardProps) {
   return (
-    <DashboardCard className="pb-6">
-      <CardContent className="flex min-h-[150px] flex-col justify-between p-6 py-1">
-        <div className="mb-6 flex items-start justify-between">
+    <DashboardCard className="page-enter overflow-hidden">
+      <CardContent className="flex min-h-[156px] flex-col justify-between p-5 sm:p-6">
+        <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
           <div
             className={cn(
-              "flex h-10 w-10 items-center justify-center rounded-lg",
+              "flex size-10 items-center justify-center rounded-xl",
               iconClassName,
             )}
           >
@@ -36,18 +36,18 @@ export function SummaryCard({
           <Badge
             variant="secondary"
             className={cn(
-              "h-full min-w-[30%] rounded-full px-4 py-1 font-semibold text-sm",
+              "max-w-full rounded-full px-3 py-1 text-center font-semibold text-sm",
               badgeClassName,
             )}
           >
             {badgeText}
           </Badge>
         </div>
-        <div>
-          <p className="mb-1 font-medium text-body-4 text-muted-foreground">
+        <div className="flex flex-col gap-1">
+          <p className="line-clamp-2 font-medium text-body-4 text-muted-foreground">
             {title}
           </p>
-          <p className="font-bold text-h4">{value}</p>
+          <p className="text-balance font-bold text-h4">{value}</p>
         </div>
       </CardContent>
     </DashboardCard>

@@ -6,7 +6,9 @@ export default function PublicLayout({
   return (
     <div className="flex min-h-[100dvh] w-full flex-col">
       <AppHeader />
-      <section className="container pt-10 pb-20 md:pb-40">{children}</section>
+      <section className="container flex-1 pt-6 pb-12 sm:pt-8 sm:pb-16 lg:pt-10 lg:pb-24">
+        {children}
+      </section>
     </div>
   );
 }

@@ -5,7 +5,7 @@ export async function PublicReportContainer() {
   const reviews = await fetchPublicReviews();
 
   return (
-    <div className="flex w-full max-w-[933px] flex-col gap-6">
+    <div className="page-enter flex w-full max-w-[933px] flex-col gap-4 sm:gap-6">
       {reviews.map((review) => (
         <PublicReportCard key={review.id} review={review} />
       ))}

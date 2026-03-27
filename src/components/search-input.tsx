@@ -19,7 +19,7 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
       className,
       inputClassName,
       type = "search",
-      placeholder = "Search...",
+      placeholder = "Cari laporan…",
       ...props
     },
     ref,
@@ -27,12 +27,13 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
     return (
       <InputGroup className={className}>
         <InputGroupAddon>
-          <HugeiconsIcon icon={Search01FreeIcons} />
+          <HugeiconsIcon icon={Search01FreeIcons} aria-hidden="true" />
         </InputGroupAddon>
         <InputGroupInput
           type={type}
           placeholder={placeholder}
           ref={ref}
+          autoComplete="off"
           className={inputClassName}
           {...props}
         />

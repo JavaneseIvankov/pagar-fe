@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -30,52 +31,111 @@ interface PeriodicReportTableProps {
   data: TSppgPeriodicReport[];
 }
 
+const PERIOD_OPTIONS = ["Januari", "Februari", "Maret", "April"] as const;
+const YEAR_OPTIONS = ["2024", "2025", "2026"] as const;
+
 export function PeriodicReportTable({ data }: PeriodicReportTableProps) {
   // These are intentionally kept for future functional hooking.
   // TODO: confirm, what are the enum for this?
-  const [periode, setPeriode] = useState<string>("Bulanan");
-  const [year, setYear] = useState<string>("");
+  const [periode, setPeriode] = useState<string>(PERIOD_OPTIONS[0]);
+  const [year, setYear] = useState<string>(YEAR_OPTIONS[0]);
 
   return (
-    <div className="mt-4 flex flex-col">
+    <div className="page-enter mt-4 flex flex-col">
       {/* Filters (visually at the top right of the whole block in design, but structurally cleaner right above the card) */}
-      <div className="mb-6 flex justify-end gap-3">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
         <Select value={periode} onValueChange={setPeriode}>
-          <SelectTrigger className="bg-background">
-            <SelectValue placeholder="Bulanan" />
+          <SelectTrigger className="h-10 w-full bg-background sm:w-[180px]">
+            <SelectValue placeholder="Pilih periode" />
           </SelectTrigger>
           <SelectContent position="popper">
-            <SelectItem value="0">Januari</SelectItem>
-            <SelectItem value="1">Februari</SelectItem>
-            <SelectItem value="2">Maret</SelectItem>
-            <SelectItem value="3">April</SelectItem>
+            <SelectGroup>
+              {PERIOD_OPTIONS.map((item) => (
+                <SelectItem key={item} value={item}>
+                  {item}
+                </SelectItem>
+              ))}
+            </SelectGroup>
           </SelectContent>
         </Select>
 
         <Select value={year} onValueChange={setYear}>
-          <SelectTrigger className="bg-background">
-            <SelectValue placeholder="Tahun" />
+          <SelectTrigger className="h-10 w-full bg-background sm:w-[140px]">
+            <SelectValue placeholder="Pilih tahun" />
           </SelectTrigger>
           <SelectContent position="popper">
-            <SelectItem value="2024">2024</SelectItem>
-            <SelectItem value="2025">2025</SelectItem>
-            <SelectItem value="2026">2026</SelectItem>
+            <SelectGroup>
+              {YEAR_OPTIONS.map((item) => (
+                <SelectItem key={item} value={item}>
+                  {item}
+                </SelectItem>
+              ))}
+            </SelectGroup>
           </SelectContent>
         </Select>
       </div>
 
-      <DashboardCard className="p-8">
+      <DashboardCard className="overflow-hidden p-5 sm:p-8">
         {/* Table Header / Action */}
-        <div className="mb-8 flex items-center justify-between">
-          <h2 className="font-bold text-xl">Rekap Laporan</h2>
-          <Button className="rounded-lg bg-emerald-600 px-6 text-white hover:bg-emerald-700">
+        <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="text-balance font-bold text-xl">Rekap Laporan</h2>
+          <Button className="h-10 w-full rounded-xl bg-emerald-600 px-5 text-white hover:bg-emerald-700 sm:w-auto sm:px-6">
             Lihat Semua{" "}
-            <HugeiconsIcon icon={ArrowRight01Icon} className="ml-2" size={18} />
+            <HugeiconsIcon
+              icon={ArrowRight01Icon}
+              className="ml-2"
+              size={18}
+              aria-hidden="true"
+            />
           </Button>
         </div>
 
-        {/* Table */}
-        <Table>
+        <div className="flex flex-col gap-3 sm:hidden">
+          {data.map((report) => (
+            <div
+              key={report.id}
+              className="rounded-2xl border border-border/60 bg-white/75 p-4"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="font-semibold text-sm">{report.periode}</p>
+                  <p className="mt-1 text-muted-foreground text-xs">
+                    {report.totalMeal} Buah
+                  </p>
+                </div>
+                <Badge
+                  variant="secondary"
+                  className={
+                    getPeriodicReportVerificationStatusUi(report.status)
+                      .className
+                  }
+                >
+                  {getPeriodicReportVerificationStatusUi(report.status).label}
+                </Badge>
+              </div>
+              <div className="mt-4 flex items-center justify-between gap-3">
+                <p className="font-semibold text-sm tabular-nums">
+                  {formatCurrencyIdr(report.totalBudget)}
+                </p>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="size-9 text-foreground hover:bg-gray-100"
+                  aria-label={`Unduh rekap ${report.periode}`}
+                >
+                  <HugeiconsIcon
+                    icon={Download01Icon}
+                    size={20}
+                    aria-hidden="true"
+                  />
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <Table className="hidden sm:table">
           <TableHeader>
             <TableRow className="border-none hover:bg-transparent">
               <TableHead className="pb-4 font-medium text-muted-foreground text-xs uppercase tracking-wider">
@@ -127,8 +187,13 @@ export function PeriodicReportTable({ data }: PeriodicReportTableProps) {
                     variant="ghost"
                     size="icon"
                     className="text-foreground hover:bg-gray-100"
+                    aria-label={`Unduh rekap ${report.periode}`}
                   >
-                    <HugeiconsIcon icon={Download01Icon} size={20} />
+                    <HugeiconsIcon
+                      icon={Download01Icon}
+                      size={20}
+                      aria-hidden="true"
+                    />
                   </Button>
                 </TableCell>
               </TableRow>

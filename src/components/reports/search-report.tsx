@@ -98,12 +98,19 @@ function SearchReportLayout({
   // FIXME: this has bad tab-navigation
   return (
     <div
-      className={cn("flex w-full items-center justify-center gap-2", className)}
+      className={cn(
+        "flex w-full min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center",
+        className,
+      )}
     >
       <SearchInput
+        className="w-full sm:flex-1"
+        inputClassName="h-10"
         value={searchValue}
         onChange={(e) => onSearchChange?.(e.target.value)}
         readOnly={isReadOnly}
+        placeholder="Cari laporan atau menu…"
+        aria-label="Cari laporan atau menu"
       />
       <Combobox
         items={items}
@@ -115,7 +122,12 @@ function SearchReportLayout({
           }
         }}
       >
-        <ComboboxInput placeholder="Pilih kecamatan" disabled={isReadOnly} />
+        <ComboboxInput
+          className="w-full sm:w-[220px]"
+          placeholder="Pilih kecamatan"
+          disabled={isReadOnly}
+          aria-label="Pilih kecamatan"
+        />
         <ComboboxContent>
           <ComboboxEmpty>Tidak ada kecamatan yang cocok</ComboboxEmpty>
           <ComboboxList>

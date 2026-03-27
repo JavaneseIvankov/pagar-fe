@@ -62,19 +62,19 @@ export function SppgReportDetailLayout({
   discrepancy,
 }: SppgReportDetailLayoutProps) {
   return (
-    <div className="space-y-6 pb-10 md:space-y-8">
-      <h1 className="mb-4 border-b pb-4 font-bold text-h2 md:mb-8">
+    <div className="page-enter mx-auto max-w-6xl space-y-6 pb-10 md:space-y-8">
+      <h1 className="mb-4 text-balance border-b pb-4 font-bold text-2xl md:mb-8 md:text-h2">
         Detail Laporan : {title}
       </h1>
 
-      <div className="grid items-start gap-8 lg:grid-cols-[2fr_1fr]">
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)] lg:gap-8">
         <div className="left flex w-full flex-col gap-6">
           {hero}
           {nutrition}
           {budget}
         </div>
 
-        <div className="right flex w-full flex-col gap-6 lg:sticky lg:top-8">
+        <div className="right flex w-full flex-col gap-6 lg:sticky lg:top-6">
           {vendor}
           {related}
           {discrepancy}

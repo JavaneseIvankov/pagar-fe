@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import {
   DashboardIcon,
   ForkAndSpoonIcon,
+  PersonCircleIcon,
   PersonIcon,
   ReportIcon,
 } from "../exported-icons";
@@ -32,6 +33,11 @@ const sidebarItems = [
     icon: ReportIcon,
   },
   {
+    title: "Profile",
+    href: "/dashboard/sppg/profile",
+    icon: PersonCircleIcon,
+  },
+  {
     title: "Dashboard",
     href: "/dashboard/admin",
     icon: DashboardIcon,
@@ -40,6 +46,11 @@ const sidebarItems = [
     title: "Kelola Akun",
     href: "/dashboard/admin/kelola-akun",
     icon: PersonIcon,
+  },
+  {
+    title: "Profile Pengguna",
+    href: "/dashboard/admin/profile",
+    icon: PersonCircleIcon,
   },
 ];
 

@@ -1,13 +1,11 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { DashboardAppLogo } from "../dashboard/dashboard-app-logo";
 import { DashboardSidebarNav } from "./dashboard-sidebar-nav";
-import { DashboardSidebarProfile } from "./dashboard-sidebar-profile";
 
 export function DashboardSidebar() {
   return (
@@ -20,9 +18,6 @@ export function DashboardSidebar() {
         <DashboardSidebarNav />
       </SidebarContent>
 
-      <SidebarFooter className="p-4 group-data-[collapsible=icon]:p-2">
-        <DashboardSidebarProfile />
-      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

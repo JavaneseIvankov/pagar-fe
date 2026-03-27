@@ -1,4 +1,5 @@
 export type TRole = "ADMIN" | "PUBLIC" | "SCHOOL" | "SPPG";
+export type TAccountStatus = "PENDING" | "APPROVED" | "REJECTED";
 
 export type TUser = {
   id: string;
@@ -27,6 +28,37 @@ export type TSchool = TUser & {
   schoolName: string;
   address: string;
 };
+
+export type TPublicProfile = TPublic & {
+  displayName: string;
+  email: string;
+};
+
+export type TSchoolProfile = TSchool & {
+  displayName: string;
+  email: string;
+};
+
+export type TSppgProfile = TSppg & {
+  description: string;
+  email: string;
+  location: string;
+  registrationCode: string;
+  accountStatus: TAccountStatus;
+};
+
+export type TAdminAccessDetail = {
+  id: string;
+  label: string;
+};
+
+export type TAdminProfile = TAdmin & {
+  accessDetails: TAdminAccessDetail[];
+  email: string;
+  name: string;
+};
+
+export type TCurrentProfile = TPublicProfile | TSchoolProfile;
 
 export type TNutritionalFacts = {
   calories: {

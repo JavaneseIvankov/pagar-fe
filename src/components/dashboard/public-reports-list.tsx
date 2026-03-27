@@ -1,10 +1,10 @@
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import Image from "next/image";
-import { PersonIcon } from "@/components/exported-icons";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import type { TPublicReview } from "@/types";
+import { AvatarFallbackIcon } from "../avatar-fallback-icon";
 import { DashboardCard } from "./dashboard-card";
 
 interface PublicReportsListProps {
@@ -35,7 +35,7 @@ export function PublicReportsList({ reports }: PublicReportsListProps) {
             <div className="col-span-3 flex items-center gap-3">
               <Avatar className="h-10 w-10">
                 <AvatarFallback className="bg-muted">
-                  <PersonIcon className="text-foreground/30" />
+                  <AvatarFallbackIcon />
                 </AvatarFallback>
               </Avatar>
               <span className="font-medium text-sm">{report.reporterName}</span>

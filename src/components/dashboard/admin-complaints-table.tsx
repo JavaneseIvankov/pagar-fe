@@ -1,7 +1,7 @@
 import { ArrowRight01Icon, ViewIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -13,7 +13,8 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import type { TAdminComplaint } from "@/types";
-import { PencilIcon, PersonIcon } from "../exported-icons";
+import { AvatarFallbackIcon } from "../avatar-fallback-icon";
+import { PencilIcon } from "../exported-icons";
 import { DashboardCard } from "./dashboard-card";
 
 export interface AdminComplaintStatusUi {
@@ -77,9 +78,7 @@ export function AdminComplaintsTable({
               <TableCell className="py-4 align-top">
                 <div className="flex items-center gap-3">
                   <Avatar className="h-10 w-10">
-                    <AvatarFallback className="bg-muted">
-                      <PersonIcon className="text-foreground/30" />
-                    </AvatarFallback>
+                    <AvatarFallbackIcon />
                   </Avatar>
                   <span className="font-medium">{complaint.authorName}</span>
                 </div>

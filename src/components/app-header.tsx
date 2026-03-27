@@ -51,7 +51,7 @@ export function AppHeader() {
             <HugeiconsIcon icon={Add01Icon} className="md:hidden" />
             <span className="hidden md:inline">Tambah Laporan</span>
           </Link>
-          <ProfileButton />
+          <ProfileButton username="user" email="user@email.com" />
         </div>
       </div>
     </header>

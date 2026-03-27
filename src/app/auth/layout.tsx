@@ -41,9 +41,16 @@ const authContent: Record<
   "/auth/register/school": {
     image:
       "https://bhnybebpsxnfyazsjxtk.supabase.co/storage/v1/object/public/pagar-assets/register-school-thumbnail.jpg.webp",
-    title: "Pastikan Layanan Terbaik di Setiap Piring",
+    title: "Awasi Distribusi Gizi untuk Sekolah Anda",
     subtitle:
-      "Menemukan lauk yang kurang matang? Jangan diam. Daftar sekarang untuk melapor dan bantu vendor memberikan tanggung jawab yang lebih baik secara instan!",
+      "Daftarkan akun sekolah untuk memantau kualitas makanan, menyampaikan evaluasi, dan menjaga hak gizi siswa.",
+  },
+  "/auth/forgot-password": {
+    image:
+      "https://bhnybebpsxnfyazsjxtk.supabase.co/storage/v1/object/public/pagar-assets/login-thumbnail.jpg.webp",
+    title: "Pulihkan Akses Akun Anda",
+    subtitle:
+      "Gunakan halaman ini untuk memahami status pemulihan akses sementara backend reset kata sandi belum tersedia.",
   },
 };
 

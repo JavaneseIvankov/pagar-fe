@@ -2,8 +2,12 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import * as z from "zod/v3";
+import { registerAction } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -20,14 +24,6 @@ const registerSchema = z
       .string()
       .min(3, "Username minimal 3 karakter")
       .max(16, "Username maksimal 16 karakter"),
-    schoolName: z
-      .string()
-      .min(3, "Nama sekolah minimal 3 karakter")
-      .max(30, "Nama sekolah maksimal 30 karakter"),
-    alamat: z
-      .string()
-      .min(3, "Alamat minimal 3 karakter")
-      .max(30, "Alamat maksimal 30 karakter"),
     kodeRegistrasi: z
       .string()
       .min(3, "Kode registrasi minimal 3 karakter")
@@ -49,6 +45,8 @@ const registerSchema = z
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export function RegisterSchoolForm() {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const {
     register,
     handleSubmit,
@@ -57,8 +55,6 @@ export function RegisterSchoolForm() {
     resolver: zodResolver(registerSchema),
     defaultValues: {
       username: "",
-      schoolName: "",
-      alamat: "",
       kodeRegistrasi: "",
       kataSandi: "",
       ulangiKataSandi: "",
@@ -66,9 +62,22 @@ export function RegisterSchoolForm() {
   });
 
   const onSubmit = (data: RegisterFormValues) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { ulangiKataSandi, ...submitData } = data;
-    console.log(submitData);
+    startTransition(async () => {
+      const result = await registerAction({
+        username: data.username,
+        password: data.kataSandi,
+        role: "SCHOOL",
+        registrationCode: data.kodeRegistrasi,
+      });
+
+      if (result.status === "error") {
+        toast.error(result.message);
+        return;
+      }
+
+      toast.success(result.message);
+      router.push(result.redirectTo);
+    });
   };
 
   return (
@@ -84,34 +93,11 @@ export function RegisterSchoolForm() {
             placeholder="Masukkan username"
             {...register("username")}
             aria-invalid={!!errors.username}
+            disabled={isPending}
           />
           {errors.username && (
             <FieldError>{errors.username.message}</FieldError>
           )}
-        </Field>
-
-        <Field data-invalid={!!errors.schoolName}>
-          <FieldLabel htmlFor="schoolName">Nama Sekolah</FieldLabel>
-          <Input
-            id="schoolName"
-            placeholder="Masukkan nama sekolah"
-            {...register("schoolName")}
-            aria-invalid={!!errors.schoolName}
-          />
-          {errors.schoolName && (
-            <FieldError>{errors.schoolName.message}</FieldError>
-          )}
-        </Field>
-
-        <Field data-invalid={!!errors.alamat}>
-          <FieldLabel htmlFor="alamat">Alamat</FieldLabel>
-          <Input
-            id="alamat"
-            placeholder="Masukkan alamat"
-            {...register("alamat")}
-            aria-invalid={!!errors.alamat}
-          />
-          {errors.alamat && <FieldError>{errors.alamat.message}</FieldError>}
         </Field>
 
         <Field data-invalid={!!errors.kodeRegistrasi}>
@@ -121,6 +107,7 @@ export function RegisterSchoolForm() {
             placeholder="Masukkan kode registrasi"
             {...register("kodeRegistrasi")}
             aria-invalid={!!errors.kodeRegistrasi}
+            disabled={isPending}
           />
           {errors.kodeRegistrasi && (
             <FieldError>{errors.kodeRegistrasi.message}</FieldError>
@@ -134,6 +121,7 @@ export function RegisterSchoolForm() {
             placeholder="••••••••"
             {...register("kataSandi")}
             aria-invalid={!!errors.kataSandi}
+            disabled={isPending}
           />
           {errors.kataSandi && (
             <FieldError>{errors.kataSandi.message}</FieldError>
@@ -147,6 +135,7 @@ export function RegisterSchoolForm() {
             placeholder="••••••••"
             {...register("ulangiKataSandi")}
             aria-invalid={!!errors.ulangiKataSandi}
+            disabled={isPending}
           />
           {errors.ulangiKataSandi && (
             <FieldError>{errors.ulangiKataSandi.message}</FieldError>
@@ -154,8 +143,8 @@ export function RegisterSchoolForm() {
         </Field>
       </FieldGroup>
 
-      <Button type="submit" className="w-full">
-        Daftar
+      <Button type="submit" className="w-full" disabled={isPending}>
+        {isPending ? "Memproses..." : "Daftar"}
       </Button>
       <div className="flex w-full justify-end">
         <Link href="/auth/login" className="text-body-4 underline">

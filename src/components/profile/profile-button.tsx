@@ -32,11 +32,13 @@ const User = () => (
 
 const ProfileButton = ({
   username,
-  email,
+  secondaryText,
+  profileHref,
   onLogout,
 }: {
   username: string;
-  email: string;
+  secondaryText?: string;
+  profileHref?: string;
   onLogout?: () => void;
 }) => (
   <DropdownMenu>
@@ -52,19 +54,23 @@ const ProfileButton = ({
       <DropdownMenuLabel className="font-normal">
         <div className="flex flex-col space-y-1">
           <p className="font-medium text-sm leading-none">{username}</p>
-          <p className="text-muted-foreground text-xs leading-none">{email}</p>
+          {secondaryText ? (
+            <p className="text-muted-foreground text-xs leading-none">
+              {secondaryText}
+            </p>
+          ) : null}
         </div>
       </DropdownMenuLabel>
       <DropdownMenuSeparator />
       <DropdownMenuItem asChild>
-        <Link href={"/profile"}>
+        <Link href={profileHref ?? "/profile"}>
           <User />
-          Profile
+          Profil
         </Link>
       </DropdownMenuItem>
       <DropdownMenuItem variant="destructive" onClick={onLogout}>
         <LogOut />
-        Log out
+        Keluar
       </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>

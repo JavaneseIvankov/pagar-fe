@@ -2,9 +2,11 @@ import type { z } from "zod/v3";
 import type {
   getAdminDashboardSuccessResponseSchema,
   getActiveAccountsSuccessResponseSchema,
+  loginSuccessResponseSchema,
   getPublicDashboardReviewsSuccessResponseSchema,
   getPublicDashboardSppgReportsSuccessResponseSchema,
   getPendingAccountsSuccessResponseSchema,
+  registerSuccessResponseSchema,
   getSppgDailyReportByIdSuccessResponseSchema,
   getSppgDashboardSuccessResponseSchema,
   getSppgPeriodicReportsSuccessResponseSchema,
@@ -12,6 +14,8 @@ import type {
 import type {
   TAdminActiveAccount,
   TAdminPendingAccount,
+  TAuthRegistrationResult,
+  TAuthSession,
   TAdminComplaint,
   TAdminComplaintStatus,
   TAdminDashboard,
@@ -46,12 +50,14 @@ type AdminDashboardResponse = z.infer<
 type ActiveAccountsResponse = z.infer<
   typeof getActiveAccountsSuccessResponseSchema
 >["data"][number];
+type LoginResponse = z.infer<typeof loginSuccessResponseSchema>["data"];
 type PendingAccountsResponse = z.infer<
   typeof getPendingAccountsSuccessResponseSchema
 >["data"][number];
 type PeriodicReportsResponse = z.infer<
   typeof getSppgPeriodicReportsSuccessResponseSchema
 >["data"];
+type RegisterResponse = z.infer<typeof registerSuccessResponseSchema>;
 
 const DEFAULT_ATTACHMENT_URL = "https://placehold.co/1200x800?text=No+Image";
 const DEFAULT_VENDOR_ADDRESS = "Alamat vendor belum tersedia";
@@ -291,6 +297,31 @@ export function mapPendingAccountDtoToDomain(
     createdAt: new Date(dto.createdAt),
     registrationCode: dto.registration_code,
     bgnCode: dto.bgn_code,
+  };
+}
+
+export function mapLoginDtoToDomain(dto: LoginResponse): TAuthSession {
+  return {
+    token: dto.token,
+    user: {
+      id: dto.user.id_user,
+      role: dto.user.role,
+      username: dto.user.username,
+    },
+  };
+}
+
+export function mapRegisterDtoToDomain(
+  dto: RegisterResponse,
+): TAuthRegistrationResult {
+  return {
+    message: dto.message,
+    accountStatus: dto.data.account_status,
+    user: {
+      id: dto.data.id_user,
+      role: dto.data.role,
+      username: dto.data.username,
+    },
   };
 }
 

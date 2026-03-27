@@ -2,8 +2,12 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import * as z from "zod/v3";
+import { registerAction } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -37,6 +41,8 @@ const registerSchema = z
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export function RegisterPublicForm() {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const {
     register,
     handleSubmit,
@@ -51,9 +57,21 @@ export function RegisterPublicForm() {
   });
 
   const onSubmit = (data: RegisterFormValues) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { ulangiKataSandi, ...submitData } = data;
-    console.log(submitData);
+    startTransition(async () => {
+      const result = await registerAction({
+        username: data.username,
+        password: data.kataSandi,
+        role: "PUBLIC",
+      });
+
+      if (result.status === "error") {
+        toast.error(result.message);
+        return;
+      }
+
+      toast.success(result.message);
+      router.push(result.redirectTo);
+    });
   };
 
   return (
@@ -69,6 +87,7 @@ export function RegisterPublicForm() {
             placeholder="Masukkan username"
             {...register("username")}
             aria-invalid={!!errors.username}
+            disabled={isPending}
           />
           {errors.username && (
             <FieldError>{errors.username.message}</FieldError>
@@ -82,6 +101,7 @@ export function RegisterPublicForm() {
             placeholder="••••••••"
             {...register("kataSandi")}
             aria-invalid={!!errors.kataSandi}
+            disabled={isPending}
           />
           {errors.kataSandi && (
             <FieldError>{errors.kataSandi.message}</FieldError>
@@ -95,6 +115,7 @@ export function RegisterPublicForm() {
             placeholder="••••••••"
             {...register("ulangiKataSandi")}
             aria-invalid={!!errors.ulangiKataSandi}
+            disabled={isPending}
           />
           {errors.ulangiKataSandi && (
             <FieldError>{errors.ulangiKataSandi.message}</FieldError>
@@ -102,8 +123,8 @@ export function RegisterPublicForm() {
         </Field>
       </FieldGroup>
 
-      <Button type="submit" className="w-full">
-        Daftar
+      <Button type="submit" className="w-full" disabled={isPending}>
+        {isPending ? "Memproses..." : "Daftar"}
       </Button>
       <div className="flex w-full justify-end">
         <Link href="/auth/login" className="text-body-4 underline">

@@ -2,8 +2,12 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import * as z from "zod/v3";
+import { loginAction } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -23,6 +27,8 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const {
     register,
     handleSubmit,
@@ -36,7 +42,18 @@ export function LoginForm() {
   });
 
   const onSubmit = (data: LoginFormValues) => {
-    console.log(data);
+    startTransition(async () => {
+      const result = await loginAction(data);
+
+      if (result.status === "error") {
+        toast.error(result.message);
+        return;
+      }
+
+      toast.success(result.message);
+      router.push(result.redirectTo);
+      router.refresh();
+    });
   };
 
   return (
@@ -50,9 +67,10 @@ export function LoginForm() {
           <Input
             type="text"
             id="username"
-            placeholder="you@example.com"
+            placeholder="Masukkan username"
             {...register("username")}
             aria-invalid={!!errors.username}
+            disabled={isPending}
           />
           {errors.username && (
             <FieldError>{errors.username.message}</FieldError>
@@ -66,14 +84,15 @@ export function LoginForm() {
             placeholder="••••••••"
             {...register("password")}
             aria-invalid={!!errors.password}
+            disabled={isPending}
           />
           {errors.password && (
             <FieldError>{errors.password.message}</FieldError>
           )}
         </Field>
       </FieldGroup>
-      <Button type="submit" className="w-full">
-        Log in
+      <Button type="submit" className="w-full" disabled={isPending}>
+        {isPending ? "Memproses..." : "Masuk"}
       </Button>
       <div className="flex w-full justify-between">
         <Link href="/auth/forgot-password" className="text-body-4 underline">

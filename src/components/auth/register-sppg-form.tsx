@@ -2,8 +2,12 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import * as z from "zod/v3";
+import { registerAction } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -14,29 +18,32 @@ import {
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 
-const registerSchema = z.object({
-  username: z
-    .string()
-    .min(3, "Username minimal 3 karakter")
-    .max(16, "Username maksimal 16 karakter"),
-  nama: z
-    .string()
-    .min(3, "Nama minimal 3 karakter")
-    .max(40, "Nama maksimal 40 karakter"),
-  alamat: z.string().min(3, "Alamat minimal 3 karakter"),
-  kodeRegistrasi: z.string().min(3, "Kode registrasi minimal 3 karakter"),
-  kataSandi: z
-    .string()
-    .min(8, "Kata sandi minimal 8 karakter")
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/,
-      "Kata sandi harus mengandung huruf besar, huruf kecil, dan angka",
-    ),
-});
+const registerSchema = z
+  .object({
+    username: z
+      .string()
+      .min(3, "Username minimal 3 karakter")
+      .max(16, "Username maksimal 16 karakter"),
+    kodeBgn: z.string().min(3, "Kode BGN minimal 3 karakter"),
+    kataSandi: z
+      .string()
+      .min(8, "Kata sandi minimal 8 karakter")
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$/,
+        "Kata sandi harus mengandung huruf besar, huruf kecil, dan angka",
+      ),
+    ulangiKataSandi: z.string(),
+  })
+  .refine((data) => data.kataSandi === data.ulangiKataSandi, {
+    message: "Kata sandi tidak cocok",
+    path: ["ulangiKataSandi"],
+  });
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export function RegisterSppgForm() {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const {
     register,
     handleSubmit,
@@ -45,15 +52,29 @@ export function RegisterSppgForm() {
     resolver: zodResolver(registerSchema),
     defaultValues: {
       username: "",
-      nama: "",
-      alamat: "",
-      kodeRegistrasi: "",
+      kodeBgn: "",
       kataSandi: "",
+      ulangiKataSandi: "",
     },
   });
 
   const onSubmit = (data: RegisterFormValues) => {
-    console.log(data);
+    startTransition(async () => {
+      const result = await registerAction({
+        username: data.username,
+        password: data.kataSandi,
+        role: "SPPG",
+        bgnCode: data.kodeBgn,
+      });
+
+      if (result.status === "error") {
+        toast.error(result.message);
+        return;
+      }
+
+      toast.success(result.message);
+      router.push(result.redirectTo);
+    });
   };
 
   return (
@@ -69,45 +90,23 @@ export function RegisterSppgForm() {
             placeholder="Masukkan username"
             {...register("username")}
             aria-invalid={!!errors.username}
+            disabled={isPending}
           />
           {errors.username && (
             <FieldError>{errors.username.message}</FieldError>
           )}
         </Field>
 
-        <Field data-invalid={!!errors.nama}>
-          <FieldLabel htmlFor="nama">Nama</FieldLabel>
+        <Field data-invalid={!!errors.kodeBgn}>
+          <FieldLabel htmlFor="kodeBgn">Kode BGN</FieldLabel>
           <Input
-            id="nama"
-            placeholder="Masukkan nama"
-            {...register("nama")}
-            aria-invalid={!!errors.nama}
+            id="kodeBgn"
+            placeholder="Masukkan kode BGN"
+            {...register("kodeBgn")}
+            aria-invalid={!!errors.kodeBgn}
+            disabled={isPending}
           />
-          {errors.nama && <FieldError>{errors.nama.message}</FieldError>}
-        </Field>
-
-        <Field data-invalid={!!errors.alamat}>
-          <FieldLabel htmlFor="alamat">Alamat</FieldLabel>
-          <Input
-            id="alamat"
-            placeholder="Masukkan alamat"
-            {...register("alamat")}
-            aria-invalid={!!errors.alamat}
-          />
-          {errors.alamat && <FieldError>{errors.alamat.message}</FieldError>}
-        </Field>
-
-        <Field data-invalid={!!errors.kodeRegistrasi}>
-          <FieldLabel htmlFor="kodeRegistrasi">Kode Registrasi</FieldLabel>
-          <Input
-            id="kodeRegistrasi"
-            placeholder="Masukkan kode registrasi"
-            {...register("kodeRegistrasi")}
-            aria-invalid={!!errors.kodeRegistrasi}
-          />
-          {errors.kodeRegistrasi && (
-            <FieldError>{errors.kodeRegistrasi.message}</FieldError>
-          )}
+          {errors.kodeBgn && <FieldError>{errors.kodeBgn.message}</FieldError>}
         </Field>
 
         <Field data-invalid={!!errors.kataSandi}>
@@ -117,15 +116,30 @@ export function RegisterSppgForm() {
             placeholder="••••••••"
             {...register("kataSandi")}
             aria-invalid={!!errors.kataSandi}
+            disabled={isPending}
           />
           {errors.kataSandi && (
             <FieldError>{errors.kataSandi.message}</FieldError>
           )}
         </Field>
+
+        <Field data-invalid={!!errors.ulangiKataSandi}>
+          <FieldLabel htmlFor="ulangiKataSandi">Ulangi Kata Sandi</FieldLabel>
+          <PasswordInput
+            id="ulangiKataSandi"
+            placeholder="••••••••"
+            {...register("ulangiKataSandi")}
+            aria-invalid={!!errors.ulangiKataSandi}
+            disabled={isPending}
+          />
+          {errors.ulangiKataSandi && (
+            <FieldError>{errors.ulangiKataSandi.message}</FieldError>
+          )}
+        </Field>
       </FieldGroup>
 
-      <Button type="submit" className="w-full">
-        Daftar
+      <Button type="submit" className="w-full" disabled={isPending}>
+        {isPending ? "Memproses..." : "Daftar"}
       </Button>
       <div className="flex w-full justify-end">
         <Link href="/auth/login" className="text-body-4 underline">

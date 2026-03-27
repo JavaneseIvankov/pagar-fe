@@ -7,6 +7,17 @@ export type TUser = {
   username: string;
 };
 
+export type TAuthSession = {
+  token: string;
+  user: TUser;
+};
+
+export type TAuthRegistrationResult = {
+  accountStatus: TAccountStatus;
+  message: string;
+  user: TUser;
+};
+
 export type TAdmin = TUser & {
   role: "ADMIN";
 };

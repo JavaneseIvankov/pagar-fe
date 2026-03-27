@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "bhnybebpsxnfyazsjxtk.supabase.co",
       },
+      // FIXME: temporary
+      {
+        protocol: "https",
+        hostname: "example.com",
+      },
     ],
   },
   turbopack: {

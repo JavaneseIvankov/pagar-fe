@@ -52,6 +52,31 @@ export type TAdminAccessDetail = {
   label: string;
 };
 
+export type TManagedAccountRole = "SCHOOL" | "SPPG";
+
+export type TAdminAccountRoleFilter = "ALL" | TManagedAccountRole;
+
+export type TAdminAccountDecision = "APPROVED" | "REJECTED";
+
+export type TAdminManagedAccount = {
+  id: string;
+  username: string;
+  role: TManagedAccountRole;
+  createdAt: Date;
+};
+
+export type TAdminActiveAccount = TAdminManagedAccount;
+
+export type TAdminPendingAccount = TAdminManagedAccount & {
+  bgnCode: string | null;
+  registrationCode: string | null;
+};
+
+export type TAdminAccountStatusUpdateResult = {
+  accountStatus: TAdminAccountDecision;
+  id: string;
+};
+
 export type TAdminProfile = TAdmin & {
   accessDetails: TAdminAccessDetail[];
   email: string;

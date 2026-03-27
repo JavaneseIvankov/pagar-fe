@@ -12,6 +12,10 @@ export const queryKeys = {
   adminDashboard: {
     detail: () => ["admin-dashboard"] as const,
   },
+  adminAccounts: {
+    active: () => ["admin-accounts", "active"] as const,
+    pending: () => ["admin-accounts", "pending"] as const,
+  },
   periodicReports: {
     list: () => ["periodic-reports", "list"] as const,
   },

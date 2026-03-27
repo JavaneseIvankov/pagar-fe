@@ -12,12 +12,16 @@ import {
 } from "@/mock-data";
 import type {
   getAdminDashboardSuccessResponseSchema,
+  getActiveAccountsSuccessResponseSchema,
   getPublicDashboardReviewsSuccessResponseSchema,
   getPublicDashboardSppgReportsSuccessResponseSchema,
+  getPendingAccountsSuccessResponseSchema,
   getSchoolProfileSuccessResponseSchema,
   getSppgDashboardSuccessResponseSchema,
   getSppgDailyReportByIdSuccessResponseSchema,
   getSppgPeriodicReportsSuccessResponseSchema,
+  updateAccountStatusBodySchema,
+  updateAccountStatusSuccessResponseSchema,
 } from "@/types/dto";
 
 type PublicDashboardSppgReportsResponse = z.infer<
@@ -40,6 +44,16 @@ type SppgPeriodicReportsResponse = z.infer<
 >;
 type SchoolProfileResponse = z.infer<
   typeof getSchoolProfileSuccessResponseSchema
+>;
+type ActiveAccountsResponse = z.infer<
+  typeof getActiveAccountsSuccessResponseSchema
+>;
+type PendingAccountsResponse = z.infer<
+  typeof getPendingAccountsSuccessResponseSchema
+>;
+type UpdateAccountStatusBody = z.infer<typeof updateAccountStatusBodySchema>;
+type UpdateAccountStatusResponse = z.infer<
+  typeof updateAccountStatusSuccessResponseSchema
 >;
 
 type PublicDashboardSppgReportItem =
@@ -66,6 +80,8 @@ type BudgetRecord = NonNullable<
 type AttachmentRecord = NonNullable<
   SppgDailyReportByIdResponse["data"]["attachments"]
 >[number];
+type ActiveAccountRecord = ActiveAccountsResponse["data"][number];
+type PendingAccountRecord = PendingAccountsResponse["data"][number];
 
 function createUserUuid(index: number) {
   return `00000000-0000-4000-8000-${String(index).padStart(12, "0")}`;
@@ -78,6 +94,89 @@ function toDateOnly(date: Date) {
 function toIsoDate(date: Date) {
   return date.toISOString();
 }
+
+function createActiveAccountRecord(params: {
+  createdAt: string;
+  id: number;
+  role: ActiveAccountRecord["role"];
+  username: string;
+}): ActiveAccountRecord {
+  return {
+    id_user: createUserUuid(params.id),
+    username: params.username,
+    role: params.role,
+    createdAt: params.createdAt,
+  } satisfies ActiveAccountRecord;
+}
+
+function createPendingAccountRecord(params: {
+  bgnCode: string | null;
+  createdAt: string;
+  id: number;
+  registrationCode: string | null;
+  role: PendingAccountRecord["role"];
+  username: string;
+}): PendingAccountRecord {
+  return {
+    id_user: createUserUuid(params.id),
+    username: params.username,
+    role: params.role,
+    registration_code: params.registrationCode,
+    bgn_code: params.bgnCode,
+    createdAt: params.createdAt,
+  } satisfies PendingAccountRecord;
+}
+
+const initialActiveAccounts: ActiveAccountRecord[] = [
+  createActiveAccountRecord({
+    id: 501,
+    username: schools[0]?.username ?? "sdn-kauman-1",
+    role: "SCHOOL",
+    createdAt: "2026-03-05T08:00:00.000Z",
+  }),
+  createActiveAccountRecord({
+    id: 502,
+    username: schools[1]?.username ?? "smpn-3-malang",
+    role: "SCHOOL",
+    createdAt: "2026-03-08T09:30:00.000Z",
+  }),
+  createActiveAccountRecord({
+    id: 503,
+    username: sppgs[0]?.username ?? "sppg-berkah-nutrisi",
+    role: "SPPG",
+    createdAt: "2026-03-10T10:15:00.000Z",
+  }),
+];
+
+const initialPendingAccounts: PendingAccountRecord[] = [
+  createPendingAccountRecord({
+    id: 601,
+    username: sppgs[1]?.username ?? "sppg-sehat-bersama",
+    role: "SPPG",
+    registrationCode: "REG-SPPG-002",
+    bgnCode: "BGN-SPPG-002",
+    createdAt: "2026-03-21T03:00:00.000Z",
+  }),
+  createPendingAccountRecord({
+    id: 602,
+    username: sppgs[2]?.username ?? "sppg-gizi-nusantara",
+    role: "SPPG",
+    registrationCode: "REG-SPPG-003",
+    bgnCode: "BGN-SPPG-003",
+    createdAt: "2026-03-22T04:20:00.000Z",
+  }),
+  createPendingAccountRecord({
+    id: 603,
+    username: "sdn-blimbing-2",
+    role: "SCHOOL",
+    registrationCode: null,
+    bgnCode: "BGN-SCHOOL-014",
+    createdAt: "2026-03-23T01:10:00.000Z",
+  }),
+];
+
+let mockActiveAccounts = [...initialActiveAccounts];
+let mockPendingAccounts = [...initialPendingAccounts];
 
 function createAttachmentRecord(params: {
   id: number;
@@ -350,6 +449,58 @@ export function buildAdminDashboardResponse(): AdminDashboardResponse {
       }),
     },
   } satisfies AdminDashboardResponse;
+}
+
+export function buildActiveAccountsResponse(): ActiveAccountsResponse {
+  return {
+    status: "success" as const,
+    data: mockActiveAccounts.map((account) => ({ ...account })),
+  } satisfies ActiveAccountsResponse;
+}
+
+export function buildPendingAccountsResponse(): PendingAccountsResponse {
+  return {
+    status: "success" as const,
+    data: mockPendingAccounts.map((account) => ({ ...account })),
+  } satisfies PendingAccountsResponse;
+}
+
+export function updateMockAccountStatus(params: {
+  idUser: string;
+  status: UpdateAccountStatusBody["status"];
+}): UpdateAccountStatusResponse {
+  const pendingAccount = mockPendingAccounts.find(
+    (account) => account.id_user === params.idUser,
+  );
+
+  if (!pendingAccount) {
+    throw new Error("Akun tidak ditemukan dalam antrean validasi.");
+  }
+
+  mockPendingAccounts = mockPendingAccounts.filter(
+    (account) => account.id_user !== params.idUser,
+  );
+
+  if (params.status === "APPROVED") {
+    mockActiveAccounts = [
+      createActiveAccountRecord({
+        id: Number(params.idUser.slice(-12)),
+        username: pendingAccount.username,
+        role: pendingAccount.role,
+        createdAt: pendingAccount.createdAt,
+      }),
+      ...mockActiveAccounts,
+    ];
+  }
+
+  return {
+    status: "success" as const,
+    message: "Status akun berhasil diperbarui",
+    data: {
+      id_user: params.idUser,
+      account_status: params.status,
+    },
+  } satisfies UpdateAccountStatusResponse;
 }
 
 export function buildSppgPeriodicReportsResponse(): SppgPeriodicReportsResponse {

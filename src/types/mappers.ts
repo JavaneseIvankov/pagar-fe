@@ -1,13 +1,17 @@
 import type { z } from "zod/v3";
 import type {
   getAdminDashboardSuccessResponseSchema,
+  getActiveAccountsSuccessResponseSchema,
   getPublicDashboardReviewsSuccessResponseSchema,
   getPublicDashboardSppgReportsSuccessResponseSchema,
+  getPendingAccountsSuccessResponseSchema,
   getSppgDailyReportByIdSuccessResponseSchema,
   getSppgDashboardSuccessResponseSchema,
   getSppgPeriodicReportsSuccessResponseSchema,
 } from "@/types/dto";
 import type {
+  TAdminActiveAccount,
+  TAdminPendingAccount,
   TAdminComplaint,
   TAdminComplaintStatus,
   TAdminDashboard,
@@ -39,6 +43,12 @@ type SppgDashboardResponse = z.infer<
 type AdminDashboardResponse = z.infer<
   typeof getAdminDashboardSuccessResponseSchema
 >["data"];
+type ActiveAccountsResponse = z.infer<
+  typeof getActiveAccountsSuccessResponseSchema
+>["data"][number];
+type PendingAccountsResponse = z.infer<
+  typeof getPendingAccountsSuccessResponseSchema
+>["data"][number];
 type PeriodicReportsResponse = z.infer<
   typeof getSppgPeriodicReportsSuccessResponseSchema
 >["data"];
@@ -257,6 +267,30 @@ export function mapSppgDashboardDtoToDomain(
         location_name: review.school?.school_name ?? "Sekolah",
       }),
     ),
+  };
+}
+
+export function mapActiveAccountDtoToDomain(
+  dto: ActiveAccountsResponse,
+): TAdminActiveAccount {
+  return {
+    id: dto.id_user,
+    username: dto.username,
+    role: dto.role,
+    createdAt: new Date(dto.createdAt),
+  };
+}
+
+export function mapPendingAccountDtoToDomain(
+  dto: PendingAccountsResponse,
+): TAdminPendingAccount {
+  return {
+    id: dto.id_user,
+    username: dto.username,
+    role: dto.role,
+    createdAt: new Date(dto.createdAt),
+    registrationCode: dto.registration_code,
+    bgnCode: dto.bgn_code,
   };
 }
 

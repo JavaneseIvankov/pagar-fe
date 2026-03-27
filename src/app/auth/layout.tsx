@@ -55,7 +55,7 @@ export default function AuthLayout({
 
   return (
     <div className="grid h-[100dvh] w-full grid-cols-2 grid-rows-1">
-      <section className="auth-thumbnail relative bg-blue-400">
+      <section className="auth-thumbnail relative bg-primary">
         <Image
           src={content.image}
           alt="Authentication background"

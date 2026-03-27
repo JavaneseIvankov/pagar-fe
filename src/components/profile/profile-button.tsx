@@ -63,7 +63,7 @@ const ProfileButton = ({
       </DropdownMenuLabel>
       <DropdownMenuSeparator />
       <DropdownMenuItem asChild>
-        <Link href={profileHref ?? "/profile"}>
+        <Link href={profileHref ?? "/profil"}>
           <User />
           Profil
         </Link>

@@ -16,7 +16,7 @@ export function getAuthenticatedLandingPath(role: TRole) {
       return "/dashboard/sppg";
     case "PUBLIC":
     case "SCHOOL":
-      return "/public-report";
+      return "/laporan-masyarakat";
   }
 }
 
@@ -32,8 +32,8 @@ export function canRoleAccessPath(role: TRole, pathname: string) {
   }
 
   if (
-    normalizedPathname.startsWith("/profile") ||
-    normalizedPathname.startsWith("/create-report")
+    normalizedPathname.startsWith("/profil") ||
+    normalizedPathname.startsWith("/tambah-laporan")
   ) {
     return role === "PUBLIC" || role === "SCHOOL";
   }

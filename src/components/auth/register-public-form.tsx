@@ -127,7 +127,7 @@ export function RegisterPublicForm() {
         {isPending ? "Memproses..." : "Daftar"}
       </Button>
       <div className="flex w-full justify-end">
-        <Link href="/auth/login" className="text-body-4 underline">
+        <Link href="/auth/masuk" className="text-body-4 underline">
           Sudah Punya Akun?{" "}
           <span className="font-semibold text-primary">Masuk</span>
         </Link>

@@ -14,7 +14,7 @@ export default function ForgotPasswordPage() {
           akses akun.
         </p>
         <Button asChild className="w-full">
-          <Link href="/auth/login">Kembali ke Login</Link>
+          <Link href="/auth/masuk">Kembali ke Login</Link>
         </Button>
       </div>
     </AuthContentLayout>

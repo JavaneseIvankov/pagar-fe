@@ -92,7 +92,7 @@ export function SppgReportCard({ report }: SppgReportCardProps) {
       <CardFooter className="border-border/50 border-t px-4 py-4 sm:px-6">
         <CardAction className="flex w-full">
           <Link
-            href={`/sppg-report/${report.id}`}
+            href={`/laporan-sppg/${report.id}`}
             className={buttonVariants({
               variant: "tertiary",
               className:

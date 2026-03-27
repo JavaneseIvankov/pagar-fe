@@ -41,7 +41,7 @@ export function DashboardSidebar({
   const handleLogout = () => {
     startTransition(async () => {
       await logoutAction();
-      router.replace("/auth/login");
+      router.replace("/auth/masuk");
       router.refresh();
     });
   };

@@ -16,17 +16,17 @@ export function ReportTabs({ className }: { className?: string }) {
 
   return (
     <Tabs
-      defaultValue="/public-report"
+      defaultValue="/laporan-masyarakat"
       value={pathname}
       className={cn("", className)}
     >
       <TabsList className="grid grid-cols-2 gap-2 rounded-2xl border border-border/60 bg-white/70 p-1">
         <TabsTrigger
-          value="/public-report"
+          value="/laporan-masyarakat"
           className="min-w-0 rounded-xl px-3 py-2.5 text-xs sm:text-sm"
         >
           <Link
-            href="/public-report"
+            href="/laporan-masyarakat"
             className="flex min-w-0 items-center justify-center gap-2 text-center"
           >
             <PeopleIcon />
@@ -35,11 +35,11 @@ export function ReportTabs({ className }: { className?: string }) {
         </TabsTrigger>
 
         <TabsTrigger
-          value="/sppg-report"
+          value="/laporan-sppg"
           className="min-w-0 rounded-xl px-3 py-2.5 text-xs sm:text-sm"
         >
           <Link
-            href="/sppg-report"
+            href="/laporan-sppg"
             className="flex min-w-0 items-center justify-center gap-2 text-center"
           >
             <HugeiconsIcon

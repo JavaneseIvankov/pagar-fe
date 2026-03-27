@@ -95,10 +95,10 @@ export function LoginForm() {
         {isPending ? "Memproses..." : "Masuk"}
       </Button>
       <div className="flex w-full justify-between">
-        <Link href="/auth/forgot-password" className="text-body-4 underline">
+        <Link href="/auth/lupa-kata-sandi" className="text-body-4 underline">
           Lupa Password?
         </Link>
-        <Link href="/auth/register" className="text-body-4 underline">
+        <Link href="/auth/daftar" className="text-body-4 underline">
           Belum Punya Akun?{" "}
           <span className="font-semibold text-primary">Daftar</span>
         </Link>

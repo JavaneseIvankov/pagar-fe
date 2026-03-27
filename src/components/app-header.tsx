@@ -13,7 +13,7 @@ import ProfileButton from "./profile/profile-button";
 import { SearchReport } from "./reports/search-report";
 import { buttonVariants } from "./ui/button";
 
-const SEARCH_ENABLED_ROUTES = ["/public-report", "/sppg-report"];
+const SEARCH_ENABLED_ROUTES = ["/laporan-masyarakat", "/laporan-sppg"];
 
 function getRoleLabel(role: TRole) {
   switch (role) {
@@ -31,12 +31,12 @@ function getRoleLabel(role: TRole) {
 function getProfileHref(role: TRole) {
   switch (role) {
     case "ADMIN":
-      return "/dashboard/admin/profile";
+      return "/dashboard/admin/profil";
     case "SPPG":
-      return "/dashboard/sppg/profile";
+      return "/dashboard/sppg/profil";
     case "PUBLIC":
     case "SCHOOL":
-      return "/profile";
+      return "/profil";
   }
 }
 
@@ -55,7 +55,7 @@ export function AppHeader({ session }: { session: TAuthSession | null }) {
   const handleLogout = () => {
     startTransition(async () => {
       await logoutAction();
-      router.replace("/auth/login");
+      router.replace("/auth/masuk");
       router.refresh();
     });
   };
@@ -134,7 +134,7 @@ function HeaderActions({
             variant: "ghost",
             className: cn("gap-2", navButtonClassName),
           })}
-          href={"/create-report"}
+          href={"/tambah-laporan"}
           title="Tambah laporan"
           aria-label="Tambah laporan"
         >
@@ -156,7 +156,7 @@ function HeaderActions({
               variant: "ghost",
               className: cn(navButtonClassName, "px-4"),
             })}
-            href={"/auth/login"}
+            href={"/auth/masuk"}
           >
             Masuk
           </Link>
@@ -164,7 +164,7 @@ function HeaderActions({
             className={buttonVariants({
               className: "h-10 rounded-full px-4",
             })}
-            href={"/auth/register"}
+            href={"/auth/daftar"}
           >
             Daftar
           </Link>

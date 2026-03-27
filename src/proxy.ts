@@ -9,8 +9,8 @@ import {
 function isProtectedPath(pathname: string) {
   return (
     pathname.startsWith("/dashboard") ||
-    pathname.startsWith("/profile") ||
-    pathname.startsWith("/create-report")
+    pathname.startsWith("/profil") ||
+    pathname.startsWith("/tambah-laporan")
   );
 }
 
@@ -27,7 +27,15 @@ export function proxy(request: NextRequest) {
   if (pathname === "/") {
     const destination = session
       ? getAuthenticatedLandingPath(session.user.role)
-      : "/public-report";
+      : "/laporan-masyarakat";
+
+    return NextResponse.redirect(new URL(destination, request.url));
+  }
+
+  if (pathname === "/dashboard") {
+    const destination = session
+      ? getAuthenticatedLandingPath(session.user.role)
+      : "/auth/masuk";
 
     return NextResponse.redirect(new URL(destination, request.url));
   }
@@ -39,7 +47,7 @@ export function proxy(request: NextRequest) {
   }
 
   if (!session && isProtectedPath(pathname)) {
-    return NextResponse.redirect(new URL("/auth/login", request.url));
+    return NextResponse.redirect(new URL("/auth/masuk", request.url));
   }
 
   if (
@@ -58,9 +66,10 @@ export function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/",
+    "/dashboard",
     "/auth/:path*",
     "/dashboard/:path*",
-    "/profile",
-    "/create-report",
+    "/profil",
+    "/tambah-laporan",
   ],
 };

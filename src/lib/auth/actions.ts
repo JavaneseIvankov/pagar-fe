@@ -74,7 +74,7 @@ export async function registerAction(input: {
     return {
       status: "success",
       message: result.message,
-      redirectTo: "/auth/login",
+      redirectTo: "/auth/masuk",
     };
   } catch (error) {
     return {

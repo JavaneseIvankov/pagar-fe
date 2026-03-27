@@ -10,21 +10,21 @@ const ROLE_DATA = [
     roleName: "SPPG",
     description: "Kelola dapur dan buktikan transparansi pelayanan Anda",
     iconWrapperClassName: "bg-[#E3F8FF]",
-    href: "/auth/register/sppg",
+    href: "/auth/daftar/sppg",
   },
   {
     icon: <SchoolIcon className="text-[#00A455]" />,
     roleName: "Sekolah",
     description: "Pastikan siswa mendapatkan hak nutrisinya",
     iconWrapperClassName: "bg-[#E7FDEE]",
-    href: "/auth/register/school",
+    href: "/auth/daftar/sekolah",
   },
   {
     icon: <PeopleIcon className="text-[#6200EE]" />,
     roleName: "Umum",
     description: "Suarakan kepedulian Anda sebagai pengawas kualitas",
     iconWrapperClassName: "bg-[#EFE6FD]",
-    href: "/auth/register/public",
+    href: "/auth/daftar/publik",
   },
 ] as const;
 

@@ -33,8 +33,8 @@ const sidebarItems = [
     icon: ReportIcon,
   },
   {
-    title: "Profile",
-    href: "/dashboard/sppg/profile",
+    title: "Profil",
+    href: "/dashboard/sppg/profil",
     icon: PersonCircleIcon,
   },
   {
@@ -48,8 +48,8 @@ const sidebarItems = [
     icon: PersonIcon,
   },
   {
-    title: "Profile Pengguna",
-    href: "/dashboard/admin/profile",
+    title: "Profil Pengguna",
+    href: "/dashboard/admin/profil",
     icon: PersonCircleIcon,
   },
 ];

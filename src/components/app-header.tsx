@@ -22,8 +22,10 @@ export function AppHeader() {
       <div className="container flex min-h-16 items-center gap-4">
         <AppLogo className="h-18 pr-2 xl:p-2" />
 
-        {showBrandAndSearch && (
+        {showBrandAndSearch ? (
           <SearchReport className="mx-auto max-w-[517px]" />
+        ) : (
+          <div className="spacer w-full" aria-hidden />
         )}
 
         <div className="flex items-center gap-2">

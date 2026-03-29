@@ -5,6 +5,7 @@ import { AdminAccountSettingsCard } from "@/components/profile/admin-account-set
 import { useCurrentAdminProfile } from "@/hooks/use-current-profile";
 import { mapAdminAccessDetailToUi } from "@/lib/ui-mappers";
 
+// TASK: implement mutation flow
 export function AdminProfileContainer() {
   const { data: currentProfile, isError, isLoading } = useCurrentAdminProfile();
 

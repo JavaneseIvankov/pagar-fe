@@ -61,23 +61,27 @@ export default function AuthLayout({
   const content = authContent[pathname] || authContent["/auth/masuk"];
 
   return (
-    <div className="grid h-[100dvh] w-full grid-cols-2 grid-rows-1">
-      <section className="auth-thumbnail relative bg-primary">
+    <div className="grid min-h-dvh w-full grid-cols-1 bg-background md:grid-cols-2">
+      <section className="auth-thumbnail relative min-h-[280px] overflow-hidden bg-primary md:min-h-dvh">
         <Image
           src={content.image}
           alt="Authentication background"
           fill
-          className="object-cover"
+          className="object-cover object-center"
           priority
         />
-        <div className="absolute right-6 bottom-16 left-6 z-10 text-white xl:right-10 xl:bottom-24 xl:left-10">
-          <h1 className="text-h1">{content.title}</h1>
-          <p className="text-body">{content.subtitle}</p>
+        <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-6 text-white sm:px-6 sm:pb-8 md:right-10 md:bottom-24 md:left-10 md:px-0 md:pb-0">
+          <h1 className="max-w-xl text-balance text-h3 sm:text-h2 xl:text-h1">
+            {content.title}
+          </h1>
+          <p className="mt-3 max-w-2xl text-body-4 sm:text-body-3 md:max-w-xl">
+            {content.subtitle}
+          </p>
         </div>
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/75 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black/85 via-black/45 to-transparent md:h-1/2" />
       </section>
-      <section className="mx-6 flex items-center justify-center">
-        {children}
+      <section className="flex items-center justify-center px-4 py-8 sm:px-6 sm:py-10 md:min-h-dvh md:px-8 xl:px-12">
+        <div className="w-full max-w-xl">{children}</div>
       </section>
     </div>
   );

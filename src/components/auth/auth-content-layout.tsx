@@ -20,10 +20,15 @@ export function AuthContentLayout({
     "Pilih identitas Anda untuk mulai memantau, mengelola, dan memastikan setiap porsi makanan sampai dengan kualitas terbaik.";
 
   return (
-    <div className={cn("flex flex-col gap-10 md:max-w-[90%]", className)}>
-      <section className="auth-content-header space-y-4">
-        <h1 className="text-h1">{_title}</h1>
-        <p className="text-body text-foreground/40">{_subtitle}</p>
+    <div
+      className={cn(
+        "mx-auto flex w-full max-w-xl flex-col gap-6 sm:gap-8 lg:max-w-[32rem] lg:gap-10",
+        className,
+      )}
+    >
+      <section className="auth-content-header space-y-3 sm:space-y-4">
+        <h1 className="text-balance text-h3 sm:text-h2 lg:text-h1">{_title}</h1>
+        <p className="max-w-2xl text-body-3 text-foreground/60">{_subtitle}</p>
       </section>
       {children}
     </div>

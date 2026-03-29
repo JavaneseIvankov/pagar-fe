@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { AppLogo } from "@/components/app-logo";
 import { Button } from "@/components/ui/button";
+import "./globals.css";
 
 export default function GlobalError({
   error,

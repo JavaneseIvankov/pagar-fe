@@ -17,6 +17,8 @@ const formSchema = z.object({
   details: z.string().min(10, "Ulasan minimal 10 karakter"),
 });
 
+// TASK: make this component accept initial data, it should prefill location (we probably going to refactor location into sppg)
+
 export function PublicCreateReportContainer() {
   const {
     handleSubmit,

@@ -63,8 +63,8 @@ export function SppgReportDetailLayout({
 }: SppgReportDetailLayoutProps) {
   return (
     <div className="page-enter mx-auto max-w-6xl space-y-6 pb-10 md:space-y-8">
-      <h1 className="mb-4 text-balance border-b pb-4 font-bold text-2xl md:mb-8 md:text-h2">
-        Detail Laporan : {title}
+      <h1 className="mb-4 text-balance border-b pb-4 font-bold text-h4 md:mb-8 md:text-h2 md:text-h3 lg:text-h2">
+        {title}
       </h1>
 
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)] lg:gap-8">

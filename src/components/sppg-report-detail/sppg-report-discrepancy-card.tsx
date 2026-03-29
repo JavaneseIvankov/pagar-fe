@@ -1,6 +1,10 @@
 import { SpeakerIcon } from "@/components/exported-icons";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
+
+// TASK: make this component accept sppgId for then be used for prefilling the public-create-report-container (we also need to improve public-create-report-container to accept and properly new prefill-related props)
 
 export function SppgReportDiscrepancyCard() {
   return (
@@ -17,9 +21,15 @@ export function SppgReportDiscrepancyCard() {
           platform ini
         </p>
       </div>
-      <Button className="h-10 w-full max-w-[200px] rounded-lg bg-white font-extrabold text-black text-sm hover:bg-zinc-200">
+      <Link
+        href={"/tambah-laporan"}
+        className={cn(
+          buttonVariants(),
+          "h-10 w-full max-w-[200px] rounded-lg bg-white font-extrabold text-black text-sm hover:bg-primary-200 hover:text-white",
+        )}
+      >
         Laporkan
-      </Button>
+      </Link>
     </Card>
   );
 }

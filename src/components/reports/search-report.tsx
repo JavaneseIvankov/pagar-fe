@@ -123,7 +123,7 @@ function SearchReportLayout({
         }}
       >
         <ComboboxInput
-          className="w-full sm:w-[220px]"
+          className="w-full sm:w-[160px]"
           placeholder="Pilih kecamatan"
           disabled={isReadOnly}
           aria-label="Pilih kecamatan"

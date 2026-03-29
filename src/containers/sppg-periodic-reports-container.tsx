@@ -23,7 +23,7 @@ export function SppgPeriodicReportsContainer() {
   }
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col p-8">
+    <div className="flex w-full flex-col">
       <div className="flex flex-col gap-2">
         <h1 className="font-bold text-3xl tracking-tight">Laporan Periodik</h1>
         <p className="text-muted-foreground">

@@ -9,6 +9,7 @@ import {
 import { loginUser, registerUser } from "@/rpc/auth";
 import type { TRole } from "@/types";
 import { getAuthenticatedLandingPath } from "./navigation";
+import { getSafeReturnToPath } from "./redirects";
 
 type AuthActionErrorResult = {
   message: string;
@@ -35,10 +36,15 @@ function getSessionCookieOptions(maxAge: number) {
 
 export async function loginAction(input: {
   password: string;
+  returnTo?: string;
   username: string;
 }): Promise<AuthActionResult> {
   try {
-    const session = await loginUser(input);
+    const safeReturnTo = getSafeReturnToPath(input.returnTo);
+    const session = await loginUser({
+      password: input.password,
+      username: input.username,
+    });
     const cookieStore = await cookies();
 
     cookieStore.set(
@@ -50,7 +56,8 @@ export async function loginAction(input: {
     return {
       status: "success",
       message: "Berhasil masuk ke akun Anda.",
-      redirectTo: getAuthenticatedLandingPath(session.user.role),
+      redirectTo:
+        safeReturnTo ?? getAuthenticatedLandingPath(session.user.role),
     };
   } catch (error) {
     return {

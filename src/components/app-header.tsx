@@ -44,8 +44,8 @@ export function AppHeader({ session }: { session: TAuthSession | null }) {
   const pathname = usePathname();
   const router = useRouter();
   const [, startTransition] = useTransition();
-  const showBrandAndSearch = SEARCH_ENABLED_ROUTES.some((route) =>
-    pathname.startsWith(route),
+  const showBrandAndSearch = SEARCH_ENABLED_ROUTES.some(
+    (route) => pathname === route.trim(),
   );
   const canCreateReport =
     !session ||

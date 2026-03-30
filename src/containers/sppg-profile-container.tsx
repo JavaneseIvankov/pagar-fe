@@ -3,6 +3,7 @@
 import { ProfileHeaderCard } from "@/components/profile/profile-header-card";
 import { SppgProfessionalInfoCard } from "@/components/profile/sppg-professional-info-card";
 import { SppgAccountSettingsCard } from "@/components/profile/sppg-account-settings-card";
+import { SppgProfileSkeleton } from "@/components/profile/sppg-profile-skeleton";
 import { useCurrentSppgProfile } from "@/hooks/use-current-profile";
 
 // TASK: implement mutation flow
@@ -10,7 +11,7 @@ export function SppgProfileContainer() {
   const { data: currentProfile, isError, isLoading } = useCurrentSppgProfile();
 
   if (isLoading) {
-    return <div className="py-8 text-muted-foreground">Memuat profil...</div>;
+    return <SppgProfileSkeleton />;
   }
 
   if (isError || !currentProfile) {

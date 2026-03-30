@@ -1,5 +1,6 @@
 "use client";
 
+import { SppgPeriodicReportsSkeleton } from "@/components/dashboard/sppg/sppg-periodic-reports-skeleton";
 import { PeriodicReportTable } from "@/components/dashboard/sppg/periodic-report-table";
 import { useSppgPeriodicReports } from "@/hooks/use-sppg-periodic-reports";
 
@@ -7,11 +8,7 @@ export function SppgPeriodicReportsContainer() {
   const { data, isLoading, isError } = useSppgPeriodicReports();
 
   if (isLoading) {
-    return (
-      <div className="py-8 text-muted-foreground">
-        Memuat laporan periodik...
-      </div>
-    );
+    return <SppgPeriodicReportsSkeleton />;
   }
 
   if (isError || !data) {

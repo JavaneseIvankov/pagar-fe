@@ -66,7 +66,7 @@ export function CreateReportForm({
   totalAnggaranPerPorsi,
 }: DashboardCreateReportFormProps) {
   if (isHydrating) {
-    return null;
+    return <div className="overflow-y-scroll"></div>;
   }
 
   return (

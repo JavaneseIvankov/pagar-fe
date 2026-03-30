@@ -1,5 +1,6 @@
 "use client";
 
+import { ValidasiAkunCardSkeleton } from "@/components/admin/kelola-akun/validasi-akun-card-skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,9 +42,7 @@ export function ValidasiAkunCard({
 
       <CardContent className="flex flex-1 flex-col p-6 pt-2">
         {isLoading ? (
-          <div className="flex min-h-[240px] items-center justify-center rounded-xl border border-border/70 border-dashed bg-muted/20 px-6 text-muted-foreground text-sm">
-            Memuat data validasi akun...
-          </div>
+          <ValidasiAkunCardSkeleton />
         ) : isError ? (
           <div className="flex min-h-[240px] items-center justify-center rounded-xl border border-destructive/30 border-dashed bg-destructive/5 px-6 text-destructive text-sm">
             Gagal memuat data validasi akun.

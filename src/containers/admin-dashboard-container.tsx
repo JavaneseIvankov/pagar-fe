@@ -3,6 +3,7 @@
 import { AdminComplaintsOverview } from "@/components/dashboard/admin-complaints-overview";
 import { AdminComplaintsTable } from "@/components/dashboard/admin-complaints-table";
 import { AdminDashboardHeader } from "@/components/dashboard/admin-dashboard-header";
+import { AdminDashboardSkeleton } from "@/components/dashboard/admin-dashboard-skeleton";
 import {
   type AdminSummaryStatItem,
   AdminSummaryStats,
@@ -61,11 +62,7 @@ export function AdminDashboardContainer() {
   const { data, isLoading, isError } = useAdminDashboard();
 
   if (isLoading) {
-    return (
-      <div className="py-8 text-muted-foreground">
-        Memuat dashboard admin...
-      </div>
-    );
+    return <AdminDashboardSkeleton />;
   }
 
   if (isError || !data) {

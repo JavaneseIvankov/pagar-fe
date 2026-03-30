@@ -12,6 +12,8 @@ import {
 import type { TAdminAccountRoleFilter } from "@/types";
 
 // TASK: simplify this, abstract logic into hooks
+// TASK: make this responsive on smaller device
+
 export function AdminKelolaAkunContainer() {
   const [selectedRoleFilter, setSelectedRoleFilter] =
     useState<TAdminAccountRoleFilter>("ALL");

@@ -62,7 +62,7 @@ export default function AuthLayout({
 
   return (
     <div className="grid min-h-dvh w-full grid-cols-1 bg-background md:grid-cols-2">
-      <section className="auth-thumbnail relative min-h-[280px] overflow-hidden bg-primary md:min-h-dvh">
+      <section className="auth-thumbnail relative max-h-[10dvh] min-h-[240px] overflow-hidden bg-primary md:min-h-dvh">
         <Image
           src={content.image}
           alt="Authentication background"
@@ -80,7 +80,7 @@ export default function AuthLayout({
         </div>
         <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black/85 via-black/45 to-transparent md:h-1/2" />
       </section>
-      <section className="flex items-center justify-center px-4 py-8 sm:px-6 sm:py-10 md:min-h-dvh md:px-8 xl:px-12">
+      <section className="flex items-center justify-center px-4 pt-8 pb-[10dvh] sm:px-6 sm:py-10 md:min-h-dvh md:px-8 md:pb-8 xl:px-12">
         <div className="w-full max-w-xl">{children}</div>
       </section>
     </div>

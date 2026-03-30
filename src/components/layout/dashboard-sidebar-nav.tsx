@@ -6,6 +6,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import {
@@ -61,6 +62,7 @@ const sidebarItems = [
   },
 ] as const;
 
+// TODO: we can improve perf by just using nested object structure in sidebarItems
 const visibleNavItems = (pathname: string) => {
   const segment = pathname.split("/")[2]; // "sppg" | "admin"
   return sidebarItems.filter((item) =>
@@ -70,6 +72,7 @@ const visibleNavItems = (pathname: string) => {
 
 export function DashboardSidebarNav() {
   const pathname = usePathname();
+  const { isMobile, setOpenMobile } = useSidebar();
   const navItems = visibleNavItems(pathname);
 
   return (
@@ -90,6 +93,11 @@ export function DashboardSidebarNav() {
                   href={item.href}
                   className="flex items-center gap-3"
                   prefetch={item.prefetch}
+                  onClick={() => {
+                    if (isMobile) {
+                      setOpenMobile(false);
+                    }
+                  }}
                 >
                   <item.icon />
                   <span

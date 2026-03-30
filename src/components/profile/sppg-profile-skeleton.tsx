@@ -55,9 +55,10 @@ export function SppgProfileSkeleton() {
         </div>
       </div>
 
-      <div className="mt-8 flex justify-center">
-        <Skeleton className="h-4 w-full max-w-[460px]" />
-      </div>
+      <p className="mt-8 text-center text-muted-foreground text-sm">
+        Halaman ini masih bersifat baca-saja sampai kontrak pembaruan profil
+        SPPG tersedia.
+      </p>
     </div>
   );
 }

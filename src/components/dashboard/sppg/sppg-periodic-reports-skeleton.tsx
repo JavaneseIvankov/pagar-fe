@@ -4,8 +4,10 @@ export function SppgPeriodicReportsSkeleton() {
   return (
     <div className="flex w-full flex-col">
       <div className="flex flex-col gap-2">
-        <Skeleton className="h-9 w-56" />
-        <Skeleton className="h-5 w-full max-w-[360px]" />
+        <h1 className="font-bold text-3xl tracking-tight">Laporan Periodik</h1>
+        <p className="text-muted-foreground">
+          Rekap laporan rincian menu dan anggaran
+        </p>
       </div>
 
       <div className="mt-8 flex flex-col">

@@ -3,9 +3,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function AdminProfileSkeleton() {
   return (
     <div className="flex flex-col gap-6 pb-10">
-      <div className="space-y-2 pt-2">
-        <Skeleton className="h-9 w-52" />
-        <Skeleton className="h-4 w-40" />
+      <div className="flex flex-col gap-1 pt-2">
+        <h1 className="font-bold text-3xl text-foreground">Profil Pengguna</h1>
+        <p className="font-medium text-muted-foreground text-sm">
+          Profil Pengguna Admin
+        </p>
       </div>
 
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1.5fr_1fr]">
@@ -56,9 +58,10 @@ export function AdminProfileSkeleton() {
         </div>
       </div>
 
-      <div className="flex justify-center">
-        <Skeleton className="h-4 w-full max-w-[420px]" />
-      </div>
+      <p className="text-center text-muted-foreground text-sm">
+        Halaman ini masih bersifat baca-saja sampai kontrak pembaruan profil
+        admin tersedia.
+      </p>
     </div>
   );
 }

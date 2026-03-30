@@ -3,9 +3,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function AdminDashboardSkeleton() {
   return (
     <div className="mx-auto flex w-full flex-col gap-8">
-      <div className="space-y-3">
-        <Skeleton className="h-9 w-[280px]" />
-        <Skeleton className="h-5 w-full max-w-[560px]" />
+      <div>
+        <h1 className="font-bold text-3xl tracking-tight">
+          Panel Monitoring Pusat
+        </h1>
+        <p className="mt-2 text-muted-foreground">
+          Pantau real-time transparansi gizi dan realisasi anggaran publik
+        </p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

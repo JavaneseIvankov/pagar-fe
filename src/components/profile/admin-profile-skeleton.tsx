@@ -10,7 +10,7 @@ export function AdminProfileSkeleton() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1.5fr_1fr]">
+      <div className="grid grid-cols-1 items-start gap-6 bg-card lg:grid-cols-[1.5fr_1fr]">
         <div className="rounded-2xl border border-border/60 p-6">
           <div className="mb-6 flex items-center gap-3">
             <Skeleton className="h-8 w-8 rounded-full" />
@@ -36,7 +36,7 @@ export function AdminProfileSkeleton() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border/60 p-6">
+        <div className="rounded-2xl border border-border/60 bg-card p-6">
           <div className="mb-6 flex items-center gap-3">
             <Skeleton className="h-8 w-8 rounded-full" />
             <Skeleton className="h-6 w-28" />

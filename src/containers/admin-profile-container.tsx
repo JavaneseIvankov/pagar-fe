@@ -2,14 +2,16 @@
 
 import { AdminAccessDetailsCard } from "@/components/profile/admin-access-details-card";
 import { AdminAccountSettingsCard } from "@/components/profile/admin-account-settings-card";
+import { AdminProfileSkeleton } from "@/components/profile/admin-profile-skeleton";
 import { useCurrentAdminProfile } from "@/hooks/use-current-profile";
 import { mapAdminAccessDetailToUi } from "@/lib/ui-mappers";
 
+// TASK: implement mutation flow
 export function AdminProfileContainer() {
   const { data: currentProfile, isError, isLoading } = useCurrentAdminProfile();
 
   if (isLoading) {
-    return <div className="py-8 text-muted-foreground">Memuat profil...</div>;
+    return <AdminProfileSkeleton />;
   }
 
   if (isError || !currentProfile) {

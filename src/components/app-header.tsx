@@ -44,8 +44,8 @@ export function AppHeader({ session }: { session: TAuthSession | null }) {
   const pathname = usePathname();
   const router = useRouter();
   const [, startTransition] = useTransition();
-  const showBrandAndSearch = SEARCH_ENABLED_ROUTES.some((route) =>
-    pathname.startsWith(route),
+  const showBrandAndSearch = SEARCH_ENABLED_ROUTES.some(
+    (route) => pathname === route.trim(),
   );
   const canCreateReport =
     !session ||
@@ -65,7 +65,7 @@ export function AppHeader({ session }: { session: TAuthSession | null }) {
 
   return (
     <header className="sticky top-0 z-30 w-full border-border/60 border-b bg-card backdrop-blur">
-      <div className="container flex flex-col gap-3 py-3 sm:min-h-18 sm:flex-row sm:items-center sm:gap-4">
+      <div className="container flex flex-col gap-5 py-3 sm:min-h-18 sm:flex-row sm:items-center sm:gap-4">
         <div className="flex items-center gap-3 sm:shrink-0">
           <AppLogo className="block h-12 sm:hidden md:block" variant="full" />
           <AppLogo
@@ -154,7 +154,7 @@ function HeaderActions({
           <Link
             className={buttonVariants({
               variant: "ghost",
-              className: cn(navButtonClassName, "px-4"),
+              className: cn(navButtonClassName, "mr-2 px-4"),
             })}
             href={"/auth/masuk"}
           >

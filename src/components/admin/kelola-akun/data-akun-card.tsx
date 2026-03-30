@@ -1,5 +1,6 @@
 "use client";
 
+import { DataAkunCardSkeleton } from "@/components/admin/kelola-akun/data-akun-card-skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -58,9 +59,7 @@ export function DataAkunCard({
 
       <CardContent className="flex flex-1 flex-col p-6 pt-2">
         {isLoading ? (
-          <div className="flex min-h-[240px] items-center justify-center rounded-xl border border-border/70 border-dashed bg-muted/20 px-6 text-muted-foreground text-sm">
-            Memuat data akun aktif...
-          </div>
+          <DataAkunCardSkeleton />
         ) : isError ? (
           <div className="flex min-h-[240px] items-center justify-center rounded-xl border border-destructive/30 border-dashed bg-destructive/5 px-6 text-destructive text-sm">
             Gagal memuat data akun aktif.

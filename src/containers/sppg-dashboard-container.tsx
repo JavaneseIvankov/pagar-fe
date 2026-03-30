@@ -3,6 +3,7 @@
 import { PublicReportsList } from "@/components/dashboard/public-reports-list";
 import { ReportHistoryTable } from "@/components/dashboard/report-history-table";
 import { SummaryCard } from "@/components/dashboard/summary-card";
+import { SppgDashboardSkeleton } from "@/components/dashboard/sppg-dashboard-skeleton";
 import {
   CheckCircleIcon,
   HeartIcon,
@@ -68,9 +69,7 @@ export function SppgDashboardContainer() {
   const { data, isLoading, isError } = useSppgDashboard();
 
   if (isLoading) {
-    return (
-      <div className="py-8 text-muted-foreground">Memuat dashboard SPPG...</div>
-    );
+    return <SppgDashboardSkeleton />;
   }
 
   if (isError || !data) {

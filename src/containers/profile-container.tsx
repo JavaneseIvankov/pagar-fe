@@ -5,6 +5,7 @@ import {
   PublicProfileForm,
   type PublicProfileFormValues,
 } from "@/components/profile/public-profile-form";
+import { ProfileFormSkeleton } from "@/components/profile/profile-form-skeleton";
 import {
   SchoolProfileForm,
   type SchoolProfileFormValues,
@@ -15,7 +16,7 @@ export function ProfileContainer() {
   const { data: currentUser, isLoading, isError } = useCurrentProfile();
 
   if (isLoading) {
-    return <div className="py-8 text-muted-foreground">Memuat profil...</div>;
+    return <ProfileFormSkeleton />;
   }
 
   if (isError || !currentUser) {

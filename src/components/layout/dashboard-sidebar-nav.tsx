@@ -21,38 +21,45 @@ const sidebarItems = [
     title: "Dashboard",
     href: "/dashboard/sppg",
     icon: DashboardIcon,
+    prefetch: true,
   },
   {
     title: "Manajemen Laporan",
     href: "/dashboard/sppg/manajemen-laporan",
     icon: ForkAndSpoonIcon,
+    prefetch: true,
   },
   {
     title: "Laporan Periodik",
     href: "/dashboard/sppg/laporan-periodik",
     icon: ReportIcon,
+    prefetch: "auto",
   },
   {
     title: "Profil",
     href: "/dashboard/sppg/profil",
     icon: PersonCircleIcon,
+    prefetch: true,
   },
   {
     title: "Dashboard",
     href: "/dashboard/admin",
     icon: DashboardIcon,
+    prefetch: true,
   },
   {
     title: "Kelola Akun",
     href: "/dashboard/admin/kelola-akun",
     icon: PersonIcon,
+    prefetch: "auto",
   },
   {
     title: "Profil Pengguna",
     href: "/dashboard/admin/profil",
     icon: PersonCircleIcon,
+    prefetch: true,
   },
-];
+] as const;
 
 const visibleNavItems = (pathname: string) => {
   const segment = pathname.split("/")[2]; // "sppg" | "admin"
@@ -79,7 +86,11 @@ export function DashboardSidebarNav() {
                 tooltip={item.title}
                 className="h-11 rounded-lg px-4 font-bold transition-colors hover:bg-muted/50 data-[active=true]:bg-transparent data-[active=true]:font-black data-[active=true]:text-primary"
               >
-                <Link href={item.href} className="flex items-center gap-3">
+                <Link
+                  href={item.href}
+                  className="flex items-center gap-3"
+                  prefetch={item.prefetch}
+                >
                   <item.icon />
                   <span
                     className={cn("group-data-[collapsible=icon]:opacity-0")}

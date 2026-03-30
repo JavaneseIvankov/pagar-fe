@@ -1,12 +1,17 @@
+"use client";
+
 import { Search01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import Link from "next/link";
 import { AppLogo } from "@/components/app-logo";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import "@/app/globals.css";
 
 export default function NotFound() {
+  const router = useRouter();
+
   return (
-    <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 text-center">
+    <div className="flex min-h-[60dvh] flex-col items-center justify-center px-4 text-center">
       <div className="mb-8">
         <AppLogo className="h-12 w-auto" />
       </div>
@@ -26,9 +31,22 @@ export default function NotFound() {
         dipindahkan.
       </p>
 
-      <Button asChild size="lg">
-        <Link href="/">Kembali ke Beranda</Link>
-      </Button>
+      <div className="flex gap-4">
+        <button
+          type="button"
+          className={buttonVariants({ size: "lg" })}
+          onClick={() => router.back()}
+        >
+          Kembali
+        </button>
+
+        <a
+          className={buttonVariants({ size: "lg", variant: "outline" })}
+          href="/"
+        >
+          Kembali ke Beranda
+        </a>
+      </div>
     </div>
   );
 }

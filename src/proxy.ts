@@ -5,6 +5,7 @@ import {
   getAuthenticatedLandingPath,
   parseAuthSessionCookieValue,
 } from "@/lib/auth";
+import { buildReturnToPath, LOGIN_RETURN_TO_PARAM } from "@/lib/auth/redirects";
 
 function isProtectedPath(pathname: string) {
   return (
@@ -16,6 +17,15 @@ function isProtectedPath(pathname: string) {
 
 function isAuthPath(pathname: string) {
   return pathname.startsWith("/auth");
+}
+
+function createLoginRedirectUrl(request: NextRequest) {
+  const loginUrl = new URL("/auth/masuk", request.url);
+  loginUrl.searchParams.set(
+    LOGIN_RETURN_TO_PARAM,
+    buildReturnToPath(request.nextUrl.pathname, request.nextUrl.search),
+  );
+  return loginUrl;
 }
 
 export function proxy(request: NextRequest) {
@@ -35,9 +45,13 @@ export function proxy(request: NextRequest) {
   if (pathname === "/dashboard") {
     const destination = session
       ? getAuthenticatedLandingPath(session.user.role)
-      : "/auth/masuk";
+      : createLoginRedirectUrl(request);
 
-    return NextResponse.redirect(new URL(destination, request.url));
+    return NextResponse.redirect(
+      typeof destination === "string"
+        ? new URL(destination, request.url)
+        : destination,
+    );
   }
 
   if (isAuthPath(pathname) && session) {
@@ -47,7 +61,7 @@ export function proxy(request: NextRequest) {
   }
 
   if (!session && isProtectedPath(pathname)) {
-    return NextResponse.redirect(new URL("/auth/masuk", request.url));
+    return NextResponse.redirect(createLoginRedirectUrl(request));
   }
 
   if (

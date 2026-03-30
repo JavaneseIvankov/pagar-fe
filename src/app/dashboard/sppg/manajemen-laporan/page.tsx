@@ -2,7 +2,7 @@ import { SppgCreateReportContainer } from "@/containers/sppg-create-report-conta
 
 export default function CreateReportPage() {
   return (
-    <div className="flex flex-col gap-8 p-8">
+    <div className="flex flex-col gap-8">
       {/* Header */}
       <div>
         <h1 className="font-bold text-3xl tracking-tight">

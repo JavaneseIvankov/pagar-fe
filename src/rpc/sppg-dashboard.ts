@@ -1,14 +1,11 @@
-import { delayedValue } from "@/lib/utils";
-import {
-  getSppgDashboardSuccessResponseSchema,
-  mapSppgDashboardDtoToDomain,
-  type TSppgDashboard,
-} from "@/types";
-import { buildSppgDashboardResponse } from "./mock-backend";
+"use server";
+
+import { mapSppgDashboardDtoToDomain, type TSppgDashboard } from "@/types";
+import { createServerApiClient } from "./server-api-client";
 
 export async function fetchSppgDashboard(): Promise<TSppgDashboard> {
-  const rawData = await delayedValue(buildSppgDashboardResponse(), 300);
-  const dto = getSppgDashboardSuccessResponseSchema.parse(rawData);
+  const client = createServerApiClient();
+  const dto = await client.getSppgDashboard();
 
   return mapSppgDashboardDtoToDomain(dto.data);
 }

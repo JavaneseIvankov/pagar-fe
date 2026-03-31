@@ -1,6 +1,5 @@
 // TODO: perform security analysis
 
-export type { AuthActionResult } from "./actions";
 export { loginAction, logoutAction, registerAction } from "./actions";
 export {
   AUTH_SESSION_COOKIE_NAME,

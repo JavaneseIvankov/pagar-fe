@@ -1,6 +1,6 @@
 import { delayedValue } from "@/lib/utils";
+import { getSppgPeriodicReportsSuccessResponseSchema } from "@/lib/api/dto";
 import {
-  getSppgPeriodicReportsSuccessResponseSchema,
   mapPeriodicReportsDtoToDomain,
   type TSppgPeriodicReport,
 } from "@/types";

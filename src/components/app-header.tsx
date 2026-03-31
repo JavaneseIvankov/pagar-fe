@@ -6,7 +6,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { logoutAction } from "@/lib/auth";
+import { logoutUser } from "@/rpc";
 import type { TAuthSession, TRole } from "@/types";
 import { AppLogo } from "./app-logo";
 import ProfileButton from "./profile/profile-button";
@@ -54,7 +54,7 @@ export function AppHeader({ session }: { session: TAuthSession | null }) {
 
   const handleLogout = () => {
     startTransition(async () => {
-      await logoutAction();
+      await logoutUser();
       router.replace("/auth/masuk");
       router.refresh();
     });

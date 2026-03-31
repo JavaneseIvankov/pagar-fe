@@ -1,99 +1,26 @@
 "use server";
 
-import { cookies } from "next/headers";
 import {
-  AUTH_SESSION_COOKIE_NAME,
-  AUTH_SESSION_MAX_AGE_SECONDS,
-  serializeAuthSessionCookie,
-} from "@/lib/auth/cookie";
-import { loginUser, registerUser } from "@/rpc/auth";
-import type { TRole } from "@/types";
-import { getAuthenticatedLandingPath } from "./navigation";
-import { getSafeReturnToPath } from "./redirects";
-
-type AuthActionErrorResult = {
-  message: string;
-  status: "error";
-};
-
-type AuthActionSuccessResult = {
-  message: string;
-  redirectTo: string;
-  status: "success";
-};
-
-export type AuthActionResult = AuthActionErrorResult | AuthActionSuccessResult;
-
-function getSessionCookieOptions(maxAge: number) {
-  return {
-    httpOnly: true,
-    maxAge,
-    path: "/",
-    sameSite: "lax" as const,
-    secure: process.env.NODE_ENV === "production",
-  };
-}
+  loginUser,
+  logoutUser,
+  registerUser,
+  type AuthActionResult,
+} from "@/rpc/auth";
 
 export async function loginAction(input: {
   password: string;
   returnTo?: string;
   username: string;
 }): Promise<AuthActionResult> {
-  try {
-    const safeReturnTo = getSafeReturnToPath(input.returnTo);
-    const session = await loginUser({
-      password: input.password,
-      username: input.username,
-    });
-    const cookieStore = await cookies();
-
-    cookieStore.set(
-      AUTH_SESSION_COOKIE_NAME,
-      serializeAuthSessionCookie(session),
-      getSessionCookieOptions(AUTH_SESSION_MAX_AGE_SECONDS),
-    );
-
-    return {
-      status: "success",
-      message: "Berhasil masuk ke akun Anda.",
-      redirectTo:
-        safeReturnTo ?? getAuthenticatedLandingPath(session.user.role),
-    };
-  } catch (error) {
-    return {
-      status: "error",
-      message:
-        error instanceof Error ? error.message : "Gagal masuk ke akun Anda.",
-    };
-  }
+  return loginUser(input);
 }
 
-export async function registerAction(input: {
-  bgnCode?: string;
-  password: string;
-  registrationCode?: string;
-  role: TRole;
-  username: string;
-}): Promise<AuthActionResult> {
-  try {
-    const result = await registerUser(input);
-
-    return {
-      status: "success",
-      message: result.message,
-      redirectTo: "/auth/masuk",
-    };
-  } catch (error) {
-    return {
-      status: "error",
-      message:
-        error instanceof Error ? error.message : "Gagal mendaftarkan akun.",
-    };
-  }
+export async function registerAction(
+  input: Parameters<typeof registerUser>[0],
+): Promise<AuthActionResult> {
+  return registerUser(input);
 }
 
 export async function logoutAction() {
-  const cookieStore = await cookies();
-
-  cookieStore.set(AUTH_SESSION_COOKIE_NAME, "", getSessionCookieOptions(0));
+  await logoutUser();
 }

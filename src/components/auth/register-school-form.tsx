@@ -7,7 +7,6 @@ import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod/v3";
-import { registerAction } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -17,6 +16,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
+import { registerUser } from "@/rpc";
 
 const registerSchema = z
   .object({
@@ -24,10 +24,14 @@ const registerSchema = z
       .string()
       .min(3, "Username minimal 3 karakter")
       .max(16, "Username maksimal 16 karakter"),
+    email: z.string().email("Email tidak valid"),
+    namaSekolah: z.string().min(1, "Nama sekolah wajib diisi"),
+    alamatSekolah: z.string().min(1, "Alamat sekolah wajib diisi"),
     kodeRegistrasi: z
       .string()
-      .min(3, "Kode registrasi minimal 3 karakter")
-      .max(16, "Kode registrasi maksimal 16 karakter"),
+      .max(32, "Kode registrasi maksimal 32 karakter")
+      .optional()
+      .or(z.literal("")),
     kataSandi: z
       .string()
       .min(8, "Kata sandi minimal 8 karakter")
@@ -55,6 +59,9 @@ export function RegisterSchoolForm() {
     resolver: zodResolver(registerSchema),
     defaultValues: {
       username: "",
+      email: "",
+      namaSekolah: "",
+      alamatSekolah: "",
       kodeRegistrasi: "",
       kataSandi: "",
       ulangiKataSandi: "",
@@ -63,11 +70,14 @@ export function RegisterSchoolForm() {
 
   const onSubmit = (data: RegisterFormValues) => {
     startTransition(async () => {
-      const result = await registerAction({
-        username: data.username,
+      const result = await registerUser({
+        email: data.email,
         password: data.kataSandi,
+        registrationCode: data.kodeRegistrasi || undefined,
         role: "SCHOOL",
-        registrationCode: data.kodeRegistrasi,
+        schoolAddress: data.alamatSekolah,
+        schoolName: data.namaSekolah,
+        username: data.username,
       });
 
       if (result.status === "error") {
@@ -100,8 +110,51 @@ export function RegisterSchoolForm() {
           )}
         </Field>
 
+        <Field data-invalid={!!errors.email}>
+          <FieldLabel htmlFor="email">Email</FieldLabel>
+          <Input
+            id="email"
+            type="email"
+            placeholder="sekolah@email.com"
+            {...register("email")}
+            aria-invalid={!!errors.email}
+            disabled={isPending}
+          />
+          {errors.email && <FieldError>{errors.email.message}</FieldError>}
+        </Field>
+
+        <Field data-invalid={!!errors.namaSekolah}>
+          <FieldLabel htmlFor="namaSekolah">Nama Sekolah</FieldLabel>
+          <Input
+            id="namaSekolah"
+            placeholder="Masukkan nama sekolah"
+            {...register("namaSekolah")}
+            aria-invalid={!!errors.namaSekolah}
+            disabled={isPending}
+          />
+          {errors.namaSekolah && (
+            <FieldError>{errors.namaSekolah.message}</FieldError>
+          )}
+        </Field>
+
+        <Field data-invalid={!!errors.alamatSekolah}>
+          <FieldLabel htmlFor="alamatSekolah">Alamat Sekolah</FieldLabel>
+          <Input
+            id="alamatSekolah"
+            placeholder="Masukkan alamat sekolah"
+            {...register("alamatSekolah")}
+            aria-invalid={!!errors.alamatSekolah}
+            disabled={isPending}
+          />
+          {errors.alamatSekolah && (
+            <FieldError>{errors.alamatSekolah.message}</FieldError>
+          )}
+        </Field>
+
         <Field data-invalid={!!errors.kodeRegistrasi}>
-          <FieldLabel htmlFor="kodeRegistrasi">Kode Registrasi</FieldLabel>
+          <FieldLabel htmlFor="kodeRegistrasi">
+            Kode Registrasi (Opsional)
+          </FieldLabel>
           <Input
             id="kodeRegistrasi"
             placeholder="Masukkan kode registrasi"

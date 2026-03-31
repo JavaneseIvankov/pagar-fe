@@ -22,7 +22,7 @@ import type {
   getSppgPeriodicReportsSuccessResponseSchema,
   updateAccountStatusBodySchema,
   updateAccountStatusSuccessResponseSchema,
-} from "@/types/dto";
+} from "@/lib/api/dto";
 
 type PublicDashboardSppgReportsResponse = z.infer<
   typeof getPublicDashboardSppgReportsSuccessResponseSchema
@@ -87,6 +87,14 @@ function createUserUuid(index: number) {
   return `00000000-0000-4000-8000-${String(index).padStart(12, "0")}`;
 }
 
+function createEntityUuid(index: number) {
+  return `10000000-0000-4000-8000-${String(index).padStart(12, "0")}`;
+}
+
+function asEntityUuid(value: number | string) {
+  return typeof value === "string" ? value : createEntityUuid(value);
+}
+
 function toDateOnly(date: Date) {
   return date.toISOString().slice(0, 10);
 }
@@ -96,15 +104,21 @@ function toIsoDate(date: Date) {
 }
 
 function createActiveAccountRecord(params: {
+  bgnCode?: string | null;
   createdAt: string;
+  email?: string;
   id: number;
+  registrationCode?: string | null;
   role: ActiveAccountRecord["role"];
   username: string;
 }): ActiveAccountRecord {
   return {
     id_user: createUserUuid(params.id),
     username: params.username,
+    email: params.email ?? `${params.username}@pagar.app`,
     role: params.role,
+    registration_code: params.registrationCode ?? null,
+    bgn_code: params.bgnCode ?? null,
     createdAt: params.createdAt,
   } satisfies ActiveAccountRecord;
 }
@@ -112,6 +126,7 @@ function createActiveAccountRecord(params: {
 function createPendingAccountRecord(params: {
   bgnCode: string | null;
   createdAt: string;
+  email?: string;
   id: number;
   registrationCode: string | null;
   role: PendingAccountRecord["role"];
@@ -120,6 +135,7 @@ function createPendingAccountRecord(params: {
   return {
     id_user: createUserUuid(params.id),
     username: params.username,
+    email: params.email ?? `${params.username}@pagar.app`,
     role: params.role,
     registration_code: params.registrationCode,
     bgn_code: params.bgnCode,
@@ -180,16 +196,16 @@ let mockPendingAccounts = [...initialPendingAccounts];
 
 function createAttachmentRecord(params: {
   id: number;
-  entityId: number;
+  entityId: number | string;
   url: string;
   fileType: string | null;
   category: string | null;
   createdAt: string;
 }): AttachmentRecord {
   return {
-    id_attachment: params.id,
+    id_attachment: createEntityUuid(params.id),
     entity_type: "daily_report",
-    id_entity: params.entityId,
+    id_entity: asEntityUuid(params.entityId),
     file_url: params.url,
     file_type: params.fileType,
     file_size: null,
@@ -201,17 +217,16 @@ function createAttachmentRecord(params: {
 
 function createBudgetRecord(params: {
   id: number;
-  reportId: number;
+  reportId: number | string;
   itemName: string;
   itemPrice: number;
   createdAt: string;
 }): BudgetRecord {
   return {
-    id_budget: params.id,
-    id_daily_report: params.reportId,
+    id_budget: createEntityUuid(params.id),
+    id_daily_report: asEntityUuid(params.reportId),
     item_name: params.itemName,
     item_price: params.itemPrice,
-    total_price: params.itemPrice,
     createdAt: params.createdAt,
     updatedAt: params.createdAt,
   } satisfies BudgetRecord;
@@ -222,13 +237,14 @@ function createDailyReportRecord(
   index: number,
 ): DailyReportRecord {
   return {
-    id_daily_report: index + 1,
-    id_sppg: index + 1,
-    date_report: toIsoDate(report.postedAt),
+    id_daily_report: createEntityUuid(index + 1),
+    id_sppg: createEntityUuid(index + 101),
+    date_report: toDateOnly(report.postedAt),
     menu_name: report.title,
     meal_time: report.mealTime,
     total_portion: 1500,
     menu_description: report.content,
+    total_expense: budgets[index]?.totalPrice ?? 0,
     energy: report.nutritionalFacts.calories.inKcal,
     protein: report.nutritionalFacts.proteinGrams.inGrams,
     fat: report.nutritionalFacts.fatGrams.inGrams,
@@ -263,8 +279,8 @@ export function buildPublicDashboardReviewsResponse(): PublicDashboardReviewResp
     status: "success" as const,
     data: publicReviews.map((review, index) => {
       return {
-        id_review: index + 1,
-        id_sppg: index + 1,
+        id_review: createEntityUuid(index + 201),
+        id_sppg: createEntityUuid(index + 101),
         id_school: null,
         id_user: createUserUuid(index + 100),
         is_anonymous: true,
@@ -294,20 +310,21 @@ export function buildPublicDashboardReviewsResponse(): PublicDashboardReviewResp
 export function buildSppgDailyReportByIdResponse(
   id: string,
 ): SppgDailyReportByIdResponse | null {
-  const report = sppgReportDetails.find(
-    (_item, index) => String(index + 1) === id,
-  );
+  const reportIndex = sppgReportDetails.findIndex((_item, index) => {
+    return createEntityUuid(index + 1) === id;
+  });
+  const report = reportIndex >= 0 ? sppgReportDetails[reportIndex] : null;
 
   if (!report) {
     return null;
   }
 
-  const reportId = Number(id);
+  const reportId = id;
 
   return {
     status: "success" as const,
     data: {
-      ...createDailyReportRecord(report, reportId - 1),
+      ...createDailyReportRecord(report, reportIndex),
       budgets: report.budget.items.map((item, index) =>
         createBudgetRecord({
           id: index + 1,
@@ -334,7 +351,6 @@ export function buildSppgDailyReportByIdResponse(
 export function buildSppgDashboardResponse(): SppgDashboardResponse {
   return {
     status: "success" as const,
-    message: "OK",
     data: {
       sppg_name: sppgs[0].sppgName,
       widgets: {
@@ -347,16 +363,16 @@ export function buildSppgDashboardResponse(): SppgDashboardResponse {
       } satisfies SppgDashboardWidgets,
       riwayat_laporan: sppgReports.map((report, index) => {
         return {
-          id_daily_report: index + 1,
+          id_daily_report: createEntityUuid(index + 1),
           menu_name: report.title,
           date_report: toDateOnly(report.postedAt),
         } satisfies SppgDashboardHistoryItem;
       }),
       laporan_masyarakat: publicReviews.map((review, index) => {
         return {
-          id_review: index + 1,
-          id_sppg: index + 1,
-          id_school: index + 1,
+          id_review: createEntityUuid(index + 301),
+          id_sppg: createEntityUuid(index + 101),
+          id_school: createEntityUuid(index + 401),
           id_user: createUserUuid(index + 100),
           is_anonymous: true,
           title: review.title,
@@ -392,8 +408,8 @@ export function buildAdminDashboardResponse(): AdminDashboardResponse {
       },
       recent_complaints: [
         {
-          id_review: 1,
-          id_sppg: 1,
+          id_review: createEntityUuid(501),
+          id_sppg: createEntityUuid(101),
           id_school: null,
           id_user: createUserUuid(201),
           is_anonymous: false,
@@ -403,14 +419,14 @@ export function buildAdminDashboardResponse(): AdminDashboardResponse {
           status_review: "MENUNGGU" as const,
           createdAt: "2026-03-20T08:00:00.000Z",
           updatedAt: "2026-03-20T08:00:00.000Z",
-          reviewer: {
+          user: {
             username: "Rasya Fariz",
           },
         } satisfies AdminComplaintItem,
         {
-          id_review: 2,
-          id_sppg: 2,
-          id_school: 1,
+          id_review: createEntityUuid(502),
+          id_sppg: createEntityUuid(102),
+          id_school: createEntityUuid(401),
           id_user: createUserUuid(202),
           is_anonymous: false,
           title: "Nasi keras & kurang banyak",
@@ -419,13 +435,13 @@ export function buildAdminDashboardResponse(): AdminDashboardResponse {
           status_review: "INVESTIGASI" as const,
           createdAt: "2026-03-21T08:00:00.000Z",
           updatedAt: "2026-03-21T08:00:00.000Z",
-          reviewer: {
+          user: {
             username: "SDN 01 Malang",
           },
         } satisfies AdminComplaintItem,
         {
-          id_review: 3,
-          id_sppg: 1,
+          id_review: createEntityUuid(503),
+          id_sppg: createEntityUuid(101),
           id_school: null,
           id_user: createUserUuid(203),
           is_anonymous: false,
@@ -435,7 +451,7 @@ export function buildAdminDashboardResponse(): AdminDashboardResponse {
           status_review: "SELESAI" as const,
           createdAt: "2026-03-22T08:00:00.000Z",
           updatedAt: "2026-03-22T08:00:00.000Z",
-          reviewer: {
+          user: {
             username: "Jule",
           },
         } satisfies AdminComplaintItem,
@@ -454,6 +470,9 @@ export function buildAdminDashboardResponse(): AdminDashboardResponse {
 export function buildActiveAccountsResponse(): ActiveAccountsResponse {
   return {
     status: "success" as const,
+    totalItems: mockActiveAccounts.length,
+    totalPages: 1,
+    currentPage: 1,
     data: mockActiveAccounts.map((account) => ({ ...account })),
   } satisfies ActiveAccountsResponse;
 }
@@ -461,6 +480,9 @@ export function buildActiveAccountsResponse(): ActiveAccountsResponse {
 export function buildPendingAccountsResponse(): PendingAccountsResponse {
   return {
     status: "success" as const,
+    totalItems: mockPendingAccounts.length,
+    totalPages: 1,
+    currentPage: 1,
     data: mockPendingAccounts.map((account) => ({ ...account })),
   } satisfies PendingAccountsResponse;
 }
@@ -486,7 +508,10 @@ export function updateMockAccountStatus(params: {
       createActiveAccountRecord({
         id: Number(params.idUser.slice(-12)),
         username: pendingAccount.username,
+        email: pendingAccount.email,
         role: pendingAccount.role,
+        registrationCode: pendingAccount.registration_code,
+        bgnCode: pendingAccount.bgn_code,
         createdAt: pendingAccount.createdAt,
       }),
       ...mockActiveAccounts,
@@ -518,13 +543,14 @@ export function buildSppgPeriodicReportsResponse(): SppgPeriodicReportsResponse 
       ),
       reports: sppgPeriodicReports.map((report, index) => {
         return {
-          id_daily_report: index + 1,
-          id_sppg: 1,
+          id_daily_report: createEntityUuid(index + 601),
+          id_sppg: createEntityUuid(101),
           date_report: `2024-${String(report.monthIndex + 1).padStart(2, "0")}-01`,
           menu_name: `Rekap ${report.periode}`,
           meal_time: "Makan Siang",
           total_portion: report.totalMeal,
           menu_description: `Ringkasan laporan ${report.periode}`,
+          total_expense: report.totalBudget,
           energy: 0,
           protein: 0,
           fat: 0,
@@ -580,7 +606,7 @@ export function buildSchoolProfileResponse(): SchoolProfileResponse {
   return {
     status: "success" as const,
     data: {
-      id_school: 1,
+      id_school: createEntityUuid(701),
       id_user: createUserUuid(301),
       school_name: schools[0].schoolName,
       school_address: schools[0].address,

@@ -4,7 +4,7 @@ export {
   updateAdminAccountStatus,
 } from "./admin-accounts";
 export { fetchAdminDashboard } from "./admin-dashboard";
-export { loginUser, registerUser } from "./auth";
+export { loginUser, logoutUser, registerUser } from "./auth";
 export { fetchSppgPeriodicReports } from "./periodic-reports";
 export {
   fetchCurrentAdminProfile,

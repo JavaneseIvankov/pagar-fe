@@ -1,27 +1,19 @@
-import { delayedValue } from "@/lib/utils";
+"use server";
+
 import {
-  getActiveAccountsSuccessResponseSchema,
-  getPendingAccountsSuccessResponseSchema,
   mapActiveAccountDtoToDomain,
   mapPendingAccountDtoToDomain,
-  updateAccountStatusBodySchema,
-  updateAccountStatusParamsSchema,
-  updateAccountStatusSuccessResponseSchema,
   type TAdminAccountDecision,
   type TAdminActiveAccount,
   type TAdminPendingAccount,
 } from "@/types";
-import {
-  buildActiveAccountsResponse,
-  buildPendingAccountsResponse,
-  updateMockAccountStatus,
-} from "./mock-backend";
+import { createServerApiClient } from "./server-api-client";
 
 export async function fetchAdminActiveAccounts(): Promise<
   TAdminActiveAccount[]
 > {
-  const rawData = await delayedValue(buildActiveAccountsResponse(), 300);
-  const dto = getActiveAccountsSuccessResponseSchema.parse(rawData);
+  const client = createServerApiClient();
+  const dto = await client.getActiveAccounts();
 
   return dto.data.map(mapActiveAccountDtoToDomain);
 }
@@ -29,8 +21,8 @@ export async function fetchAdminActiveAccounts(): Promise<
 export async function fetchAdminPendingAccounts(): Promise<
   TAdminPendingAccount[]
 > {
-  const rawData = await delayedValue(buildPendingAccountsResponse(), 300);
-  const dto = getPendingAccountsSuccessResponseSchema.parse(rawData);
+  const client = createServerApiClient();
+  const dto = await client.getPendingAccounts();
 
   return dto.data.map(mapPendingAccountDtoToDomain);
 }
@@ -39,21 +31,18 @@ export async function updateAdminAccountStatus(params: {
   idUser: string;
   status: TAdminAccountDecision;
 }) {
-  const parsedParams = updateAccountStatusParamsSchema.parse({
-    id_user: params.idUser,
-  });
-  const parsedBody = updateAccountStatusBodySchema.parse({
-    status: params.status,
-  });
-
-  await delayedValue(null, 300);
-
-  const rawData = updateMockAccountStatus({
-    idUser: parsedParams.id_user,
-    status: parsedBody.status,
+  const client = createServerApiClient();
+  const dto = await client.updateAccountStatus({
+    params: {
+      id_user: params.idUser,
+    },
+    body: {
+      status: params.status,
+    },
   });
 
-  const dto = updateAccountStatusSuccessResponseSchema.parse(rawData);
-
-  return dto;
+  return {
+    accountStatus: dto.data.account_status,
+    id: dto.data.id_user,
+  };
 }

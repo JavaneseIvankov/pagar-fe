@@ -13,7 +13,6 @@ export type TAuthSession = {
 };
 
 export type TAuthRegistrationResult = {
-  accountStatus: TAccountStatus;
   message: string;
   user: TUser;
 };

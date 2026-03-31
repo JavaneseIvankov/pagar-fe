@@ -7,7 +7,6 @@ import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod/v3";
-import { registerAction } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -17,6 +16,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
+import { registerUser } from "@/rpc";
 
 const registerSchema = z
   .object({
@@ -24,6 +24,7 @@ const registerSchema = z
       .string()
       .min(3, "Username minimal 3 karakter")
       .max(16, "Username maksimal 16 karakter"),
+    email: z.string().email("Email tidak valid"),
     kataSandi: z
       .string()
       .min(8, "Kata sandi minimal 8 karakter")
@@ -51,6 +52,7 @@ export function RegisterPublicForm() {
     resolver: zodResolver(registerSchema),
     defaultValues: {
       username: "",
+      email: "",
       kataSandi: "",
       ulangiKataSandi: "",
     },
@@ -58,10 +60,11 @@ export function RegisterPublicForm() {
 
   const onSubmit = (data: RegisterFormValues) => {
     startTransition(async () => {
-      const result = await registerAction({
-        username: data.username,
+      const result = await registerUser({
+        email: data.email,
         password: data.kataSandi,
         role: "PUBLIC",
+        username: data.username,
       });
 
       if (result.status === "error") {
@@ -92,6 +95,19 @@ export function RegisterPublicForm() {
           {errors.username && (
             <FieldError>{errors.username.message}</FieldError>
           )}
+        </Field>
+
+        <Field data-invalid={!!errors.email}>
+          <FieldLabel htmlFor="email">Email</FieldLabel>
+          <Input
+            id="email"
+            type="email"
+            placeholder="nama@email.com"
+            {...register("email")}
+            aria-invalid={!!errors.email}
+            disabled={isPending}
+          />
+          {errors.email && <FieldError>{errors.email.message}</FieldError>}
         </Field>
 
         <Field data-invalid={!!errors.kataSandi}>

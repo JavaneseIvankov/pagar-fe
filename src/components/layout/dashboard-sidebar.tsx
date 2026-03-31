@@ -4,7 +4,6 @@ import { Logout01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { logoutAction } from "@/lib/auth";
 import {
   Sidebar,
   SidebarContent,
@@ -13,6 +12,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
+import { logoutUser } from "@/rpc";
 import type { TAuthSession, TRole } from "@/types";
 import { DashboardAppLogo } from "../dashboard/dashboard-app-logo";
 import { DashboardSidebarNav } from "./dashboard-sidebar-nav";
@@ -40,7 +40,7 @@ export function DashboardSidebar({
 
   const handleLogout = () => {
     startTransition(async () => {
-      await logoutAction();
+      await logoutUser();
       router.replace("/auth/masuk");
       router.refresh();
     });

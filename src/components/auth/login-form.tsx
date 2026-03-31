@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod/v3";
 import { InfoCircleIcon } from "@/components/exported-icons";
-import { loginAction } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -16,9 +15,9 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
+import { loginUser } from "@/rpc";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -52,7 +51,7 @@ export function LoginForm({
 
   const onSubmit = (data: LoginFormValues) => {
     startTransition(async () => {
-      const result = await loginAction({
+      const result = await loginUser({
         ...data,
         returnTo: returnTo ?? undefined,
       });

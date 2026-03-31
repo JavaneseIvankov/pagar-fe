@@ -1,14 +1,11 @@
-import { delayedValue } from "@/lib/utils";
-import {
-  getAdminDashboardSuccessResponseSchema,
-  mapAdminDashboardDtoToDomain,
-  type TAdminDashboard,
-} from "@/types";
-import { buildAdminDashboardResponse } from "./mock-backend";
+"use server";
+
+import { mapAdminDashboardDtoToDomain, type TAdminDashboard } from "@/types";
+import { createServerApiClient } from "./server-api-client";
 
 export async function fetchAdminDashboard(): Promise<TAdminDashboard> {
-  const rawData = await delayedValue(buildAdminDashboardResponse(), 300);
-  const dto = getAdminDashboardSuccessResponseSchema.parse(rawData);
+  const client = createServerApiClient();
+  const dto = await client.getDashboard();
 
   return mapAdminDashboardDtoToDomain(dto.data);
 }

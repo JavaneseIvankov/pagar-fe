@@ -1,16 +1,17 @@
 import type { z } from "zod/v3";
 import type {
+  loginSuccessResponseSchema,
+  registerPublicSuccessResponseSchema,
+  registerSchoolSuccessResponseSchema,
+  registerSppgSuccessResponseSchema,
+} from "@/lib/api/dto";
+import type {
   getAdminDashboardSuccessResponseSchema,
   getActiveAccountsSuccessResponseSchema,
-  loginSuccessResponseSchema,
-  getPublicDashboardReviewsSuccessResponseSchema,
-  getPublicDashboardSppgReportsSuccessResponseSchema,
   getPendingAccountsSuccessResponseSchema,
-  registerSuccessResponseSchema,
-  getSppgDailyReportByIdSuccessResponseSchema,
-  getSppgDashboardSuccessResponseSchema,
   getSppgPeriodicReportsSuccessResponseSchema,
-} from "@/types/dto";
+  getSppgDashboardSuccessResponseSchema,
+} from "@/lib/api/dto";
 import type {
   TAdminActiveAccount,
   TAdminPendingAccount,
@@ -32,15 +33,67 @@ import type {
   TSppgStatistics,
 } from "./ui";
 
-type PublicDashboardReviewItem = z.infer<
-  typeof getPublicDashboardReviewsSuccessResponseSchema
->["data"][number];
-type PublicDashboardReportItem = z.infer<
-  typeof getPublicDashboardSppgReportsSuccessResponseSchema
->["data"][number];
-type SppgDailyReportDetailItem = z.infer<
-  typeof getSppgDailyReportByIdSuccessResponseSchema
->["data"];
+type PublicDashboardReviewItem = {
+  attachments?: Array<{
+    file_url: string;
+  }>;
+  author_name?: string;
+  createdAt?: string;
+  description: string | null;
+  display_author: string;
+  id_review: number | string;
+  id_sppg: null | number | string;
+  location_name?: string;
+  rating_score: number | null;
+  sppg?: {
+    sppg_name: string;
+  } | null;
+  title: string | null;
+  updatedAt?: string;
+};
+type PublicDashboardReportItem = {
+  attachments?: Array<{
+    file_url: string;
+  }>;
+  carbohydrate: number | null;
+  date_report: string;
+  energy: number | null;
+  fat: number | null;
+  id_daily_report: number | string;
+  id_sppg: number | string;
+  meal_time: string | null;
+  menu_description: null | string;
+  menu_name: string;
+  protein: number | null;
+  sppg: {
+    sppg_address: string | null;
+    sppg_name: string;
+  };
+};
+type SppgDailyReportDetailItem = {
+  attachments?: Array<{
+    entity_type: string;
+    file_category: string | null;
+    file_type: string | null;
+    file_url: string;
+    id_attachment: number | string;
+  }>;
+  budgets?: Array<{
+    id_budget: number | string;
+    item_name: string;
+    item_price: number | string;
+  }>;
+  carbohydrate: number | null;
+  date_report: string;
+  energy: number | null;
+  fat: number | null;
+  id_daily_report: number | string;
+  id_sppg: number | string;
+  meal_time: string | null;
+  menu_description: null | string;
+  menu_name: string;
+  protein: number | null;
+};
 type SppgDashboardResponse = z.infer<
   typeof getSppgDashboardSuccessResponseSchema
 >["data"];
@@ -57,7 +110,10 @@ type PendingAccountsResponse = z.infer<
 type PeriodicReportsResponse = z.infer<
   typeof getSppgPeriodicReportsSuccessResponseSchema
 >["data"];
-type RegisterResponse = z.infer<typeof registerSuccessResponseSchema>;
+type RegisterResponse =
+  | z.infer<typeof registerPublicSuccessResponseSchema>
+  | z.infer<typeof registerSchoolSuccessResponseSchema>
+  | z.infer<typeof registerSppgSuccessResponseSchema>;
 
 const DEFAULT_ATTACHMENT_URL = "https://placehold.co/1200x800?text=No+Image";
 const DEFAULT_VENDOR_ADDRESS = "Alamat vendor belum tersedia";
@@ -102,31 +158,34 @@ function createNutritionalFacts(values: {
 }
 
 function createSppgAuthor(values: {
-  id: number;
-  userId: string;
+  id: number | string;
   username?: string;
   name: string;
   address?: string | null;
 }): TSppg {
+  const id = String(values.id);
+
   return {
-    id: values.userId,
+    id,
     role: "SPPG",
-    username: values.username ?? `sppg-${values.id}`,
-    sppgId: String(values.id),
+    username: values.username ?? values.name.toLowerCase().replace(/\s+/g, "-"),
+    sppgId: id,
     sppgName: values.name,
     address: values.address ?? DEFAULT_VENDOR_ADDRESS,
   };
 }
 
 function createReviewTarget(values: {
-  id: number | null;
+  id: null | number | string;
   name?: string | null;
   username?: string;
 }) {
+  const id = values.id === null ? "" : String(values.id);
+
   return {
-    id: String(values.id ?? 0),
-    username: values.username ?? `sppg-${values.id ?? 0}`,
-    sppgId: String(values.id ?? 0),
+    id,
+    username: values.username ?? values.name ?? "sppg",
+    sppgId: id,
     sppgName: values.name ?? "SPPG",
   };
 }
@@ -160,7 +219,6 @@ export function mapPublicDashboardSppgReportDtoToDomain(
     title: dto.menu_name,
     author: createSppgAuthor({
       id: dto.id_sppg,
-      userId: `00000000-0000-4000-8000-${String(dto.id_sppg).padStart(12, "0")}`,
       name: dto.sppg.sppg_name,
       address: dto.sppg.sppg_address,
     }),
@@ -186,7 +244,6 @@ export function mapSppgDailyReportDetailDtoToDomain(
     title: dto.menu_name,
     author: createSppgAuthor({
       id: dto.id_sppg,
-      userId: `00000000-0000-4000-8000-${String(dto.id_sppg).padStart(12, "0")}`,
       name: "SPPG",
     }),
     mealTime: dto.meal_time ?? "Makan Siang",
@@ -229,7 +286,7 @@ export function mapSppgDailyReportDetailDtoToDomain(
 }
 
 function mapDashboardRecentReportDtoToDomain(dto: {
-  id_daily_report: number;
+  id_daily_report: number | string;
   menu_name: string;
   date_report: string;
 }): TSppgReportSummary {
@@ -316,7 +373,6 @@ export function mapRegisterDtoToDomain(
 ): TAuthRegistrationResult {
   return {
     message: dto.message,
-    accountStatus: dto.data.account_status,
     user: {
       id: dto.data.id_user,
       role: dto.data.role,
@@ -340,7 +396,7 @@ export function mapAdminDashboardDtoToDomain(
   const complaints: TAdminComplaint[] = dto.recent_complaints.map(
     (complaint) => ({
       id: String(complaint.id_review),
-      authorName: complaint.reviewer?.username ?? "Anonim",
+      authorName: complaint.user?.username ?? "Anonim",
       title: complaint.title ?? "Keluhan",
       vendorName: complaint.id_sppg ? `SPPG ${complaint.id_sppg}` : "Vendor",
       imageUrl: DEFAULT_ATTACHMENT_URL,

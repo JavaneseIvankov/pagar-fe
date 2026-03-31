@@ -8,6 +8,7 @@ import type {
 import type {
   getAdminDashboardSuccessResponseSchema,
   getActiveAccountsSuccessResponseSchema,
+  getSchoolProfileSuccessResponseSchema,
   getPendingAccountsSuccessResponseSchema,
   getSppgPeriodicReportsSuccessResponseSchema,
   getSppgProfileSuccessResponseSchema,
@@ -25,6 +26,7 @@ import type {
   TAdminVendorWarning,
   TBudget,
   TPublicReview,
+  TSchoolProfile,
   TSppg,
   TSppgDashboard,
   TSppgProfile,
@@ -111,6 +113,9 @@ type PendingAccountsResponse = z.infer<
 >["data"][number];
 type PeriodicReportsResponse = z.infer<
   typeof getSppgPeriodicReportsSuccessResponseSchema
+>["data"];
+type SchoolProfileResponse = z.infer<
+  typeof getSchoolProfileSuccessResponseSchema
 >["data"];
 type SppgProfileResponse = z.infer<
   typeof getSppgProfileSuccessResponseSchema
@@ -355,6 +360,27 @@ export function mapSppgProfileDtoToDomain(
     location: address,
     registrationCode: dto.user.bgn_code ?? "-",
     accountStatus: dto.user.account_status,
+  };
+}
+
+// FIXME: fixate, this email fallback based on username is hacky
+
+export function mapSchoolProfileDtoToDomain(
+  dto: SchoolProfileResponse,
+  options: {
+    email?: string;
+    username: string;
+  },
+): TSchoolProfile {
+  return {
+    id: dto.id_user,
+    role: "SCHOOL",
+    username: options.username,
+    schoolId: dto.id_school,
+    schoolName: dto.school_name,
+    address: dto.school_address ?? "",
+    displayName: dto.school_name,
+    email: options.email ?? `${options.username}@pagar.app`,
   };
 }
 

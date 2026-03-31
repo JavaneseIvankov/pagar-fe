@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import type { TUser } from "@/types";
+import type { TPublicProfile } from "@/types";
 import { createPasswordSchema } from "./profile-schema";
 
 const publicProfileFormSchema = z
@@ -27,7 +27,7 @@ const publicProfileFormSchema = z
 export type PublicProfileFormValues = z.infer<typeof publicProfileFormSchema>;
 
 export interface PublicProfileFormProps {
-  initialData: TUser;
+  initialData: TPublicProfile;
   onSubmit: (data: PublicProfileFormValues) => void;
 }
 

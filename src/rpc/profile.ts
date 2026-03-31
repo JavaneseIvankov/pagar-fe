@@ -1,9 +1,15 @@
 "use server";
 
+import { cookies } from "next/headers";
 import z from "zod/v3";
-import { admins, publicUsers, schools } from "@/mock-data";
+import {
+  AUTH_SESSION_COOKIE_NAME,
+  parseAuthSessionCookieValue,
+} from "@/lib/auth";
+import { admins, publicUsers } from "@/mock-data";
 import { delayedValue } from "@/lib/utils";
 import {
+  mapSchoolProfileDtoToDomain,
   mapSppgProfileDtoToDomain,
   type TAdminProfile,
   type TCurrentProfile,
@@ -63,24 +69,7 @@ const currentAdminProfileSchema = z.object({
 type CurrentProfileMock = z.infer<typeof currentProfileSchema>;
 type CurrentAdminProfileMock = z.infer<typeof currentAdminProfileSchema>;
 
-const currentPublicProfileRole: CurrentProfileMock["role"] = "PUBLIC";
-
-function buildCurrentProfileMock(): CurrentProfileMock {
-  if (currentPublicProfileRole === "SCHOOL") {
-    const school = schools[0];
-
-    return {
-      role: "SCHOOL",
-      id: school?.id ?? "user-school-001",
-      username: school?.username ?? "school-1",
-      schoolId: school?.schoolId ?? "SCH-MLG-001",
-      schoolName: school?.schoolName ?? "Sekolah",
-      address: school?.address ?? "",
-      displayName: school?.schoolName ?? "Sekolah",
-      email: "sekolah@pagar.app",
-    };
-  }
-
+function buildCurrentPublicProfileMock(): CurrentProfileMock {
   const publicUser = publicUsers[0];
 
   return {
@@ -90,6 +79,14 @@ function buildCurrentProfileMock(): CurrentProfileMock {
     displayName: "Pengguna Publik",
     email: "warga@pagar.app",
   };
+}
+
+async function getCurrentSession() {
+  const cookieStore = await cookies();
+
+  return parseAuthSessionCookieValue(
+    cookieStore.get(AUTH_SESSION_COOKIE_NAME)?.value,
+  );
 }
 
 function buildCurrentAdminProfileMock(): CurrentAdminProfileMock {
@@ -119,9 +116,30 @@ function buildCurrentAdminProfileMock(): CurrentAdminProfileMock {
 }
 
 export async function fetchCurrentProfile(): Promise<TCurrentProfile> {
-  const rawData = await delayedValue(buildCurrentProfileMock(), 300);
+  const session = await getCurrentSession();
 
-  return currentProfileSchema.parse(rawData);
+  if (session?.user.role === "SCHOOL") {
+    const client = createServerApiClient();
+    const dto = await client.getSchoolProfile();
+
+    return currentProfileSchema.parse(
+      mapSchoolProfileDtoToDomain(dto.data, {
+        username: session.user.username,
+      }),
+    );
+  }
+
+  if (session?.user.role === "PUBLIC") {
+    const rawData = await delayedValue(buildCurrentPublicProfileMock(), 300);
+
+    return currentProfileSchema.parse(rawData);
+  }
+
+  if (!session) {
+    throw new Error("Sesi profil tidak ditemukan.");
+  }
+
+  throw new Error("Profil saat ini hanya tersedia untuk publik dan sekolah.");
 }
 
 export async function fetchCurrentSppgProfile(): Promise<TSppgProfile> {

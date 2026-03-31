@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import type { TSchool } from "@/types";
+import type { TSchoolProfile } from "@/types";
 import { createPasswordSchema } from "./profile-schema";
 
 const schoolProfileFormSchema = z
@@ -29,7 +29,7 @@ const schoolProfileFormSchema = z
 export type SchoolProfileFormValues = z.infer<typeof schoolProfileFormSchema>;
 
 export interface SchoolProfileFormProps {
-  initialData: TSchool;
+  initialData: TSchoolProfile;
   onSubmit: (data: SchoolProfileFormValues) => void;
 }
 

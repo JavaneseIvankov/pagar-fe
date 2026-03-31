@@ -1,6 +1,6 @@
 # Codebase Drift Remediation Tasks
 
-This document tracks the original drift backlog and its current status after the RPC/types/container migration pass and the latest DTO rewrite in `src/types/dto/index.ts`.
+This document tracks the original drift backlog and its current status after the RPC/types/container migration pass and the contract-client migration work under `src/lib/api/*`.
 
 ## API Contract Integration Plan
 
@@ -24,20 +24,26 @@ Key architecture decisions:
 - no extra `server-actions/*` adapter layer will be introduced unless later performance/debugging pressure justifies it
 
 What this means in practice:
-- contract drift should now be resolved against `src/lib/api/dto.ts`, not against `src/types/dto/index.ts`
-- existing `src/types/dto/index.ts` consumers are migration targets and should be phased over to `src/lib/api/*`
+- contract drift must now be resolved against `src/lib/api/dto.ts`, not against `src/types/dto/index.ts`
+- `src/types/dto/index.ts` should be removed so stale imports fail loudly and are fixed immediately
+- any existing `src/types/dto/index.ts` consumers are migration bugs, not acceptable compatibility shims
 - current mock-backed RPC modules are now transitional infrastructure, not target architecture
+- the shared API client should be instantiated once and reused; auth stays request-scoped through dynamic token resolution, not per-request client construction
+- barrel import conventions should be restored after the contract cutover so the codebase does not drift into ad hoc deep imports
 
 ## Contract Migration Batches
 
 ### Integration Batch A
 - establish shared RPC server-action conventions over `src/lib/api/*`
+- remove `src/types/dto/index.ts` and fix all resulting stale imports
 - centralize backend base URL and auth-token injection for the contract client
+- convert the contract client helper to a shared instance rather than per-request construction
 - decide and document how `ApiClientError` is normalized for hooks/UI consumers
 
 ### Integration Batch B
 - fix auth by moving `src/rpc/auth.ts` onto the contract client
 - update auth forms/actions to the role-specific registration contract exposed by `src/lib/api/api-contract.ts`
+- restore barrel-based imports where they remain semantically correct
 - restore build-green status
 
 ### Integration Batch C
@@ -57,7 +63,7 @@ What this means in practice:
 - run final verification and close out the drift backlog
 
 Current state snapshot:
-- DTO schemas remain centralized in `src/types/dto/index.ts`
+- `src/lib/api/dto.ts` is the intended contract source of truth
 - Domain models, mappers, and the `src/types` barrel remain in place
 - Reports, dashboards, periodic reports, and admin account management still flow through RPC modules instead of pages/containers reading mock data directly
 - Shared helpers remain under `src/lib/formatters/` and `src/lib/ui-mappers/`
@@ -69,15 +75,16 @@ Current state snapshot:
 - Those dashboard profile routes are now thin composition shells, and their containers already use explicit hooks plus presentational cards
 - The SPPG/admin dashboard profile surfaces are still intentionally read-only until realistic mutation contracts exist
 - The admin account-management route remains aligned with the RPC/domain/hook/container standard
-- `src/types/dto/index.ts` is backend-owned contract space and must not be changed for frontend-only mocks unless explicitly requested
+- `src/types/dto/index.ts` should no longer be treated as a valid compatibility layer; the correct end state is its removal
 - `pnpm lint` currently passes
-- `pnpm build` currently fails after the DTO rewrite because the auth boundary still expects removed generic register exports (`registerBodySchema`, `registerSuccessResponseSchema`, `registerErrorResponseSchema`) from `@/types`
-- The latest DTO rewrite introduced meaningful auth-boundary drift: registration is now split into role-specific schemas, error envelopes are richer, and downstream auth/forms/mappers are not yet aligned
+- the active migration risk is mixed-contract usage: some slices still reference old DTO imports while newer work already depends on `src/lib/api/*`
+- the active cleanup target is to make stale contract imports fail early, then repair them against `src/lib/api/*`
 
 The remaining work is no longer just profile-boundary polish. It is now split between:
 - migrating the app’s RPC boundary onto the new `src/lib/api/*` contract surface,
+- removing the old DTO source so the codebase cannot silently mix old and new backend contracts,
 - finishing the profile foundation and the remaining read-only profile slice tail, and
-- realigning the auth boundary with the new DTO contracts so the repository is build-green again
+- restoring consistent client construction and barrel-import conventions after the contract cutover
 
 ## Remaining Dependency Summary
 
@@ -95,11 +102,11 @@ T09, T14 (closed: no further action required)
 ## Recommended Execution Batches
 
 ### Batch 1
-- `T15` Establish the contract-client-backed RPC pattern and fix auth/register flows
+- `T15` Remove `src/types/dto/index.ts`, establish the contract-client-backed RPC pattern, and fix auth/register flows
 
 ### Batch 2
-- `T16` Migrate admin RPC slices onto `src/lib/api/*`
-- `T17` Migrate SPPG/report RPC slices onto `src/lib/api/*`
+- `T16` Migrate admin RPC slices onto `src/lib/api/*` and shared client usage
+- `T17` Migrate SPPG/report RPC slices onto `src/lib/api/*` and remove any remaining mixed DTO imports
 
 ### Batch 3
 - `T18` Reassess and migrate profile RPC slices where contract coverage is sufficient
@@ -181,7 +188,7 @@ T09, T14 (closed: no further action required)
 - Outcome:
   - `src/app/dashboard/admin/kelola-akun/page.tsx` remains a thin route shell
   - frontend-owned admin account domain types exist in `src/types/ui.ts`, with DTO-to-domain mapping in `src/types/mappers.ts`
-  - `src/rpc/admin-accounts.ts` and `src/hooks/use-admin-account-management.ts` provide the active-account list, pending-account list, and account-status update mutation using DTO contracts from `src/types/dto/index.ts`
+  - `src/rpc/admin-accounts.ts` and `src/hooks/use-admin-account-management.ts` provide the active-account list, pending-account list, and account-status update mutation through the RPC/domain boundary
   - `src/containers/admin-kelola-akun-container.tsx` consumes those hooks instead of inline arrays
   - `src/components/admin/kelola-akun/data-akun-card.tsx` and `src/components/admin/kelola-akun/validasi-akun-card.tsx` are presentational cards over domain data
 
@@ -244,6 +251,32 @@ T09, T14 (closed: no further action required)
 - Parallel Notes:
   - Foundational task for `T12` and `T13`
   - Should avoid editing SPPG/admin dashboard profile containers beyond shared contract touchpoints
+
+## `T15` Remove Old DTO Source and Stabilize the Contract Boundary
+- Status: In Progress
+- Goal: make `src/lib/api/*` the only valid backend contract source and force stale imports to fail early.
+- Current Gap:
+  - `src/types/dto/index.ts` still exists and makes mixed old/new contract imports possible
+  - some migrated code already uses `src/lib/api/dto.ts`, while other code still pulls schema types from the old DTO module
+  - the temporary contract client helper currently favors correctness over cleanliness by constructing client instances per call
+  - some recent edits bypassed barrel imports to make server-action boundaries explicit, which diverges from project convention
+- Deliverables:
+  - delete `src/types/dto/index.ts`
+  - fix all resulting compile failures by moving DTO/schema imports to `src/lib/api/dto.ts`
+  - ensure the app builds with no remaining old DTO references
+  - convert the API client helper to a shared instance with request-time auth token resolution
+  - restore barrel-based imports where they do not break the server/client boundary semantics
+- Write Scope:
+  - `src/types/*`
+  - `src/rpc/*`
+  - `src/lib/api/*`
+  - `src/lib/auth/*`
+  - hooks/components only where imports or call surfaces need to be normalized
+- Dependencies:
+  - None
+- Parallel Notes:
+  - must land before treating `T16` or `T17` as complete
+  - intentionally creates loud compile failures as part of the migration strategy
 
 ## `T12` Finalize SPPG Dashboard Profile Route
 - Status: Partial

@@ -29,7 +29,7 @@ export function SppgProfessionalInfoCard({
             htmlFor="registrationCode"
             className="font-semibold text-foreground"
           >
-            Kode Registrasi
+            Kode BGN / Registrasi
           </FieldLabel>
           <Input
             id="registrationCode"

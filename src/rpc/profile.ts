@@ -1,7 +1,15 @@
+"use server";
+
 import z from "zod/v3";
-import { admins, publicUsers, schools, sppgs } from "@/mock-data";
+import { admins, publicUsers, schools } from "@/mock-data";
 import { delayedValue } from "@/lib/utils";
-import type { TAdminProfile, TCurrentProfile, TSppgProfile } from "@/types";
+import {
+  mapSppgProfileDtoToDomain,
+  type TAdminProfile,
+  type TCurrentProfile,
+  type TSppgProfile,
+} from "@/types";
+import { createServerApiClient } from "./server-api-client";
 
 // TODO: Replace with actual API mock or call (once shape is established)
 const currentProfileSchema = z.discriminatedUnion("role", [
@@ -53,7 +61,6 @@ const currentAdminProfileSchema = z.object({
 });
 
 type CurrentProfileMock = z.infer<typeof currentProfileSchema>;
-type CurrentSppgProfileMock = z.infer<typeof currentSppgProfileSchema>;
 type CurrentAdminProfileMock = z.infer<typeof currentAdminProfileSchema>;
 
 const currentPublicProfileRole: CurrentProfileMock["role"] = "PUBLIC";
@@ -82,25 +89,6 @@ function buildCurrentProfileMock(): CurrentProfileMock {
     username: publicUser?.username ?? "pengguna",
     displayName: "Pengguna Publik",
     email: "warga@pagar.app",
-  };
-}
-
-function buildCurrentSppgProfileMock(): CurrentSppgProfileMock {
-  const sppg = sppgs[0];
-
-  return {
-    role: "SPPG",
-    id: sppg?.id ?? "user-sppg-001",
-    username: sppg?.username ?? "sppg-1",
-    sppgId: sppg?.sppgId ?? "SPPG-MLG-001",
-    sppgName: sppg?.sppgName ?? "SPPG",
-    address: sppg?.address ?? "",
-    description:
-      "Penyedia nutrisi presisi tersertifikasi untuk program kesehatan nasional dengan fokus pada transparansi rantai pasok.",
-    email: "sppg@pagar.app",
-    location: "Kota Malang, Kec. Kedungkandang",
-    registrationCode: "REG-SPPG-001",
-    accountStatus: "APPROVED",
   };
 }
 
@@ -137,9 +125,10 @@ export async function fetchCurrentProfile(): Promise<TCurrentProfile> {
 }
 
 export async function fetchCurrentSppgProfile(): Promise<TSppgProfile> {
-  const rawData = await delayedValue(buildCurrentSppgProfileMock(), 300);
+  const client = createServerApiClient();
+  const dto = await client.getSppgProfile();
 
-  return currentSppgProfileSchema.parse(rawData);
+  return currentSppgProfileSchema.parse(mapSppgProfileDtoToDomain(dto.data));
 }
 
 export async function fetchCurrentAdminProfile(): Promise<TAdminProfile> {

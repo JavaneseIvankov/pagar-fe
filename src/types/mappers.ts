@@ -10,6 +10,7 @@ import type {
   getActiveAccountsSuccessResponseSchema,
   getPendingAccountsSuccessResponseSchema,
   getSppgPeriodicReportsSuccessResponseSchema,
+  getSppgProfileSuccessResponseSchema,
   getSppgDashboardSuccessResponseSchema,
 } from "@/lib/api/dto";
 import type {
@@ -26,6 +27,7 @@ import type {
   TPublicReview,
   TSppg,
   TSppgDashboard,
+  TSppgProfile,
   TSppgPeriodicReport,
   TSppgReport,
   TSppgReportDetail,
@@ -109,6 +111,9 @@ type PendingAccountsResponse = z.infer<
 >["data"][number];
 type PeriodicReportsResponse = z.infer<
   typeof getSppgPeriodicReportsSuccessResponseSchema
+>["data"];
+type SppgProfileResponse = z.infer<
+  typeof getSppgProfileSuccessResponseSchema
 >["data"];
 type RegisterResponse =
   | z.infer<typeof registerPublicSuccessResponseSchema>
@@ -330,6 +335,26 @@ export function mapSppgDashboardDtoToDomain(
         location_name: review.school?.school_name ?? "Sekolah",
       }),
     ),
+  };
+}
+
+export function mapSppgProfileDtoToDomain(
+  dto: SppgProfileResponse,
+): TSppgProfile {
+  const address = dto.sppg_address ?? DEFAULT_VENDOR_ADDRESS;
+
+  return {
+    id: dto.id_user,
+    role: "SPPG",
+    username: dto.user.username,
+    sppgId: dto.id_sppg,
+    sppgName: dto.sppg_name,
+    address,
+    description: "Deskripsi profil belum tersedia.",
+    email: dto.user.email,
+    location: address,
+    registrationCode: dto.user.bgn_code ?? "-",
+    accountStatus: dto.user.account_status,
   };
 }
 

@@ -33,6 +33,13 @@ export function ProfileContainer() {
     toast.success("Profil pengguna berhasil diperbarui!");
   };
 
+  const footerNote =
+    currentUser.role === "SCHOOL"
+      ? "Data profil sekolah sudah memakai kontrak baca backend. Perubahannya masih placeholder sampai kontrak pembaruan sekolah dipakai penuh."
+      : currentUser.role === "PUBLIC"
+        ? "Data profil publik di halaman ini masih memakai fallback frontend karena kontrak baca profil publik belum tersedia. Perubahannya juga masih placeholder."
+        : null;
+
   const profileForm =
     currentUser.role === "SCHOOL" ? (
       <SchoolProfileForm
@@ -51,10 +58,11 @@ export function ProfileContainer() {
       {profileForm ? (
         <div className="flex w-full max-w-xl flex-col gap-3">
           {profileForm}
-          <p className="text-center text-muted-foreground text-sm">
-            Perubahan profil masih memakai alur placeholder sampai kontrak
-            pembaruan yang sesuai tersedia untuk tiap peran.
-          </p>
+          {footerNote ? (
+            <div className="rounded-xl border border-amber-200/70 bg-amber-50/80 px-4 py-3 text-amber-950 text-sm leading-relaxed">
+              {footerNote}
+            </div>
+          ) : null}
         </div>
       ) : (
         <div className="py-8 text-muted-foreground">

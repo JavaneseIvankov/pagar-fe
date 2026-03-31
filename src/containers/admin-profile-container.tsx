@@ -31,14 +31,20 @@ export function AdminProfileContainer() {
         </p>
       </div>
 
+      <div className="rounded-2xl border border-amber-200/70 bg-amber-50/80 px-4 py-3 text-amber-950 text-sm leading-relaxed">
+        Data profil admin di halaman ini masih memakai fallback frontend karena
+        kontrak baca profil admin belum tersedia. Halaman ini tetap baca-saja
+        sampai kontrak baca dan pembaruan admin sama-sama jelas.
+      </div>
+
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1.5fr_1fr]">
         <AdminAccountSettingsCard profile={currentProfile} />
         <AdminAccessDetailsCard accessDetails={accessDetails} />
       </div>
 
       <p className="text-center text-muted-foreground text-sm">
-        Halaman ini masih bersifat baca-saja sampai kontrak pembaruan profil
-        admin tersedia.
+        Halaman ini masih bersifat baca-saja sampai kontrak baca dan pembaruan
+        profil admin tersedia.
       </p>
     </div>
   );

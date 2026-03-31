@@ -2,11 +2,14 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/query-keys";
-import { fetchSppgPeriodicReports } from "@/rpc";
+import {
+  fetchSppgPeriodicReports,
+  type FetchSppgPeriodicReportsParams,
+} from "@/rpc";
 
-export function useSppgPeriodicReports() {
+export function useSppgPeriodicReports(params: FetchSppgPeriodicReportsParams) {
   return useQuery({
-    queryKey: queryKeys.periodicReports.list(),
-    queryFn: fetchSppgPeriodicReports,
+    queryKey: queryKeys.periodicReports.list(params),
+    queryFn: () => fetchSppgPeriodicReports(params),
   });
 }

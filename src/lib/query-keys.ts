@@ -17,7 +17,8 @@ export const queryKeys = {
     pending: () => ["admin-accounts", "pending"] as const,
   },
   periodicReports: {
-    list: () => ["periodic-reports", "list"] as const,
+    list: (params: { endDate: string; startDate: string }) =>
+      ["periodic-reports", "list", params.startDate, params.endDate] as const,
   },
   profile: {
     current: () => ["profile", "current"] as const,

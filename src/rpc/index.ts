@@ -5,7 +5,10 @@ export {
 } from "./admin-accounts";
 export { fetchAdminDashboard } from "./admin-dashboard";
 export { loginUser, logoutUser, registerUser } from "./auth";
-export { fetchSppgPeriodicReports } from "./periodic-reports";
+export {
+  fetchSppgPeriodicReports,
+  type FetchSppgPeriodicReportsParams,
+} from "./periodic-reports";
 export {
   fetchCurrentAdminProfile,
   fetchCurrentProfile,

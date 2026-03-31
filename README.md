@@ -36,13 +36,21 @@ There is currently no test runner configured.
 pnpm install
 ```
 
-2. Start the app:
+2. Create your local env file and set the backend base URL:
+
+```bash
+cp .env.example .env.local
+```
+
+Set `PAGAR_API_BASE_URL` in `.env.local` to your backend origin.
+
+3. Start the app:
 
 ```bash
 pnpm dev
 ```
 
-3. Open `http://localhost:3000`.
+4. Open `http://localhost:3000`.
 
 ## Current Route Behavior
 

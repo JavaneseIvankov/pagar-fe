@@ -76,10 +76,12 @@ export function AdminKelolaAkunContainer() {
     }
   };
 
+  // FIXME: fix header sytling
+
   return (
     <div className="flex h-full w-full flex-col pb-10">
       <div className="mb-6 flex flex-col gap-1">
-        <h1 className="font-bold text-2xl">Kelola Akun</h1>
+        <h1 className="font-bold text-h2">Kelola Akun</h1>
         <p className="text-foreground text-sm">
           Kelola akun pengguna platform PaGar
         </p>

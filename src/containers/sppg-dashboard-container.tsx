@@ -81,8 +81,10 @@ export function SppgDashboardContainer() {
   const summaryMetrics = mapSummaryMetrics(data.statistics);
   const currentDate = formatLongDate(new Date());
 
+  // FIXME: fix this text-sizing, use design system instead of absolute value
+
   return (
-    <div className="page-enter mx-auto flex flex-col gap-6 sm:gap-8">
+    <div className="page-enter flex flex-col gap-6 sm:gap-8">
       {/* Header */}
       <div className="max-w-3xl">
         <h2 className="text-balance font-bold text-2xl text-foreground tracking-tight sm:text-[28px] lg:text-[32px]">

@@ -41,6 +41,8 @@ interface PeriodicReportTableProps {
   yearOptions: readonly string[];
 }
 
+// FIXME: make the download actually downloads once the backend provide sufficient API for it.
+
 export function PeriodicReportTable({
   data,
   monthOptions,

@@ -3,7 +3,8 @@ import type { z } from "zod/v3";
 import { apiContract, type ApiContract } from "./api-contract";
 
 type AnySchema = z.ZodTypeAny;
-type EndpointName = keyof ApiContract;
+export type ApiEndpointName = keyof ApiContract;
+type EndpointName = ApiEndpointName;
 type EndpointDefinition<Name extends EndpointName> = ApiContract[Name];
 type MaybePromise<T> = T | Promise<T>;
 type SchemaInput<T> = T extends AnySchema ? z.input<T> : never;
@@ -14,6 +15,31 @@ type MultipartFiles = Record<
   string,
   MultipartFile | MultipartFile[] | null | undefined
 >;
+
+export interface ApiClientHeadersLike {
+  get(name: string): string | null;
+}
+
+export interface ApiClientResponseLike {
+  ok: boolean;
+  status: number;
+  headers: ApiClientHeadersLike;
+  text(): Promise<string>;
+}
+
+export type ApiClientHeaderRecord = Record<string, string>;
+
+export interface ApiClientFetchInit {
+  method: string;
+  headers?: ApiClientHeaderRecord;
+  body?: BodyInit;
+  signal?: AbortSignal;
+}
+
+export type ApiClientFetcher = (
+  input: string,
+  init: ApiClientFetchInit,
+) => MaybePromise<ApiClientResponseLike>;
 
 export type ApiClientRequest<Name extends EndpointName> = {
   params?: SchemaInput<EndpointDefinition<Name>["params"]>;
@@ -35,6 +61,55 @@ export type ApiClientErrorData<Name extends EndpointName> = SchemaOutput<
   EndpointDefinition<Name>["errorResponse"]
 >;
 
+export type ApiClientParsedRequest<Name extends EndpointName> = {
+  params: SchemaOutput<EndpointDefinition<Name>["params"]>;
+  query: SchemaOutput<EndpointDefinition<Name>["query"]>;
+} & (EndpointDefinition<Name> extends { body: infer Body extends AnySchema }
+  ? { body: SchemaOutput<Body> }
+  : { body?: undefined }) &
+  (EndpointDefinition<Name> extends { requestFormat: "multipart/form-data" }
+    ? { files?: MultipartFiles }
+    : { files?: undefined });
+
+export interface ApiClientRequestHookContext<
+  Name extends EndpointName = EndpointName,
+> {
+  endpoint: Name;
+  contract: ApiContract[Name];
+  request: ApiClientRequest<Name>;
+  parsed: ApiClientParsedRequest<Name>;
+  url: string;
+  headers: ApiClientHeaderRecord;
+  init: ApiClientFetchInit;
+}
+
+export interface ApiClientResponseHookContext<
+  Name extends EndpointName = EndpointName,
+> extends ApiClientRequestHookContext<Name> {
+  response: ApiClientResponseLike;
+  payload: unknown;
+}
+
+export interface ApiClientErrorHookContext<
+  Name extends EndpointName = EndpointName,
+> extends ApiClientRequestHookContext<Name> {
+  error: unknown;
+  response?: ApiClientResponseLike;
+  payload?: unknown;
+}
+
+export interface ApiClientHooks {
+  onRequest?<Name extends EndpointName>(
+    context: ApiClientRequestHookContext<Name>,
+  ): MaybePromise<void>;
+  onResponse?<Name extends EndpointName>(
+    context: ApiClientResponseHookContext<Name>,
+  ): MaybePromise<void>;
+  onError?<Name extends EndpointName>(
+    context: ApiClientErrorHookContext<Name>,
+  ): MaybePromise<void>;
+}
+
 export type ApiClientMethods = {
   [Name in EndpointName]: (
     request?: ApiClientRequest<Name>,
@@ -51,16 +126,17 @@ export type ApiClient = ApiClientMethods & {
 
 export interface CreateApiClientOptions {
   baseUrl: string;
-  fetch?: typeof fetch;
+  fetch?: ApiClientFetcher;
   getAuthToken?: () => MaybePromise<string | null | undefined>;
   getHeaders?: () => MaybePromise<HeadersInit | undefined>;
+  hooks?: ApiClientHooks;
 }
 
 export class ApiClientError<T = unknown> extends Error {
   readonly status: number;
   readonly data: T | undefined;
   readonly endpoint: EndpointName;
-  readonly response: Response;
+  readonly response: ApiClientResponseLike;
 
   constructor(
     message: string,
@@ -68,7 +144,7 @@ export class ApiClientError<T = unknown> extends Error {
       status: number;
       data: T | undefined;
       endpoint: EndpointName;
-      response: Response;
+      response: ApiClientResponseLike;
     },
   ) {
     super(message);
@@ -208,7 +284,7 @@ function createMultipartBody(
   return formData;
 }
 
-async function readResponsePayload(response: Response) {
+async function readResponsePayload(response: ApiClientResponseLike) {
   const text = await response.text();
 
   if (!text) {
@@ -241,6 +317,112 @@ function getErrorMessage(payload: unknown, status: number) {
   return `Request failed with status ${status}.`;
 }
 
+function createParsedRequest<Name extends EndpointName>(
+  endpoint: EndpointDefinition<Name>,
+  requestWithInternals: ApiClientRequest<Name> & {
+    body?: unknown;
+    files?: MultipartFiles;
+  },
+): ApiClientParsedRequest<Name> {
+  const params = endpoint.params.parse(requestWithInternals.params ?? {});
+  const query = endpoint.query.parse(requestWithInternals.query ?? {});
+  const body =
+    "body" in endpoint
+      ? endpoint.body.parse(requestWithInternals.body ?? {})
+      : undefined;
+
+  return {
+    params,
+    query,
+    ...(body !== undefined ? { body } : {}),
+    ...(endpoint.requestFormat === "multipart/form-data"
+      ? { files: requestWithInternals.files }
+      : {}),
+  } as ApiClientParsedRequest<Name>;
+}
+
+async function resolveHeaders<Name extends EndpointName>(
+  endpoint: EndpointDefinition<Name>,
+  request: ApiClientRequest<Name>,
+  options: CreateApiClientOptions,
+) {
+  const defaultHeaders = toHeaderRecord(await options.getHeaders?.());
+  const requestHeaders = toHeaderRecord(request.headers);
+  const mergedHeaders = { ...defaultHeaders, ...requestHeaders };
+
+  if ("headers" in endpoint) {
+    // Caller-supplied Authorization wins over default headers and token injection.
+    if (!mergedHeaders.authorization && options.getAuthToken) {
+      const token = await options.getAuthToken();
+
+      if (token) {
+        mergedHeaders.authorization = token.startsWith("Bearer ")
+          ? token
+          : `Bearer ${token}`;
+      }
+    }
+
+    endpoint.headers.parse(mergedHeaders);
+  }
+
+  return mergedHeaders;
+}
+
+function buildRequestUrl<Name extends EndpointName>(
+  baseUrl: string,
+  endpoint: EndpointDefinition<Name>,
+  params: ApiClientParsedRequest<Name>["params"],
+  query: ApiClientParsedRequest<Name>["query"],
+) {
+  const path = endpoint.buildPath(
+    params as Record<string, string | number | boolean>,
+  );
+  const url = new URL(`${baseUrl}${path}`);
+
+  for (const [key, value] of Object.entries(query)) {
+    appendQueryValue(url.searchParams, key, value);
+  }
+
+  return url.toString();
+}
+
+function buildRequestBody<Name extends EndpointName>(
+  endpoint: EndpointDefinition<Name>,
+  parsed: ApiClientParsedRequest<Name>,
+  headers: ApiClientHeaderRecord,
+) {
+  if (endpoint.requestFormat === "multipart/form-data") {
+    delete headers["content-type"];
+
+    return createMultipartBody(
+      ((parsed as { body?: Record<string, unknown> }).body ?? {}) as Record<
+        string,
+        unknown
+      >,
+      (parsed as { files?: MultipartFiles }).files,
+    );
+  }
+
+  if ("body" in endpoint) {
+    if (!headers["content-type"]) {
+      headers["content-type"] = "application/json";
+    }
+
+    return JSON.stringify((parsed as { body?: unknown }).body);
+  }
+
+  return undefined;
+}
+
+function normalizeHookHeaders<Name extends EndpointName>(
+  context: ApiClientRequestHookContext<Name>,
+) {
+  const headers = toHeaderRecord(context.init.headers);
+
+  context.headers = headers;
+  context.init.headers = headers;
+}
+
 export function createApiClient(options: CreateApiClientOptions): ApiClient {
   const baseUrl = normalizeBaseUrl(options.baseUrl);
   const fetchImpl = options.fetch ?? globalThis.fetch;
@@ -260,64 +442,61 @@ export function createApiClient(options: CreateApiClientOptions): ApiClient {
       body?: unknown;
       files?: MultipartFiles;
     };
-    const params = endpoint.params.parse(request.params ?? {});
-    const query = endpoint.query.parse(request.query ?? {});
-    const body =
-      "body" in endpoint
-        ? endpoint.body.parse(requestWithInternals.body ?? {})
-        : undefined;
+    const parsed = createParsedRequest(endpoint, requestWithInternals);
+    const headers = await resolveHeaders(endpoint, request, options);
+    const init: ApiClientFetchInit = {
+      method: endpoint.method.toUpperCase(),
+      headers,
+      body: buildRequestBody(endpoint, parsed, headers),
+      signal: request.signal,
+    };
+    const requestContext: ApiClientRequestHookContext<Name> = {
+      endpoint: name,
+      contract: endpoint,
+      request,
+      parsed,
+      url: buildRequestUrl(baseUrl, endpoint, parsed.params, parsed.query),
+      headers,
+      init,
+    };
 
-    const defaultHeaders = toHeaderRecord(await options.getHeaders?.());
-    const requestHeaders = toHeaderRecord(request.headers);
-    const mergedHeaders = { ...defaultHeaders, ...requestHeaders };
+    await options.hooks?.onRequest?.(requestContext);
+    normalizeHookHeaders(requestContext);
 
     if ("headers" in endpoint) {
-      // Caller-supplied Authorization wins over default headers and token injection.
-      if (!mergedHeaders.authorization && options.getAuthToken) {
-        const token = await options.getAuthToken();
-
-        if (token) {
-          mergedHeaders.authorization = token.startsWith("Bearer ")
-            ? token
-            : `Bearer ${token}`;
-        }
-      }
-
-      endpoint.headers.parse(mergedHeaders);
+      endpoint.headers.parse(requestContext.headers);
     }
 
-    const path = endpoint.buildPath(
-      params as Record<string, string | number | boolean>,
-    );
-    const url = new URL(`${baseUrl}${path}`);
+    let response: ApiClientResponseLike;
 
-    for (const [key, value] of Object.entries(query)) {
-      appendQueryValue(url.searchParams, key, value);
+    try {
+      response = await fetchImpl(requestContext.url, requestContext.init);
+    } catch (error) {
+      await options.hooks?.onError?.({
+        ...requestContext,
+        error,
+      });
+      throw error;
     }
 
-    let requestBody: BodyInit | undefined;
+    let payload: unknown;
 
-    if (endpoint.requestFormat === "multipart/form-data") {
-      requestBody = createMultipartBody(
-        (body ?? {}) as Record<string, unknown>,
-        requestWithInternals.files,
-      );
-      delete mergedHeaders["content-type"];
-    } else if ("body" in endpoint) {
-      requestBody = JSON.stringify(body);
-
-      if (!mergedHeaders["content-type"]) {
-        mergedHeaders["content-type"] = "application/json";
-      }
+    try {
+      payload = await readResponsePayload(response);
+    } catch (error) {
+      await options.hooks?.onError?.({
+        ...requestContext,
+        error,
+        response,
+      });
+      throw error;
     }
 
-    const response = await fetchImpl(url.toString(), {
-      method: endpoint.method.toUpperCase(),
-      headers: mergedHeaders,
-      body: requestBody,
-      signal: request.signal,
+    await options.hooks?.onResponse?.({
+      ...requestContext,
+      response,
+      payload,
     });
-    const payload = await readResponsePayload(response);
 
     if (response.ok) {
       return endpoint.successResponse.parse(payload) as ApiClientSuccess<Name>;
@@ -327,8 +506,7 @@ export function createApiClient(options: CreateApiClientOptions): ApiClient {
     const errorData = parsedError.success
       ? (parsedError.data as ApiClientErrorData<Name>)
       : (payload as ApiClientErrorData<Name> | undefined);
-
-    throw new ApiClientError<ApiClientErrorData<Name>>(
+    const error = new ApiClientError<ApiClientErrorData<Name>>(
       getErrorMessage(payload, response.status),
       {
         status: response.status,
@@ -337,6 +515,15 @@ export function createApiClient(options: CreateApiClientOptions): ApiClient {
         response,
       },
     );
+
+    await options.hooks?.onError?.({
+      ...requestContext,
+      error,
+      response,
+      payload,
+    });
+
+    throw error;
   }
 
   const methods = Object.fromEntries(

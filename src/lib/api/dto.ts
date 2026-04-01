@@ -1,20 +1,61 @@
 import { z } from "zod/v3";
 
-const dateOnlySchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+const isValidDateOnly = (value: string) => {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+
+  if (!match) {
+    return false;
+  }
+
+  const [, yearString, monthString, dayString] = match;
+  const year = Number(yearString);
+  const month = Number(monthString);
+  const day = Number(dayString);
+  const date = new Date(Date.UTC(year, month - 1, day));
+
+  return (
+    date.getUTCFullYear() === year &&
+    date.getUTCMonth() === month - 1 &&
+    date.getUTCDate() === day
+  );
+};
+
+const emptyStringToUndefined = (value: unknown) =>
+  typeof value === "string" && value.trim() === "" ? undefined : value;
+
+const dateOnlySchema = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/)
+  .refine(isValidDateOnly, {
+    message: "Invalid date",
+  });
 const uuidSchema = z.string().uuid();
 const numericStringSchema = z.string().regex(/^-?\d+$/);
 const moneyResponseSchema = z.union([z.number().int(), numericStringSchema]);
 const successStatusSchema = z.literal("success");
 const errorStatusSchema = z.literal("error");
 const timestampFields = {
-  createdAt: z.string().optional(),
-  updatedAt: z.string().optional(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
 };
 
 const successDataEnvelope = <T extends z.ZodTypeAny>(data: T) =>
   z.object({
     status: successStatusSchema,
     data,
+  });
+
+const successDataMetaEnvelope = <
+  T extends z.ZodTypeAny,
+  M extends z.ZodTypeAny,
+>(
+  data: T,
+  meta: M,
+) =>
+  z.object({
+    status: successStatusSchema,
+    data,
+    meta,
   });
 
 const paginatedSuccessDataEnvelope = <T extends z.ZodTypeAny>(data: T) =>
@@ -62,6 +103,14 @@ const reviewStatusSchema = z.enum(["MENUNGGU", "INVESTIGASI", "SELESAI"]);
 const schoolOrSppgRoleSchema = z.enum(["SPPG", "SCHOOL"]);
 const accountDecisionSchema = z.enum(["APPROVED", "REJECTED"]);
 const reviewRatingSchema = z.coerce.number().int().min(1).max(5);
+const requiredNumberInputSchema = z.preprocess(
+  emptyStringToUndefined,
+  z.coerce.number(),
+);
+const requiredPositiveIntInputSchema = z.preprocess(
+  emptyStringToUndefined,
+  z.coerce.number().int().positive(),
+);
 
 const attachmentEntitySchema = z.object({
   id_attachment: uuidSchema,
@@ -209,10 +258,15 @@ const attachmentUrlOnlySchema = z.object({
   file_url: z.string(),
 });
 
+const attachmentUrlWithTypeSchema = z.object({
+  file_url: z.string(),
+  file_type: z.string().nullable(),
+});
+
 const reviewRecordSchema = reviewEntitySchema.extend(timestampFields);
 const createReviewRecordSchema = reviewRecordSchema.extend({
-  id_school: uuidSchema.nullable().optional(),
-  is_anonymous: z.boolean().nullable().optional(),
+  id_school: uuidSchema.nullish(),
+  is_anonymous: z.boolean().nullish(),
   rating_score: z
     .union([z.number().int().min(1).max(5), numericStringSchema])
     .nullable(),
@@ -255,17 +309,17 @@ const adminSchoolItemSchema = schoolEntitySchema
   });
 
 const publicDashboardReviewItemSchema = reviewRecordSchema.extend({
-  school: schoolNameOnlySchema.nullable().optional(),
-  sppg: sppgNameOnlySchema.nullable().optional(),
-  attachments: z.array(attachmentUrlOnlySchema).optional(),
+  school: schoolNameOnlySchema.nullable(),
+  sppg: sppgNameOnlySchema.nullable(),
+  attachments: z.array(attachmentUrlOnlySchema),
   author_name: z.string(),
   display_author: z.string(),
   location_name: z.string(),
 });
 
 const schoolDashboardReviewItemSchema = reviewRecordSchema.extend({
-  school: schoolNameOnlySchema.nullable().optional(),
-  attachments: z.array(attachmentUrlOnlySchema).optional(),
+  school: schoolNameOnlySchema.nullable(),
+  attachments: z.array(attachmentUrlOnlySchema),
   author_name: z.string(),
   display_author: z.string(),
   school_name: z.string(),
@@ -277,19 +331,27 @@ const dailyReportWithSppgSchema = dailyReportRecordSchema.extend({
 
 const dailyReportWithBudgetAndAttachmentSchema = dailyReportRecordSchema.extend(
   {
-    budgets: z.array(budgetRecordSchema).optional(),
-    attachments: z.array(attachmentRecordSchema).optional(),
+    budgets: z.array(budgetRecordSchema),
+    attachments: z.array(attachmentRecordSchema),
   },
 );
 
 const dailyReportForDashboardSchema = dailyReportRecordSchema.extend({
   sppg: sppgNameAddressSchema,
-  attachments: z.array(attachmentUrlOnlySchema).optional(),
+  attachments: z.array(attachmentUrlOnlySchema),
+});
+
+const publicDailyReportDetailSchema = dailyReportRecordSchema.extend({
+  sppg: sppgNameAddressSchema,
+  attachments: z.array(attachmentUrlWithTypeSchema),
 });
 
 const budgetInputItemSchema = z.object({
   item_name: z.string().min(1),
-  item_price: z.coerce.number().int(),
+  item_price: z.coerce
+    .number()
+    .int()
+    .refine((value) => value !== 0),
 });
 
 const dailyReportBudgetsInputSchema = z.preprocess((value) => {
@@ -302,12 +364,25 @@ const dailyReportBudgetsInputSchema = z.preprocess((value) => {
   } catch {
     return value;
   }
-}, z.array(budgetInputItemSchema));
+}, z.array(budgetInputItemSchema).nonempty());
 
 const dashboardRecentReportSchema = z.object({
   id_daily_report: uuidSchema,
   menu_name: z.string(),
   date_report: dateOnlySchema,
+});
+
+const schoolPaginationMetaSchema = z.object({
+  totalItems: z.number().int(),
+  totalPages: z.number().int(),
+  currentPage: z.number().int(),
+  limit: z.number().int(),
+});
+
+const reportPaginationSchema = z.object({
+  totalItems: z.number().int(),
+  totalPages: z.number().int(),
+  currentPage: z.number().int(),
 });
 
 const sppgDashboardDataSchema = z.object({
@@ -321,8 +396,8 @@ const sppgDashboardDataSchema = z.object({
   riwayat_laporan: z.array(dashboardRecentReportSchema),
   laporan_masyarakat: z.array(
     reviewRecordSchema.extend({
-      school: schoolNameOnlySchema.nullable().optional(),
-      attachments: z.array(attachmentUrlOnlySchema).optional(),
+      school: schoolNameOnlySchema.nullable(),
+      attachments: z.array(attachmentUrlOnlySchema),
     }),
   ),
 });
@@ -336,11 +411,9 @@ const adminDashboardDataSchema = z.object({
   }),
   recent_complaints: z.array(
     reviewRecordSchema.extend({
-      user: z
-        .object({
-          username: z.string(),
-        })
-        .optional(),
+      user: z.object({
+        username: z.string(),
+      }),
     }),
   ),
   vendor_warnings: z.array(
@@ -357,11 +430,11 @@ const periodicReportsDataSchema = z.object({
     start_date: dateOnlySchema,
     end_date: dateOnlySchema,
   }),
-  total_reports: z.number().int(),
   total_budget_spent: z.number(),
+  pagination: reportPaginationSchema,
   reports: z.array(
     dailyReportRecordSchema.extend({
-      budgets: z.array(budgetRecordSchema).optional(),
+      budgets: z.array(budgetRecordSchema),
     }),
   ),
 });
@@ -377,6 +450,10 @@ export const jsonEndpointQuerySchema = emptyObjectSchema;
 export const paginatedListQuerySchema = z.object({
   page: z.coerce.number().int().positive().optional(),
   limit: z.coerce.number().int().positive().optional(),
+});
+export const schoolPaginatedListQuerySchema = z.object({
+  page: z.coerce.number().int().positive().optional(),
+  limit: z.coerce.number().int().min(1).max(100).optional(),
 });
 
 export const registerPublicBodySchema = z.object({
@@ -480,9 +557,9 @@ export const updateAccountStatusErrorResponseSchema = statusErrorResponseSchema;
 
 export const updateAdminProfileBodySchema = z.object({
   name: z.string().optional(),
-  username: z.string().optional(),
+  username: z.string().min(5).optional(),
   email: z.string().email().optional(),
-  password: z.string().min(1).optional(),
+  password: z.string().min(6).optional(),
 });
 
 export const updateAdminProfileSuccessResponseSchema =
@@ -502,7 +579,7 @@ export const getAdminDashboardSuccessResponseSchema = successDataEnvelope(
 export const getAdminDashboardErrorResponseSchema = statusErrorResponseSchema;
 
 export const updateReviewStatusParamsSchema = z.object({
-  id_review: uuidSchema,
+  id_review: z.string().min(1),
 });
 
 export const updateReviewStatusBodySchema = z.object({
@@ -520,9 +597,9 @@ export const getPublicSppgListErrorResponseSchema = messageOnlyErrorSchema;
 
 export const createPublicReviewBodySchema = z.object({
   id_sppg: uuidSchema,
-  title: z.string().optional(),
-  description: z.string().optional(),
-  rating_score: reviewRatingSchema.optional(),
+  title: z.string().min(1).max(255),
+  description: z.string().min(1),
+  rating_score: reviewRatingSchema,
 });
 
 export const createPublicReviewFilesSchema = attachmentsFilesSchema;
@@ -542,35 +619,47 @@ export const getPublicDashboardSppgReportsSuccessResponseSchema =
 export const getPublicDashboardSppgReportsErrorResponseSchema =
   messageOnlyErrorSchema;
 
+export const getDetailSppgReportParamsSchema = z.object({
+  id_daily_report: uuidSchema,
+});
+
+export const getDetailSppgReportSuccessResponseSchema = successDataEnvelope(
+  publicDailyReportDetailSchema,
+);
+export const getDetailSppgReportErrorResponseSchema = messageOnlyErrorSchema;
+
 export const getSchoolProfileSuccessResponseSchema = successDataEnvelope(
   schoolProfileDataSchema,
 );
 export const getSchoolProfileErrorResponseSchema = messageOnlyErrorSchema;
 
 export const updateSchoolProfileBodySchema = z.object({
-  school_name: z.string().optional(),
-  school_address: z.string().optional(),
+  school_name: z.string().min(1),
+  school_address: z.string().min(1),
 });
 
 export const updateSchoolProfileSuccessResponseSchema =
   successMessageDataEnvelope(schoolProfileDataSchema);
 export const updateSchoolProfileErrorResponseSchema = messageOnlyErrorSchema;
 
-export const getSchoolSppgListSuccessResponseSchema = successDataEnvelope(
+export const getSchoolSppgListSuccessResponseSchema = successDataMetaEnvelope(
   z.array(sppgListItemSchema),
+  schoolPaginationMetaSchema,
 );
 export const getSchoolSppgListErrorResponseSchema = messageOnlyErrorSchema;
 
-export const getSchoolDailyReportsSuccessResponseSchema = successDataEnvelope(
-  z.array(dailyReportWithSppgSchema),
-);
+export const getSchoolDailyReportsSuccessResponseSchema =
+  successDataMetaEnvelope(
+    z.array(dailyReportWithSppgSchema),
+    schoolPaginationMetaSchema,
+  );
 export const getSchoolDailyReportsErrorResponseSchema = messageOnlyErrorSchema;
 
 export const createSchoolReviewBodySchema = z.object({
   id_sppg: uuidSchema,
-  title: z.string().optional(),
-  description: z.string().optional(),
-  rating_score: reviewRatingSchema.optional(),
+  title: z.string().min(1).max(255),
+  description: z.string().min(1),
+  rating_score: reviewRatingSchema,
 });
 
 export const createSchoolReviewFilesSchema = attachmentsFilesSchema;
@@ -580,12 +669,18 @@ export const createSchoolReviewSuccessResponseSchema =
 export const createSchoolReviewErrorResponseSchema = messageOnlyErrorSchema;
 
 export const getSchoolDashboardReviewsSuccessResponseSchema =
-  successDataEnvelope(z.array(schoolDashboardReviewItemSchema));
+  successDataMetaEnvelope(
+    z.array(schoolDashboardReviewItemSchema),
+    schoolPaginationMetaSchema,
+  );
 export const getSchoolDashboardReviewsErrorResponseSchema =
   messageOnlyErrorSchema;
 
 export const getSchoolDashboardSppgReportsSuccessResponseSchema =
-  successDataEnvelope(z.array(dailyReportForDashboardSchema));
+  successDataMetaEnvelope(
+    z.array(dailyReportForDashboardSchema),
+    schoolPaginationMetaSchema,
+  );
 export const getSchoolDashboardSppgReportsErrorResponseSchema =
   messageOnlyErrorSchema;
 
@@ -609,20 +704,23 @@ export const getSppgDashboardSuccessResponseSchema = successDataEnvelope(
 export const getSppgDashboardErrorResponseSchema = statusErrorResponseSchema;
 
 export const getSppgDailyReportsSuccessResponseSchema = successDataEnvelope(
-  z.array(dailyReportWithBudgetAndAttachmentSchema),
+  z.object({
+    pagination: reportPaginationSchema,
+    reports: z.array(dailyReportWithBudgetAndAttachmentSchema),
+  }),
 );
 export const getSppgDailyReportsErrorResponseSchema = statusErrorResponseSchema;
 
 export const createSppgDailyReportBodySchema = z.object({
   date_report: dateOnlySchema,
   menu_name: z.string().min(1),
-  meal_time: z.string().optional(),
-  total_portion: z.coerce.number().int().optional(),
-  energy: z.coerce.number().optional(),
-  protein: z.coerce.number().optional(),
-  fat: z.coerce.number().optional(),
-  carbohydrate: z.coerce.number().optional(),
-  budgets: dailyReportBudgetsInputSchema.optional(),
+  meal_time: z.string().min(1),
+  total_portion: requiredPositiveIntInputSchema,
+  energy: requiredNumberInputSchema,
+  protein: requiredNumberInputSchema,
+  fat: requiredNumberInputSchema,
+  carbohydrate: requiredNumberInputSchema,
+  budgets: dailyReportBudgetsInputSchema,
 });
 
 export const createSppgDailyReportFilesSchema = attachmentsFilesSchema;
@@ -640,6 +738,8 @@ export const createSppgDailyReportErrorResponseSchema =
 export const getSppgPeriodicReportsQuerySchema = z.object({
   start_date: dateOnlySchema,
   end_date: dateOnlySchema,
+  page: z.coerce.number().int().positive().optional(),
+  limit: z.coerce.number().int().positive().optional(),
 });
 
 export const getSppgPeriodicReportsSuccessResponseSchema = successDataEnvelope(
@@ -649,7 +749,7 @@ export const getSppgPeriodicReportsErrorResponseSchema =
   statusErrorResponseSchema;
 
 export const getSppgDailyReportByIdParamsSchema = z.object({
-  id_report: uuidSchema,
+  id_daily_report: uuidSchema,
 });
 
 export const getSppgDailyReportByIdSuccessResponseSchema = successDataEnvelope(
@@ -659,7 +759,7 @@ export const getSppgDailyReportByIdErrorResponseSchema =
   statusErrorResponseSchema;
 
 export const updateSppgMonthlyBudgetBodySchema = z.object({
-  monthly_budget: z.coerce.number().int(),
+  monthly_budget: requiredNumberInputSchema,
 });
 
 export const updateSppgMonthlyBudgetSuccessResponseSchema =

@@ -23,7 +23,7 @@ import type { Variants } from "framer-motion";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { AppLogo } from "@/components/app-logo";
-import { buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 
 const STAGGER_CHILD: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -49,16 +49,16 @@ export default function LandingPage() {
     <div className="min-h-screen overflow-x-hidden bg-neutral-50 font-sans text-neutral-900 selection:bg-green-200 selection:text-green-900">
       {/* Navbar */}
       <header className="sticky top-0 z-50 w-full border-border/60 border-b bg-card/80 backdrop-blur-md">
-        <div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-          <div className="flex w-full items-center gap-8">
-            <Link
-              href="#beranda"
-              className="origin-left transition-transform duration-150 ease-out active:scale-95"
-            >
-              <AppLogo className="h-10" variant="full" />
-            </Link>
+        <div className="container mx-auto flex h-16 max-w-7xl items-center">
+          <Link
+            href="#beranda"
+            className="origin-left transition-transform duration-150 ease-out active:scale-95"
+          >
+            <AppLogo className="h-10" variant="full" />
+          </Link>
+          <div className="flex flex-1 items-center justify-center gap-8">
             {/* Desktop Navigation */}
-            <nav className="hidden items-center gap-6 md:flex md:flex-1">
+            <nav className="hidden items-center justify-center gap-6 md:flex md:flex-1">
               <a
                 href="#beranda"
                 className="font-medium text-neutral-600 text-sm transition-colors hover:text-green-600"
@@ -80,23 +80,12 @@ export default function LandingPage() {
             </nav>
           </div>
           <div className="flex shrink-0 items-center gap-1.5">
-            <Link
-              href="/auth/masuk"
-              className={buttonVariants({
-                variant: "ghost",
-                className: "mr-2 rounded-full px-4 font-medium",
-              })}
-            >
-              Masuk
-            </Link>
-            <Link
-              href="/auth/daftar"
-              className={buttonVariants({
-                className: "h-10 rounded-full px-6 font-medium shadow-sm",
-              })}
-            >
-              Daftar
-            </Link>
+            <Button variant="ghost" className="mr-2 px-4" asChild>
+              <Link href="/auth/masuk">Masuk</Link>
+            </Button>
+            <Button className="h-10 px-6 shadow-sm" asChild>
+              <Link href="/auth/daftar">Daftar</Link>
+            </Button>
           </div>
         </div>
       </header>
@@ -130,13 +119,15 @@ export default function LandingPage() {
             baik.
           </motion.p>
           <motion.div variants={STAGGER_CHILD} className="mt-8">
-            <Link
-              href="#tentang-kami"
-              className="inline-flex origin-center items-center gap-2 rounded-full bg-green-600 px-6 py-3 font-medium text-white shadow-md transition-all duration-150 ease-out hover:bg-green-700 hover:shadow-lg active:scale-[0.97]"
+            <Button
+              asChild
+              className="inline-flex h-auto origin-center items-center gap-2 px-6 py-3 transition-all duration-150 ease-out hover:bg-green-700 hover:shadow-lg active:scale-[0.97]"
             >
-              Baca Selengkapnya{" "}
-              <HugeiconsIcon icon={ArrowRight01Icon} size={18} />
-            </Link>
+              <Link href="#tentang-kami">
+                Baca Selengkapnya
+                <HugeiconsIcon icon={ArrowRight01Icon} size={18} />
+              </Link>
+            </Button>
           </motion.div>
         </motion.div>
 
@@ -365,9 +356,10 @@ export default function LandingPage() {
           </div>
 
           <div className="mb-10 flex w-full md:w-auto">
-            <button
+            <Button
               type="button"
-              className="flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-5 py-2.5 font-semibold text-neutral-700 shadow-sm transition-all duration-150 ease-out hover:bg-neutral-50 active:scale-[0.97]"
+              variant="outline"
+              className="flex h-auto items-center gap-2 px-5 py-2.5 font-semibold shadow-sm transition-all duration-150 ease-out active:scale-[0.97]"
             >
               <span className="mr-1 rounded-lg bg-purple-100 p-1.5 text-purple-600">
                 <HugeiconsIcon icon={UserGroupIcon} size={16} />
@@ -376,7 +368,7 @@ export default function LandingPage() {
               <span className="ml-2 flex h-6 w-6 items-center justify-center rounded-full bg-neutral-100 text-neutral-500">
                 <HugeiconsIcon icon={ArrowRight01Icon} size={14} />
               </span>
-            </button>
+            </Button>
           </div>
 
           <motion.div
@@ -464,18 +456,19 @@ export default function LandingPage() {
             anggaran gizi pembuka pintu masa depan anak bangsa yang berkualitas.
           </p>
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link
-              href="/auth/daftar"
-              className="w-full origin-center rounded-full bg-green-600 px-8 py-3 font-medium text-white shadow-sm transition-all duration-150 ease-out hover:bg-green-700 active:scale-[0.97] sm:w-auto"
+            <Button
+              asChild
+              className="h-auto w-full origin-center bg-green-600 px-8 py-3 font-medium text-white shadow-sm transition-all duration-150 ease-out hover:bg-green-700 active:scale-[0.97] sm:w-auto"
             >
-              Daftar Sekarang
-            </Link>
-            <Link
-              href="/about"
-              className="w-full origin-center rounded-full border border-green-200 bg-white px-8 py-3 font-medium text-green-700 transition-all duration-150 ease-out hover:bg-green-50 active:scale-[0.97] sm:w-auto"
+              <Link href="/auth/daftar">Daftar Sekarang</Link>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              className="h-auto w-full origin-center border-green-200 px-8 py-3 font-medium text-green-700 transition-all duration-150 ease-out hover:bg-green-50 active:scale-[0.97] sm:w-auto"
             >
-              Baca Selengkapnya
-            </Link>
+              <Link href="/about">Baca Selengkapnya</Link>
+            </Button>
           </div>
         </motion.div>
       </section>
@@ -485,9 +478,10 @@ export default function LandingPage() {
         <div className="mx-auto grid max-w-7xl grid-cols-2 gap-10 lg:grid-cols-4">
           <div className="col-span-2 sm:col-span-1">
             <h4 className="mb-4 flex items-center gap-2 font-bold text-neutral-900">
-              <span className="text-orange-500">$</span>PaGar
+              {/* <span className="text-orange-500">$</span>PaGar */}
+              <AppLogo className="h-10" />
             </h4>
-            <div className="inline-block rounded-lg border border-neutral-200 bg-white p-4 shadow-sm">
+            <div className="inline-block rounded-lg py-4">
               <h5 className="mb-2 font-bold text-neutral-900 text-sm">
                 Pemerintah Kota Malang
               </h5>
@@ -564,9 +558,13 @@ export default function LandingPage() {
                   <a
                     key={name}
                     href="/"
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-600 transition-all duration-150 hover:bg-neutral-50 hover:text-green-600 active:scale-95"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-800 text-neutral-800 transition-all duration-150 hover:bg-neutral-50 active:scale-95"
                   >
-                    <HugeiconsIcon icon={Icon} size={18} />
+                    <HugeiconsIcon
+                      className="font-semibold"
+                      icon={Icon}
+                      size={18}
+                    />
                   </a>
                 );
               })}

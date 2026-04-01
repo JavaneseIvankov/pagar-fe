@@ -1,5 +1,5 @@
 import { PublicReportCard } from "@/components/reports/public-report-card";
-import { fetchPublicReviews } from "@/rpc";
+import { fetchPublicReviews } from "@/rpc/reports";
 
 export async function PublicReportContainer() {
   const reviews = await fetchPublicReviews();

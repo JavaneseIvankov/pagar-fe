@@ -102,10 +102,12 @@ export function usePersistedSppgCreateReportForm() {
     defaultValues: createReportFormDefaultValues(),
   });
   const {
+    clearErrors,
     control,
     handleSubmit,
     register,
     reset,
+    setError,
     watch,
     formState: { errors },
   } = form;
@@ -200,6 +202,12 @@ export function usePersistedSppgCreateReportForm() {
     isHydrating,
     isSubmitting: submitMutation.isPending,
     jumlahPorsi,
+    onBudgetProofReject: (message: string) =>
+      setError("buktiAnggaran", { type: "manual", message }),
+    onBudgetProofSelect: () => clearErrors("buktiAnggaran"),
+    onFoodPhotoReject: (message: string) =>
+      setError("fotoMakanan", { type: "manual", message }),
+    onFoodPhotoSelect: () => clearErrors("fotoMakanan"),
     onSubmit,
     register,
     remove,

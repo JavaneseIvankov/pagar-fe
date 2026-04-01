@@ -6,7 +6,7 @@ import { SppgReportHero } from "@/components/sppg-report-detail/sppg-report-hero
 import { SppgReportNutritionCard } from "@/components/sppg-report-detail/sppg-report-nutrition-card";
 import { SppgReportRelatedReports } from "@/components/sppg-report-detail/sppg-report-related-reports";
 import { SppgReportVendorCard } from "@/components/sppg-report-detail/sppg-report-vendor-card";
-import { fetchSppgReportDetail } from "@/rpc";
+import { fetchSppgReportDetail } from "@/rpc/reports";
 
 export interface SppgReportDetailContainerProps {
   id: string;

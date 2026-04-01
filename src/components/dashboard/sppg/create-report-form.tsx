@@ -49,9 +49,15 @@ interface DashboardCreateReportFormProps {
   handleSubmit: UseFormHandleSubmit<TCreateReportForm>;
   isHydrating: boolean;
   isSubmitting: boolean;
+  jumlahPorsi: number;
+  onBudgetProofReject: (message: string) => void;
+  onBudgetProofSelect: () => void;
+  onFoodPhotoReject: (message: string) => void;
+  onFoodPhotoSelect: () => void;
   onSubmit: SubmitHandler<TCreateReportForm>;
   register: UseFormRegister<TCreateReportForm>;
   remove: (index: number) => void;
+  targetKalori: number;
   totalAnggaranPerPorsi: number;
 }
 
@@ -63,9 +69,15 @@ export function CreateReportForm({
   handleSubmit,
   isHydrating,
   isSubmitting,
+  jumlahPorsi,
+  onBudgetProofReject,
+  onBudgetProofSelect,
+  onFoodPhotoReject,
+  onFoodPhotoSelect,
   onSubmit,
   register,
   remove,
+  targetKalori,
   totalAnggaranPerPorsi,
 }: DashboardCreateReportFormProps) {
   if (isHydrating) {
@@ -130,6 +142,21 @@ export function CreateReportForm({
                   <FieldError>{errors.waktuMakan.message}</FieldError>
                 )}
               </Field>
+
+              <Field data-invalid={!!errors.jumlahPorsi}>
+                <FieldLabel htmlFor="jumlahPorsi">Jumlah Porsi</FieldLabel>
+                <Input
+                  id="jumlahPorsi"
+                  type="number"
+                  min={1}
+                  placeholder="Masukkan total porsi"
+                  {...register("jumlahPorsi", { valueAsNumber: true })}
+                  aria-invalid={!!errors.jumlahPorsi}
+                />
+                {errors.jumlahPorsi && (
+                  <FieldError>{errors.jumlahPorsi.message}</FieldError>
+                )}
+              </Field>
             </div>
 
             <Field data-invalid={!!errors.deskripsi}>
@@ -163,16 +190,22 @@ export function CreateReportForm({
             render={({ field }) => (
               <FileUpload
                 maxFiles={1}
-                maxSizeMB={10}
+                maxSizeMB={3}
                 value={field.value ?? []}
-                onChange={field.onChange}
+                onChange={(files) => {
+                  field.onChange(files);
+                  onFoodPhotoSelect();
+                }}
+                onReject={(rejections) =>
+                  onFoodPhotoReject(rejections[0].message)
+                }
                 dropzoneClassName={
                   errors.fotoMakanan
                     ? "border-destructive bg-destructive/5 hover:bg-destructive/10"
                     : undefined
                 }
                 title="Unggah Foto Makanan"
-                helperText="Pastikan foto jelas dan memperlihatkan seluruh porsi makanan (Maks. 10MB)"
+                helperText="Pastikan foto jelas dan memperlihatkan seluruh porsi makanan (maks. 3MB)"
               />
             )}
           />
@@ -374,17 +407,23 @@ export function CreateReportForm({
             render={({ field }) => (
               <FileUpload
                 maxFiles={1}
-                maxSizeMB={10}
+                maxSizeMB={3}
                 accept="image/png,image/jpeg,image/webp"
                 value={field.value ?? []}
-                onChange={field.onChange}
+                onChange={(files) => {
+                  field.onChange(files);
+                  onBudgetProofSelect();
+                }}
+                onReject={(rejections) =>
+                  onBudgetProofReject(rejections[0].message)
+                }
                 dropzoneClassName={
                   errors.buktiAnggaran
                     ? "border-destructive bg-destructive/5 hover:bg-destructive/10"
                     : undefined
                 }
                 title="Unggah Bukti Rincian Anggaran"
-                helperText="Backend saat ini menerima bukti anggaran berupa gambar JPG, PNG, atau WEBP (maks. 10MB)"
+                helperText="Backend menerima bukti anggaran berupa JPG, PNG, atau WEBP (maks. 3MB)"
               />
             )}
           />
@@ -404,15 +443,23 @@ export function CreateReportForm({
           <div className="mb-8 flex flex-col gap-4">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Total Porsi</span>
-              <span className="font-semibold">1,250 Porsi</span>
+              <span className="font-semibold">
+                {jumlahPorsi > 0
+                  ? `${jumlahPorsi.toLocaleString("id-ID")} Porsi`
+                  : "-"}
+              </span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Target Kalori</span>
-              <span className="font-semibold text-emerald-500">750 kcal</span>
+              <span className="font-semibold text-emerald-500">
+                {targetKalori > 0 ? `${targetKalori} kcal` : "-"}
+              </span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Total Anggaran</span>
-              <span className="font-semibold">Rp 25.000.000</span>
+              <span className="font-semibold">
+                Rp {totalAnggaranPerPorsi.toLocaleString("id-ID")}
+              </span>
             </div>
           </div>
 

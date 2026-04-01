@@ -22,12 +22,17 @@ const formSchema = z.object({
       (file) =>
         !file ||
         (file instanceof File &&
-          ["image/jpeg", "image/png", "image/webp"].includes(file.type)),
-      "Lampiran harus berupa JPG, PNG, atau WEBP",
+          ["image/jpeg", "image/png", "image/webp"].includes(file.type) &&
+          file.size <= 3 * 1024 * 1024),
+      "Lampiran harus berupa JPG, PNG, atau WEBP dengan ukuran maksimal 3MB",
     ),
   rating: z
     .number()
     .min(1, "Berikan penilaian kualitas makanan (minimal 1 bintang)"),
+  title: z
+    .string()
+    .min(1, "Judul laporan wajib diisi")
+    .max(255, "Judul laporan maksimal 255 karakter"),
   details: z.string().min(10, "Ulasan minimal 10 karakter"),
   sppgId: z.string().uuid("Pilih SPPG tujuan yang valid"),
 });
@@ -38,6 +43,8 @@ export function PublicCreateReportContainer() {
   const reviewSubmissionContextQuery = useCurrentReviewSubmissionContext();
   const submitReviewMutation = useSubmitCurrentRoleReview();
   const {
+    clearErrors,
+    setError,
     watch,
     reset,
     handleSubmit,
@@ -48,6 +55,7 @@ export function PublicCreateReportContainer() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       rating: 0,
+      title: "",
       details: "",
       sppgId: "",
     },
@@ -66,6 +74,7 @@ export function PublicCreateReportContainer() {
       const formData = new FormData();
 
       formData.set("id_sppg", data.sppgId);
+      formData.set("title", data.title);
       formData.set("description", data.details);
       formData.set("rating_score", String(data.rating));
 
@@ -76,6 +85,7 @@ export function PublicCreateReportContainer() {
       const result = await submitReviewMutation.mutateAsync(formData);
       reset({
         rating: 0,
+        title: "",
         details: "",
         sppgId: "",
         photo: undefined,
@@ -114,6 +124,10 @@ export function PublicCreateReportContainer() {
       handleSubmit={handleSubmit}
       isLoadingTargets={reviewSubmissionContextQuery.isLoading}
       isSubmitting={submitReviewMutation.isPending}
+      onPhotoReject={(message) =>
+        setError("photo", { type: "manual", message })
+      }
+      onPhotoSelect={() => clearErrors("photo")}
       onSubmit={onSubmit}
       register={register}
       selectedTarget={selectedTarget}

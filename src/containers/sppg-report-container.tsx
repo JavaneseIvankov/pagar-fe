@@ -1,5 +1,5 @@
 import { SppgReportCard } from "@/components/reports/sppg-report-card";
-import { fetchSppgReports } from "@/rpc";
+import { fetchSppgReports } from "@/rpc/reports";
 
 export async function SppgReportContainer() {
   const reports = await fetchSppgReports();

@@ -27,12 +27,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import type { TReviewSppgTarget } from "@/types";
 
 export interface PublicCreateReportFormValues {
   photo?: File;
   rating: number;
+  title: string;
   details: string;
   sppgId: string;
 }
@@ -43,6 +45,8 @@ interface PublicCreateReportFormProps {
   handleSubmit: UseFormHandleSubmit<PublicCreateReportFormValues>;
   isLoadingTargets?: boolean;
   isSubmitting?: boolean;
+  onPhotoReject: (message: string) => void;
+  onPhotoSelect: (file?: File) => void;
   onSubmit: SubmitHandler<PublicCreateReportFormValues>;
   register: UseFormRegister<PublicCreateReportFormValues>;
   selectedTarget?: TReviewSppgTarget;
@@ -55,6 +59,8 @@ export function CreateReportForm({
   handleSubmit,
   isLoadingTargets = false,
   isSubmitting = false,
+  onPhotoReject,
+  onPhotoSelect,
   onSubmit,
   register,
   selectedTarget,
@@ -73,9 +79,14 @@ export function CreateReportForm({
             render={({ field }) => (
               <FileUpload
                 maxFiles={1}
-                maxSizeMB={10}
+                maxSizeMB={3}
                 value={field.value ? [field.value] : []}
-                onChange={(files) => field.onChange(files[0])}
+                onChange={(files) => {
+                  field.onChange(files[0]);
+                  onPhotoSelect(files[0]);
+                }}
+                onReject={(rejections) => onPhotoReject(rejections[0].message)}
+                helperText="Unggah bukti pendukung berupa JPG, PNG, atau WEBP (maks. 3MB)"
               />
             )}
           />
@@ -158,6 +169,19 @@ export function CreateReportForm({
             {errors.sppgId && <FieldError>{errors.sppgId.message}</FieldError>}
           </Field>
         </div>
+
+        <Field data-invalid={!!errors.title} className="space-y-3">
+          <FieldLabel htmlFor="title" className="font-bold text-base">
+            Judul Laporan
+          </FieldLabel>
+          <Input
+            id="title"
+            placeholder="Contoh: Porsi tidak sesuai"
+            {...register("title")}
+            aria-invalid={!!errors.title}
+          />
+          {errors.title && <FieldError>{errors.title.message}</FieldError>}
+        </Field>
 
         <Field data-invalid={!!errors.details} className="space-y-3">
           <FieldLabel htmlFor="details" className="font-bold text-base">

@@ -6,6 +6,9 @@ export const queryKeys = {
   publicReviews: {
     list: () => ["public-reviews", "list"] as const,
   },
+  reviewSubmission: {
+    context: () => ["review-submission", "context"] as const,
+  },
   sppgDashboard: {
     detail: () => ["sppg-dashboard"] as const,
   },
@@ -17,6 +20,7 @@ export const queryKeys = {
     pending: () => ["admin-accounts", "pending"] as const,
   },
   periodicReports: {
+    all: () => ["periodic-reports"] as const,
     list: (params: { endDate: string; startDate: string }) =>
       ["periodic-reports", "list", params.startDate, params.endDate] as const,
   },

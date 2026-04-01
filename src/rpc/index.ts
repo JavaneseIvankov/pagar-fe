@@ -13,10 +13,22 @@ export {
   fetchCurrentAdminProfile,
   fetchCurrentProfile,
   fetchCurrentSppgProfile,
+  updateCurrentSchoolProfile,
+  type UpdateCurrentSchoolProfileInput,
 } from "./profile";
+export {
+  fetchCurrentReviewSubmissionContext,
+  submitCurrentRoleReview,
+  type CurrentReviewSubmissionContext,
+  type SubmitCurrentRoleReviewResult,
+} from "./review-submission";
 export {
   fetchPublicReviews,
   fetchSppgReportDetail,
   fetchSppgReports,
 } from "./reports";
+export {
+  submitSppgDailyReport,
+  type SubmitSppgDailyReportResult,
+} from "./sppg-daily-report";
 export { fetchSppgDashboard } from "./sppg-dashboard";

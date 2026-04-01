@@ -1,12 +1,14 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/query-keys";
 import {
   fetchCurrentAdminProfile,
   fetchCurrentProfile,
   fetchCurrentSppgProfile,
-} from "@/rpc/profile";
+  updateCurrentSchoolProfile,
+  type UpdateCurrentSchoolProfileInput,
+} from "@/rpc";
 
 export function useCurrentProfile() {
   return useQuery({
@@ -26,5 +28,19 @@ export function useCurrentAdminProfile() {
   return useQuery({
     queryKey: queryKeys.profile.admin(),
     queryFn: fetchCurrentAdminProfile,
+  });
+}
+
+export function useUpdateCurrentSchoolProfile() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: UpdateCurrentSchoolProfileInput) =>
+      updateCurrentSchoolProfile(input),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.profile.current(),
+      });
+    },
   });
 }

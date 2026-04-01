@@ -146,6 +146,12 @@ export type TPublicReview = {
   content: string;
 };
 
+export type TReviewSppgTarget = {
+  address: string;
+  id: string;
+  name: string;
+};
+
 export type TBudgetItem = {
   id: string;
   name: string;

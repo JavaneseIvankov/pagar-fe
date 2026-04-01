@@ -11,6 +11,7 @@ export function SppgCreateReportContainer() {
     fields,
     handleSubmit,
     isHydrating,
+    isSubmitting,
     onSubmit,
     register,
     remove,
@@ -25,6 +26,7 @@ export function SppgCreateReportContainer() {
       fields={fields}
       handleSubmit={handleSubmit}
       isHydrating={isHydrating}
+      isSubmitting={isSubmitting}
       onSubmit={onSubmit}
       register={register}
       remove={remove}

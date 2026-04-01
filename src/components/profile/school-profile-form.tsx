@@ -9,28 +9,24 @@ import * as z from "zod/v3";
 import { Button } from "@/components/ui/button";
 import {
   Field,
+  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { PasswordInput } from "@/components/ui/password-input";
 import type { TSchoolProfile } from "@/types";
-import { createPasswordSchema } from "./profile-schema";
 
-const schoolProfileFormSchema = z
-  .object({
-    username: z.string().min(3, "Username minimal 3 karakter"),
-    schoolName: z.string().min(3, "Nama sekolah minimal 3 karakter"),
-    address: z.string().min(5, "Alamat sekolah minimal 5 karakter"),
-  })
-  .and(createPasswordSchema());
+const schoolProfileFormSchema = z.object({
+  schoolName: z.string().min(3, "Nama sekolah minimal 3 karakter"),
+  address: z.string().min(5, "Alamat sekolah minimal 5 karakter"),
+});
 
 export type SchoolProfileFormValues = z.infer<typeof schoolProfileFormSchema>;
 
 export interface SchoolProfileFormProps {
   initialData: TSchoolProfile;
-  onSubmit: (data: SchoolProfileFormValues) => void;
+  onSubmit: (data: SchoolProfileFormValues) => Promise<void> | void;
 }
 
 export function SchoolProfileForm({
@@ -47,24 +43,15 @@ export function SchoolProfileForm({
   } = useForm<SchoolProfileFormValues>({
     resolver: zodResolver(schoolProfileFormSchema),
     defaultValues: {
-      username: initialData.username,
       schoolName: initialData.schoolName,
       address: initialData.address,
-      currentPassword: "",
-      newPassword: "",
-      confirmNewPassword: "",
     },
   });
 
-  const handleFormSubmit = (data: SchoolProfileFormValues) => {
-    onSubmit(data);
+  const handleFormSubmit = async (data: SchoolProfileFormValues) => {
+    await onSubmit(data);
     setIsEditing(false);
-    reset({
-      ...data,
-      currentPassword: "",
-      newPassword: "",
-      confirmNewPassword: "",
-    });
+    reset(data);
   };
 
   const handleCancel = () => {
@@ -82,18 +69,18 @@ export function SchoolProfileForm({
 
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
         <FieldGroup>
-          <Field data-invalid={!!errors.username}>
+          <Field data-invalid={false}>
             <FieldLabel htmlFor="username">Username</FieldLabel>
             <Input
               id="username"
               placeholder="Username"
-              disabled={!isEditing}
-              {...register("username")}
-              aria-invalid={!!errors.username}
+              disabled={true}
+              value={initialData.username}
+              readOnly={true}
             />
-            {errors.username && (
-              <FieldError>{errors.username.message}</FieldError>
-            )}
+            <FieldDescription>
+              Username belum memiliki kontrak pembaruan di halaman ini.
+            </FieldDescription>
           </Field>
 
           <Field data-invalid={!!errors.schoolName}>
@@ -124,66 +111,10 @@ export function SchoolProfileForm({
             )}
           </Field>
 
-          {/* Password Section */}
-          {!isEditing ? (
-            <Field data-invalid={false}>
-              <FieldLabel htmlFor="kataSandiPlaceholder">Kata Sandi</FieldLabel>
-              <PasswordInput
-                id="kataSandiPlaceholder"
-                placeholder="********"
-                disabled={true}
-              />
-            </Field>
-          ) : (
-            <div className="mt-2 flex flex-col gap-6 border-gray-100 border-t pt-2">
-              <h3 className="font-medium text-foreground text-sm">
-                Ubah Kata Sandi (Opsional)
-              </h3>
-
-              <Field data-invalid={!!errors.currentPassword}>
-                <FieldLabel htmlFor="currentPassword">
-                  Kata Sandi Saat Ini
-                </FieldLabel>
-                <PasswordInput
-                  id="currentPassword"
-                  placeholder="********"
-                  {...register("currentPassword")}
-                  aria-invalid={!!errors.currentPassword}
-                />
-                {errors.currentPassword && (
-                  <FieldError>{errors.currentPassword.message}</FieldError>
-                )}
-              </Field>
-
-              <Field data-invalid={!!errors.newPassword}>
-                <FieldLabel htmlFor="newPassword">Kata Sandi Baru</FieldLabel>
-                <PasswordInput
-                  id="newPassword"
-                  placeholder="********"
-                  {...register("newPassword")}
-                  aria-invalid={!!errors.newPassword}
-                />
-                {errors.newPassword && (
-                  <FieldError>{errors.newPassword.message}</FieldError>
-                )}
-              </Field>
-
-              <Field data-invalid={!!errors.confirmNewPassword}>
-                <FieldLabel htmlFor="confirmNewPassword">
-                  Ulangi Kata Sandi Baru
-                </FieldLabel>
-                <PasswordInput
-                  id="confirmNewPassword"
-                  placeholder="********"
-                  {...register("confirmNewPassword")}
-                  aria-invalid={!!errors.confirmNewPassword}
-                />
-                {errors.confirmNewPassword && (
-                  <FieldError>{errors.confirmNewPassword.message}</FieldError>
-                )}
-              </Field>
-            </div>
-          )}
+          <div className="rounded-lg border border-amber-200/70 bg-amber-50/80 px-4 py-3 text-amber-950 text-sm leading-relaxed">
+            Nama sekolah dan alamat sudah tersambung ke backend. Perubahan
+            username dan kata sandi masih menunggu kontrak pembaruan terpisah.
+          </div>
         </FieldGroup>
 
         <div className="flex flex-col gap-3 pt-4">

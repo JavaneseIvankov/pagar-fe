@@ -154,3 +154,34 @@ export async function fetchCurrentAdminProfile(): Promise<TAdminProfile> {
 
   return currentAdminProfileSchema.parse(rawData);
 }
+
+export type UpdateCurrentSchoolProfileInput = {
+  address: string;
+  schoolName: string;
+};
+
+export async function updateCurrentSchoolProfile(
+  input: UpdateCurrentSchoolProfileInput,
+): Promise<TCurrentProfile> {
+  const session = await getCurrentSession();
+
+  if (session?.user.role !== "SCHOOL") {
+    throw new Error(
+      "Pembaruan profil sekolah hanya tersedia untuk akun sekolah.",
+    );
+  }
+
+  const client = createServerApiClient();
+  const dto = await client.updateSchoolProfile({
+    body: {
+      school_address: input.address,
+      school_name: input.schoolName,
+    },
+  });
+
+  return currentProfileSchema.parse(
+    mapSchoolProfileDtoToDomain(dto.data, {
+      username: session.user.username,
+    }),
+  );
+}

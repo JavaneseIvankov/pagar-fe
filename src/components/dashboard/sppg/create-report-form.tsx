@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   Field,
+  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -47,6 +48,7 @@ interface DashboardCreateReportFormProps {
   fields: Array<{ id: string }>;
   handleSubmit: UseFormHandleSubmit<TCreateReportForm>;
   isHydrating: boolean;
+  isSubmitting: boolean;
   onSubmit: SubmitHandler<TCreateReportForm>;
   register: UseFormRegister<TCreateReportForm>;
   remove: (index: number) => void;
@@ -60,6 +62,7 @@ export function CreateReportForm({
   fields,
   handleSubmit,
   isHydrating,
+  isSubmitting,
   onSubmit,
   register,
   remove,
@@ -85,6 +88,21 @@ export function CreateReportForm({
 
           <FieldGroup className="gap-6">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <Field data-invalid={!!errors.tanggalLaporan}>
+                <FieldLabel htmlFor="tanggalLaporan">
+                  Tanggal Laporan
+                </FieldLabel>
+                <Input
+                  id="tanggalLaporan"
+                  type="date"
+                  {...register("tanggalLaporan")}
+                  aria-invalid={!!errors.tanggalLaporan}
+                />
+                {errors.tanggalLaporan && (
+                  <FieldError>{errors.tanggalLaporan.message}</FieldError>
+                )}
+              </Field>
+
               <Field data-invalid={!!errors.namaMenu}>
                 <FieldLabel htmlFor="namaMenu">Nama Menu Makanan</FieldLabel>
                 <Input
@@ -125,6 +143,11 @@ export function CreateReportForm({
                 {...register("deskripsi")}
                 aria-invalid={!!errors.deskripsi}
               />
+              <FieldDescription>
+                Catatan khusus ini masih disimpan di draft lokal. Backend saat
+                ini belum menyediakan field catatan tambahan untuk laporan
+                harian.
+              </FieldDescription>
               {errors.deskripsi && (
                 <FieldError>{errors.deskripsi.message}</FieldError>
               )}
@@ -352,7 +375,7 @@ export function CreateReportForm({
               <FileUpload
                 maxFiles={1}
                 maxSizeMB={10}
-                accept=".pdf,.xlsx,.xls,.png,.jpg,.jpeg"
+                accept="image/png,image/jpeg,image/webp"
                 value={field.value ?? []}
                 onChange={field.onChange}
                 dropzoneClassName={
@@ -361,7 +384,7 @@ export function CreateReportForm({
                     : undefined
                 }
                 title="Unggah Bukti Rincian Anggaran"
-                helperText="Format file bisa berupa .excel, .pdf, .jpg, .png maksimal 10MB"
+                helperText="Backend saat ini menerima bukti anggaran berupa gambar JPG, PNG, atau WEBP (maks. 10MB)"
               />
             )}
           />
@@ -396,8 +419,9 @@ export function CreateReportForm({
           <Button
             type="submit"
             className="mb-4 flex h-12 w-full items-center justify-center gap-3 rounded-xl bg-emerald-500 text-base text-white hover:bg-emerald-600"
+            disabled={isSubmitting}
           >
-            Kirim Laporan
+            {isSubmitting ? "Mengirim Laporan..." : "Kirim Laporan"}
             <SendIcon className="size-4" />
           </Button>
 

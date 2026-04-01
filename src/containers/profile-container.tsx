@@ -10,9 +10,13 @@ import {
   SchoolProfileForm,
   type SchoolProfileFormValues,
 } from "@/components/profile/school-profile-form";
-import { useCurrentProfile } from "@/hooks/use-current-profile";
+import {
+  useCurrentProfile,
+  useUpdateCurrentSchoolProfile,
+} from "@/hooks/use-current-profile";
 
 export function ProfileContainer() {
+  const updateSchoolProfileMutation = useUpdateCurrentSchoolProfile();
   const { data: currentUser, isLoading, isError } = useCurrentProfile();
 
   if (isLoading) {
@@ -23,9 +27,21 @@ export function ProfileContainer() {
     return <div className="py-8 text-destructive">Gagal memuat profil.</div>;
   }
 
-  const handleSchoolSubmit = (data: SchoolProfileFormValues) => {
-    console.log("School Submit data", data);
-    toast.success("Profil sekolah berhasil diperbarui!");
+  const handleSchoolSubmit = async (data: SchoolProfileFormValues) => {
+    try {
+      await updateSchoolProfileMutation.mutateAsync({
+        schoolName: data.schoolName,
+        address: data.address,
+      });
+      toast.success("Profil sekolah berhasil diperbarui!");
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Gagal memperbarui profil sekolah.",
+      );
+      throw error;
+    }
   };
 
   const handlePublicSubmit = (data: PublicProfileFormValues) => {
@@ -35,7 +51,7 @@ export function ProfileContainer() {
 
   const footerNote =
     currentUser.role === "SCHOOL"
-      ? "Data profil sekolah sudah memakai kontrak baca backend. Perubahannya masih placeholder sampai kontrak pembaruan sekolah dipakai penuh."
+      ? "Baca dan simpan nama/alamat sekolah sudah memakai backend. Username dan kata sandi masih menunggu kontrak pembaruan terpisah."
       : currentUser.role === "PUBLIC"
         ? "Data profil publik di halaman ini masih memakai fallback frontend karena kontrak baca profil publik belum tersedia. Perubahannya juga masih placeholder."
         : null;

@@ -8,7 +8,9 @@ import type {
 import type {
   getAdminDashboardSuccessResponseSchema,
   getActiveAccountsSuccessResponseSchema,
+  getPublicSppgListSuccessResponseSchema,
   getSchoolProfileSuccessResponseSchema,
+  getSchoolSppgListSuccessResponseSchema,
   getPendingAccountsSuccessResponseSchema,
   getSppgPeriodicReportsSuccessResponseSchema,
   getSppgProfileSuccessResponseSchema,
@@ -26,6 +28,7 @@ import type {
   TAdminVendorWarning,
   TBudget,
   TPublicReview,
+  TReviewSppgTarget,
   TSchoolProfile,
   TSppg,
   TSppgDashboard,
@@ -111,6 +114,9 @@ type LoginResponse = z.infer<typeof loginSuccessResponseSchema>["data"];
 type PendingAccountsResponse = z.infer<
   typeof getPendingAccountsSuccessResponseSchema
 >["data"][number];
+type ReviewSppgTargetResponse =
+  | z.infer<typeof getPublicSppgListSuccessResponseSchema>["data"][number]
+  | z.infer<typeof getSchoolSppgListSuccessResponseSchema>["data"][number];
 type PeriodicReportsResponse = z.infer<
   typeof getSppgPeriodicReportsSuccessResponseSchema
 >["data"];
@@ -218,6 +224,16 @@ export function mapPublicDashboardReviewDtoToDomain(
       name: dto.sppg?.sppg_name,
     }),
     content: dto.description ?? "",
+  };
+}
+
+export function mapReviewSppgTargetDtoToDomain(
+  dto: ReviewSppgTargetResponse,
+): TReviewSppgTarget {
+  return {
+    id: dto.id_sppg,
+    name: dto.sppg_name,
+    address: dto.sppg_address ?? DEFAULT_VENDOR_ADDRESS,
   };
 }
 

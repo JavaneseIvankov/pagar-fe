@@ -37,7 +37,7 @@ export async function SppgReportDetailContainer({
           <SppgReportRelatedReports reports={report.relatedReports} />
         ) : null
       }
-      discrepancy={<SppgReportDiscrepancyCard />}
+      discrepancy={<SppgReportDiscrepancyCard sppgId={report.author.sppgId} />}
     />
   );
 }

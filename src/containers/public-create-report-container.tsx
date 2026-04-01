@@ -1,10 +1,11 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod/v3";
+import { handleClientApiError } from "@/lib/api/client-error-handling";
 import {
   CreateReportForm,
   type PublicCreateReportFormValues,
@@ -37,14 +38,19 @@ const formSchema = z.object({
   sppgId: z.string().uuid("Pilih SPPG tujuan yang valid"),
 });
 
-// TASK: make this component accept initial data, it should prefill sppgId once the detail/link flow is clarified.
+export interface PublicCreateReportContainerProps {
+  initialSppgId?: string;
+}
 
-export function PublicCreateReportContainer() {
+export function PublicCreateReportContainer({
+  initialSppgId,
+}: PublicCreateReportContainerProps) {
   const reviewSubmissionContextQuery = useCurrentReviewSubmissionContext();
   const submitReviewMutation = useSubmitCurrentRoleReview();
   const {
     clearErrors,
     setError,
+    setValue,
     watch,
     reset,
     handleSubmit,
@@ -69,6 +75,28 @@ export function PublicCreateReportContainer() {
     [reviewSubmissionContextQuery.data?.targets, selectedSppgId],
   );
 
+  useEffect(() => {
+    if (
+      !initialSppgId ||
+      selectedSppgId ||
+      !reviewSubmissionContextQuery.data?.targets.some(
+        (target) => target.id === initialSppgId,
+      )
+    ) {
+      return;
+    }
+
+    setValue("sppgId", initialSppgId, {
+      shouldDirty: false,
+      shouldValidate: true,
+    });
+  }, [
+    initialSppgId,
+    reviewSubmissionContextQuery.data?.targets,
+    selectedSppgId,
+    setValue,
+  ]);
+
   const onSubmit = async (data: PublicCreateReportFormValues) => {
     try {
       const formData = new FormData();
@@ -92,38 +120,25 @@ export function PublicCreateReportContainer() {
       });
       toast.success(result.message);
     } catch (error) {
+      if (handleClientApiError(error)) {
+        return;
+      }
+
       toast.error(
         error instanceof Error ? error.message : "Gagal mengirim laporan.",
       );
     }
   };
 
-  if (reviewSubmissionContextQuery.isLoading) {
-    return (
-      <div className="mx-auto max-w-4xl rounded-2xl border border-border/60 bg-white/70 px-6 py-12 text-center text-muted-foreground">
-        Memuat daftar SPPG tujuan...
-      </div>
-    );
-  }
-
-  if (
-    reviewSubmissionContextQuery.isError ||
-    !reviewSubmissionContextQuery.data
-  ) {
-    return (
-      <div className="mx-auto max-w-4xl rounded-2xl border border-destructive/30 bg-destructive/5 px-6 py-12 text-center text-destructive">
-        Gagal memuat daftar SPPG tujuan.
-      </div>
-    );
-  }
-
   return (
     <CreateReportForm
       control={control}
       errors={errors}
       handleSubmit={handleSubmit}
-      isLoadingTargets={reviewSubmissionContextQuery.isLoading}
       isSubmitting={submitReviewMutation.isPending}
+      onRetryTargets={() => {
+        void reviewSubmissionContextQuery.refetch();
+      }}
       onPhotoReject={(message) =>
         setError("photo", { type: "manual", message })
       }
@@ -131,7 +146,13 @@ export function PublicCreateReportContainer() {
       onSubmit={onSubmit}
       register={register}
       selectedTarget={selectedTarget}
-      targets={reviewSubmissionContextQuery.data.targets}
+      targets={reviewSubmissionContextQuery.data?.targets ?? []}
+      targetsError={
+        reviewSubmissionContextQuery.isError
+          ? "Gagal memuat daftar SPPG tujuan."
+          : null
+      }
+      targetsLoading={reviewSubmissionContextQuery.isLoading}
     />
   );
 }

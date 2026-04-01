@@ -1,6 +1,7 @@
 import { GraphBoxIcon } from "@/components/exported-icons";
 import { CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/multi-segment-progress";
+import { computeNutritionBreakdown } from "@/lib/nutrition";
 import { cn } from "@/lib/utils";
 import type { TNutritionalFacts } from "@/types";
 import {
@@ -8,7 +9,6 @@ import {
   SppgDetailSectionHeader,
 } from "./sppg-report-detail-layout";
 
-const CALORIES_FILL_CLASS = "bg-[#4ade80]";
 const PROTEIN_FILL_CLASS = "bg-[#38bdf8]";
 const CARB_FILL_CLASS = "bg-[#fb923c]";
 const FAT_FILL_CLASS = "bg-[#a855f7]";
@@ -17,7 +17,7 @@ interface NutritionFactTileProps {
   label: string;
   value: number;
   unit: string;
-  dciPercent: number;
+  supportingText: string;
   className?: string;
 }
 
@@ -29,7 +29,7 @@ function NutritionFactTile({
   label,
   value,
   unit,
-  dciPercent,
+  supportingText,
   className,
 }: NutritionFactTileProps) {
   return (
@@ -54,7 +54,7 @@ function NutritionFactTile({
         </p>
       </div>
       <p className="mt-1 font-semibold text-[10px] text-foreground/50">
-        {dciPercent}%
+        {supportingText}
       </p>
     </div>
   );
@@ -63,21 +63,24 @@ function NutritionFactTile({
 export function SppgReportNutritionCard({
   nutritionalFacts,
 }: SppgReportNutritionCardProps) {
-  const calorieDci = nutritionalFacts.calories.inDciPercent;
-  const proteinDci = nutritionalFacts.proteinGrams.inDciPercent;
-  const carbDci = nutritionalFacts.carbGrams.inDciPercent;
-  const fatDci = nutritionalFacts.fatGrams.inDciPercent;
-  const totalDci = calorieDci + proteinDci + carbDci + fatDci || 1;
+  const nutritionBreakdown = computeNutritionBreakdown(nutritionalFacts);
   let runningPercent = 0;
 
   const segments = [
-    { dciPercent: calorieDci, color: CALORIES_FILL_CLASS },
-    { dciPercent: proteinDci, color: PROTEIN_FILL_CLASS },
-    { dciPercent: carbDci, color: CARB_FILL_CLASS },
-    { dciPercent: fatDci, color: FAT_FILL_CLASS },
+    {
+      contributionPercent: nutritionBreakdown.shares.protein.percentage,
+      color: PROTEIN_FILL_CLASS,
+    },
+    {
+      contributionPercent: nutritionBreakdown.shares.carb.percentage,
+      color: CARB_FILL_CLASS,
+    },
+    {
+      contributionPercent: nutritionBreakdown.shares.fat.percentage,
+      color: FAT_FILL_CLASS,
+    },
   ].map((segment) => {
-    const proportion = (segment.dciPercent / totalDci) * 100;
-    runningPercent += proportion;
+    runningPercent += segment.contributionPercent;
 
     return {
       value: runningPercent,
@@ -96,30 +99,30 @@ export function SppgReportNutritionCard({
         <div className="grid w-full grid-cols-2 gap-3 md:grid-cols-4">
           <NutritionFactTile
             label="Kalori"
-            value={nutritionalFacts.calories.inKcal}
+            value={nutritionBreakdown.displayCalories}
             unit="kkal"
-            dciPercent={nutritionalFacts.calories.inDciPercent}
+            supportingText="Hasil hitung per porsi"
             className="border-[#4ade80] bg-[#4ade80]/10"
           />
           <NutritionFactTile
             label="Protein"
             value={nutritionalFacts.proteinGrams.inGrams}
             unit="gram"
-            dciPercent={nutritionalFacts.proteinGrams.inDciPercent}
+            supportingText={`${nutritionBreakdown.shares.protein.percentage}% kalori`}
             className="border-[#38bdf8] bg-[#38bdf8]/10"
           />
           <NutritionFactTile
             label="Karbo"
             value={nutritionalFacts.carbGrams.inGrams}
             unit="gram"
-            dciPercent={nutritionalFacts.carbGrams.inDciPercent}
+            supportingText={`${nutritionBreakdown.shares.carb.percentage}% kalori`}
             className="border-[#fb923c] bg-[#fb923c]/10"
           />
           <NutritionFactTile
             label="Lemak"
             value={nutritionalFacts.fatGrams.inGrams}
             unit="gram"
-            dciPercent={nutritionalFacts.fatGrams.inDciPercent}
+            supportingText={`${nutritionBreakdown.shares.fat.percentage}% kalori`}
             className="border-[#a855f7] bg-[#a855f7]/10"
           />
         </div>
@@ -134,19 +137,12 @@ export function SppgReportNutritionCard({
               <div
                 className={cn(
                   "h-2 w-2 flex-shrink-0 rounded-full",
-                  CALORIES_FILL_CLASS,
-                )}
-              />
-              <span className="text-[11px] md:text-xs">Kalori</span>
-            </div>
-            <div className="flex items-center gap-1.5 md:gap-2">
-              <div
-                className={cn(
-                  "h-2 w-2 flex-shrink-0 rounded-full",
                   PROTEIN_FILL_CLASS,
                 )}
               />
-              <span className="text-[11px] md:text-xs">Protein</span>
+              <span className="text-[11px] md:text-xs">
+                Protein {nutritionBreakdown.shares.protein.percentage}%
+              </span>
             </div>
             <div className="flex items-center gap-1.5 md:gap-2">
               <div
@@ -155,7 +151,9 @@ export function SppgReportNutritionCard({
                   CARB_FILL_CLASS,
                 )}
               />
-              <span className="text-[11px] md:text-xs">Karbo</span>
+              <span className="text-[11px] md:text-xs">
+                Karbo {nutritionBreakdown.shares.carb.percentage}%
+              </span>
             </div>
             <div className="flex items-center gap-1.5 md:gap-2">
               <div
@@ -164,7 +162,9 @@ export function SppgReportNutritionCard({
                   FAT_FILL_CLASS,
                 )}
               />
-              <span className="text-[11px] md:text-xs">Lemak</span>
+              <span className="text-[11px] md:text-xs">
+                Lemak {nutritionBreakdown.shares.fat.percentage}%
+              </span>
             </div>
           </div>
         </div>

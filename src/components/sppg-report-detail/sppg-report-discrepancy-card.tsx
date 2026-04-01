@@ -4,9 +4,13 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-// TASK: make this component accept sppgId for then be used for prefilling the public-create-report-container (we also need to improve public-create-report-container to accept and properly new prefill-related props)
+export interface SppgReportDiscrepancyCardProps {
+  sppgId: string;
+}
 
-export function SppgReportDiscrepancyCard() {
+export function SppgReportDiscrepancyCard({
+  sppgId,
+}: SppgReportDiscrepancyCardProps) {
   return (
     <Card className="mt-2 mb-2 flex w-full flex-col items-center gap-4 rounded-xl border-0 bg-[#0a0a0a] p-6 text-center text-white shadow-none">
       <div className="mt-2 text-green-500">
@@ -22,7 +26,12 @@ export function SppgReportDiscrepancyCard() {
         </p>
       </div>
       <Link
-        href={"/tambah-laporan"}
+        href={{
+          pathname: "/tambah-laporan",
+          query: {
+            sppgId,
+          },
+        }}
         className={cn(
           buttonVariants(),
           "h-10 w-full max-w-[200px] rounded-lg bg-white font-extrabold text-black text-sm hover:bg-primary-200 hover:text-white",

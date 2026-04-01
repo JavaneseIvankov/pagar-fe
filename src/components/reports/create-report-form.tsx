@@ -3,6 +3,14 @@
 import { Location01Icon, Navigation03Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Controller } from "react-hook-form";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
 import type {
   Control,
   FieldErrors,
@@ -20,13 +28,6 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { FileUpload } from "@/components/ui/file-upload";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import type { TReviewSppgTarget } from "@/types";
@@ -43,13 +44,15 @@ interface PublicCreateReportFormProps {
   control: Control<PublicCreateReportFormValues>;
   errors: FieldErrors<PublicCreateReportFormValues>;
   handleSubmit: UseFormHandleSubmit<PublicCreateReportFormValues>;
-  isLoadingTargets?: boolean;
   isSubmitting?: boolean;
+  onRetryTargets?: () => void;
   onPhotoReject: (message: string) => void;
   onPhotoSelect: (file?: File) => void;
   onSubmit: SubmitHandler<PublicCreateReportFormValues>;
   register: UseFormRegister<PublicCreateReportFormValues>;
   selectedTarget?: TReviewSppgTarget;
+  targetsError?: string | null;
+  targetsLoading?: boolean;
   targets: TReviewSppgTarget[];
 }
 
@@ -57,13 +60,15 @@ export function CreateReportForm({
   control,
   errors,
   handleSubmit,
-  isLoadingTargets = false,
   isSubmitting = false,
+  onRetryTargets,
   onPhotoReject,
   onPhotoSelect,
   onSubmit,
   register,
   selectedTarget,
+  targetsError,
+  targetsLoading = false,
   targets,
 }: PublicCreateReportFormProps) {
   return (
@@ -123,35 +128,65 @@ export function CreateReportForm({
               name="sppgId"
               control={control}
               render={({ field }) => (
-                <Select
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  disabled={isLoadingTargets || targets.length === 0}
+                <Combobox
+                  items={targets}
+                  itemToStringLabel={(target: TReviewSppgTarget) => target.name}
+                  itemToStringValue={(target: TReviewSppgTarget) => target.name}
+                  value={selectedTarget ?? null}
+                  onValueChange={(value) => {
+                    field.onChange(value?.id ?? "");
+                  }}
                 >
-                  <SelectTrigger
+                  <ComboboxInput
                     id="sppgId"
-                    className="h-11"
+                    className="w-full"
+                    disabled={targetsLoading || !!targetsError}
                     aria-invalid={!!errors.sppgId}
-                  >
-                    <SelectValue
-                      placeholder={
-                        isLoadingTargets
-                          ? "Memuat daftar SPPG..."
-                          : "Pilih SPPG tujuan"
-                      }
-                    />
-                  </SelectTrigger>
-                  <SelectContent position="popper">
-                    {targets.map((target) => (
-                      <SelectItem key={target.id} value={target.id}>
-                        {target.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                    placeholder={
+                      targetsLoading
+                        ? "Memuat daftar SPPG..."
+                        : targetsError
+                          ? "Daftar SPPG gagal dimuat"
+                          : "Cari atau pilih SPPG tujuan"
+                    }
+                  />
+                  <ComboboxContent>
+                    <ComboboxEmpty>
+                      {targetsLoading
+                        ? "Memuat daftar SPPG..."
+                        : "Tidak ada SPPG yang cocok"}
+                    </ComboboxEmpty>
+                    <ComboboxList>
+                      {(target: TReviewSppgTarget) => (
+                        <ComboboxItem key={target.id} value={target}>
+                          <div className="flex flex-col">
+                            <span>{target.name}</span>
+                            <span className="text-muted-foreground text-xs">
+                              {target.address}
+                            </span>
+                          </div>
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
               )}
             />
-            {selectedTarget ? (
+            {targetsError ? (
+              <FieldDescription className="flex items-center justify-between gap-3">
+                <span>Gagal memuat daftar SPPG tujuan.</span>
+                {onRetryTargets ? (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="h-auto px-0 font-semibold text-primary"
+                    onClick={onRetryTargets}
+                  >
+                    Coba lagi
+                  </Button>
+                ) : null}
+              </FieldDescription>
+            ) : selectedTarget ? (
               <FieldDescription className="flex items-start gap-2">
                 <HugeiconsIcon
                   icon={Location01Icon}
@@ -201,7 +236,12 @@ export function CreateReportForm({
       <Button
         type="submit"
         className="h-12 w-full bg-primary font-semibold text-base hover:bg-primary/90"
-        disabled={isLoadingTargets || isSubmitting || targets.length === 0}
+        disabled={
+          targetsLoading ||
+          isSubmitting ||
+          targets.length === 0 ||
+          !!targetsError
+        }
       >
         {isSubmitting ? "Mengirim Laporan..." : "Kirim Laporan Sekarang"}
         <HugeiconsIcon icon={Navigation03Icon} className="ml-2 rotate-90" />

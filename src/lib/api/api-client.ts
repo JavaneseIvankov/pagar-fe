@@ -1,6 +1,12 @@
 import type { z } from "zod/v3";
 
 import { apiContract, type ApiContract } from "./api-contract";
+import {
+  API_REQUEST_FAILED_MESSAGE,
+  API_RESPONSE_INVALID_MESSAGE,
+  AUTH_SESSION_EXPIRED_MESSAGE,
+} from "./error-messages";
+import { parseWithMonitoring } from "./parse-with-monitoring";
 
 type AnySchema = z.ZodTypeAny;
 export type ApiEndpointName = keyof ApiContract;
@@ -136,6 +142,7 @@ export class ApiClientError<T = unknown> extends Error {
   readonly status: number;
   readonly data: T | undefined;
   readonly endpoint: EndpointName;
+  readonly code: "auth_expired" | "request_failed";
   readonly response: ApiClientResponseLike;
 
   constructor(
@@ -144,6 +151,7 @@ export class ApiClientError<T = unknown> extends Error {
       status: number;
       data: T | undefined;
       endpoint: EndpointName;
+      code: "auth_expired" | "request_failed";
       response: ApiClientResponseLike;
     },
   ) {
@@ -152,6 +160,7 @@ export class ApiClientError<T = unknown> extends Error {
     this.status = options.status;
     this.data = options.data;
     this.endpoint = options.endpoint;
+    this.code = options.code;
     this.response = options.response;
   }
 }
@@ -304,7 +313,36 @@ async function readResponsePayload(response: ApiClientResponseLike) {
   }
 }
 
-function getErrorMessage(payload: unknown, status: number) {
+function hasExpiredTokenMessage(payload: unknown) {
+  return (
+    payload &&
+    typeof payload === "object" &&
+    "message" in payload &&
+    payload.message === "Invalid or expired token."
+  );
+}
+
+function isExpiredTokenResponse(
+  payload: unknown,
+  status: number,
+  isProtected: boolean,
+) {
+  if (!isProtected) {
+    return false;
+  }
+
+  return status === 401 || (status === 403 && hasExpiredTokenMessage(payload));
+}
+
+function getErrorMessage(
+  payload: unknown,
+  status: number,
+  isProtected: boolean,
+) {
+  if (isExpiredTokenResponse(payload, status, isProtected)) {
+    return AUTH_SESSION_EXPIRED_MESSAGE;
+  }
+
   if (
     payload &&
     typeof payload === "object" &&
@@ -314,7 +352,7 @@ function getErrorMessage(payload: unknown, status: number) {
     return payload.message;
   }
 
-  return `Request failed with status ${status}.`;
+  return API_REQUEST_FAILED_MESSAGE;
 }
 
 function createParsedRequest<Name extends EndpointName>(
@@ -499,7 +537,16 @@ export function createApiClient(options: CreateApiClientOptions): ApiClient {
     });
 
     if (response.ok) {
-      return endpoint.successResponse.parse(payload) as ApiClientSuccess<Name>;
+      return parseWithMonitoring({
+        schema: endpoint.successResponse,
+        payload,
+        operation: `api:${String(name)}:success-response`,
+        publicMessage: API_RESPONSE_INVALID_MESSAGE,
+        metadata: {
+          endpoint: String(name),
+          status: response.status,
+        },
+      }) as ApiClientSuccess<Name>;
     }
 
     const parsedError = endpoint.errorResponse.safeParse(payload);
@@ -507,11 +554,18 @@ export function createApiClient(options: CreateApiClientOptions): ApiClient {
       ? (parsedError.data as ApiClientErrorData<Name>)
       : (payload as ApiClientErrorData<Name> | undefined);
     const error = new ApiClientError<ApiClientErrorData<Name>>(
-      getErrorMessage(payload, response.status),
+      getErrorMessage(payload, response.status, "headers" in endpoint),
       {
         status: response.status,
         data: errorData,
         endpoint: name,
+        code: isExpiredTokenResponse(
+          payload,
+          response.status,
+          "headers" in endpoint,
+        )
+          ? "auth_expired"
+          : "request_failed",
         response,
       },
     );

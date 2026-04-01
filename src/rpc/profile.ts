@@ -11,7 +11,7 @@ import {
   type TCurrentProfile,
   type TSppgProfile,
 } from "@/types";
-import { createServerApiClient } from "./server-api-client";
+import { createServerRpc } from "./server-rpc";
 
 // TODO: Replace with actual API mock or call (once shape is established)
 const currentProfileSchema = z.discriminatedUnion("role", [
@@ -103,70 +103,96 @@ function buildCurrentAdminProfileMock(): CurrentAdminProfileMock {
   };
 }
 
-export async function fetchCurrentProfile(): Promise<TCurrentProfile> {
-  const session = await getAuthSession();
+export const fetchCurrentProfile = createServerRpc(
+  {
+    operation: "fetchCurrentProfile",
+  },
+  async ({ client, parse }): Promise<TCurrentProfile> => {
+    const session = await getAuthSession();
 
-  if (session?.user.role === "SCHOOL") {
-    const client = createServerApiClient();
-    const dto = await client.getSchoolProfile();
+    if (session?.user.role === "SCHOOL") {
+      const dto = await client.getSchoolProfile();
 
-    return currentProfileSchema.parse(
-      mapSchoolProfileDtoToDomain(dto.data, {
-        username: session.user.username,
-      }),
+      return parse(
+        currentProfileSchema,
+        mapSchoolProfileDtoToDomain(dto.data, {
+          username: session.user.username,
+        }),
+        "school-profile",
+      );
+    }
+
+    if (session?.user.role === "PUBLIC") {
+      const rawData = await delayedValue(buildCurrentPublicProfileMock(), 300);
+
+      return parse(currentProfileSchema, rawData, "public-profile");
+    }
+
+    if (!session) {
+      throw new Error("Sesi profil tidak ditemukan.");
+    }
+
+    throw new Error("Profil saat ini hanya tersedia untuk publik dan sekolah.");
+  },
+);
+
+export const fetchCurrentSppgProfile = createServerRpc(
+  {
+    operation: "fetchCurrentSppgProfile",
+  },
+  async ({ client, parse }): Promise<TSppgProfile> => {
+    const dto = await client.getSppgProfile();
+
+    return parse(
+      currentSppgProfileSchema,
+      mapSppgProfileDtoToDomain(dto.data),
+      "response",
     );
-  }
+  },
+);
 
-  if (session?.user.role === "PUBLIC") {
-    const rawData = await delayedValue(buildCurrentPublicProfileMock(), 300);
+export const fetchCurrentAdminProfile = createServerRpc(
+  {
+    operation: "fetchCurrentAdminProfile",
+  },
+  async ({ parse }): Promise<TAdminProfile> => {
+    const rawData = await delayedValue(buildCurrentAdminProfileMock(), 300);
 
-    return currentProfileSchema.parse(rawData);
-  }
-
-  if (!session) {
-    throw new Error("Sesi profil tidak ditemukan.");
-  }
-
-  throw new Error("Profil saat ini hanya tersedia untuk publik dan sekolah.");
-}
-
-export async function fetchCurrentSppgProfile(): Promise<TSppgProfile> {
-  const client = createServerApiClient();
-  const dto = await client.getSppgProfile();
-
-  return currentSppgProfileSchema.parse(mapSppgProfileDtoToDomain(dto.data));
-}
-
-export async function fetchCurrentAdminProfile(): Promise<TAdminProfile> {
-  const rawData = await delayedValue(buildCurrentAdminProfileMock(), 300);
-
-  return currentAdminProfileSchema.parse(rawData);
-}
+    return parse(currentAdminProfileSchema, rawData, "mock-response");
+  },
+);
 
 export type UpdateCurrentSchoolProfileInput = {
   address: string;
   schoolName: string;
 };
 
-export async function updateCurrentSchoolProfile(
-  input: UpdateCurrentSchoolProfileInput,
-): Promise<TCurrentProfile> {
-  const session = await requireCurrentRole(
-    ["SCHOOL"],
-    "Pembaruan profil sekolah hanya tersedia untuk akun sekolah.",
-  );
+export const updateCurrentSchoolProfile = createServerRpc(
+  {
+    operation: "updateCurrentSchoolProfile",
+  },
+  async (
+    { client, parse },
+    input: UpdateCurrentSchoolProfileInput,
+  ): Promise<TCurrentProfile> => {
+    const session = await requireCurrentRole(
+      ["SCHOOL"],
+      "Pembaruan profil sekolah hanya tersedia untuk akun sekolah.",
+    );
 
-  const client = createServerApiClient();
-  const dto = await client.updateSchoolProfile({
-    body: {
-      school_address: input.address,
-      school_name: input.schoolName,
-    },
-  });
+    const dto = await client.updateSchoolProfile({
+      body: {
+        school_address: input.address,
+        school_name: input.schoolName,
+      },
+    });
 
-  return currentProfileSchema.parse(
-    mapSchoolProfileDtoToDomain(dto.data, {
-      username: session.user.username,
-    }),
-  );
-}
+    return parse(
+      currentProfileSchema,
+      mapSchoolProfileDtoToDomain(dto.data, {
+        username: session.user.username,
+      }),
+      "updated-school-profile",
+    );
+  },
+);

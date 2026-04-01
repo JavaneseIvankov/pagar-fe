@@ -1,10 +1,12 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { getAuthenticatedLandingPath } from "@/lib/auth/navigation";
+import { getAuthSessionFromRequest } from "@/lib/auth/request";
+import { canRoleAccessPath } from "@/lib/auth/navigation";
 import {
-  canRoleAccessPath,
-  getAuthSessionFromRequest,
-  getAuthenticatedLandingPath,
-} from "@/lib/auth";
-import { buildReturnToPath, LOGIN_RETURN_TO_PARAM } from "@/lib/auth/redirects";
+  AUTH_SESSION_EXPIRED_PATH,
+  buildReturnToPath,
+  LOGIN_RETURN_TO_PARAM,
+} from "@/lib/auth/redirects";
 
 function isProtectedPath(pathname: string) {
   return (
@@ -34,6 +36,10 @@ export function proxy(request: NextRequest) {
   const session = getAuthSessionFromRequest(request);
 
   if (pathname === "/") {
+    return NextResponse.next();
+  }
+
+  if (pathname === AUTH_SESSION_EXPIRED_PATH) {
     return NextResponse.next();
   }
 

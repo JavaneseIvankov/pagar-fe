@@ -1,7 +1,7 @@
 "use server";
 
-import { dto } from "@/lib/api";
-import { createServerApiClient } from "./server-api-client";
+import { API_REQUEST_FAILED_MESSAGE, dto } from "@/lib/api";
+import { createServerRpc } from "./server-rpc";
 
 export type SubmitSppgDailyReportResult = {
   id: string;
@@ -41,32 +41,42 @@ function getAttachments(formData: FormData) {
   return attachments;
 }
 
-export async function submitSppgDailyReport(
-  formData: FormData,
-): Promise<SubmitSppgDailyReportResult> {
-  const attachments = getAttachments(formData);
-  const parsedPayload = dto.createSppgDailyReportBodySchema.parse({
-    date_report: getSingleValue(formData, "date_report"),
-    menu_name: getSingleValue(formData, "menu_name"),
-    meal_time: getSingleValue(formData, "meal_time"),
-    total_portion: Number(getSingleValue(formData, "total_portion")),
-    energy: Number(getSingleValue(formData, "energy")),
-    protein: Number(getSingleValue(formData, "protein")),
-    fat: Number(getSingleValue(formData, "fat")),
-    carbohydrate: Number(getSingleValue(formData, "carbohydrate")),
-    budgets: JSON.parse(getSingleValue(formData, "budgets") || "[]"),
-  });
-  const client = createServerApiClient();
-  const response = await client.createSppgDailyReport({
-    body: parsedPayload,
-    files: {
-      attachments,
-    },
-  });
+export const submitSppgDailyReport = createServerRpc(
+  {
+    operation: "submitSppgDailyReport",
+  },
+  async (
+    { client, parse },
+    formData: FormData,
+  ): Promise<SubmitSppgDailyReportResult> => {
+    const attachments = getAttachments(formData);
+    const parsedPayload = parse(
+      dto.createSppgDailyReportBodySchema,
+      {
+        date_report: getSingleValue(formData, "date_report"),
+        menu_name: getSingleValue(formData, "menu_name"),
+        meal_time: getSingleValue(formData, "meal_time"),
+        total_portion: Number(getSingleValue(formData, "total_portion")),
+        energy: Number(getSingleValue(formData, "energy")),
+        protein: Number(getSingleValue(formData, "protein")),
+        fat: Number(getSingleValue(formData, "fat")),
+        carbohydrate: Number(getSingleValue(formData, "carbohydrate")),
+        budgets: JSON.parse(getSingleValue(formData, "budgets") || "[]"),
+      },
+      "payload",
+      API_REQUEST_FAILED_MESSAGE,
+    );
+    const response = await client.createSppgDailyReport({
+      body: parsedPayload,
+      files: {
+        attachments,
+      },
+    });
 
-  return {
-    id: response.data.id_daily_report,
-    message: response.message,
-    totalExpense: response.data.total_expense,
-  };
-}
+    return {
+      id: response.data.id_daily_report,
+      message: response.message,
+      totalExpense: response.data.total_expense,
+    };
+  },
+);

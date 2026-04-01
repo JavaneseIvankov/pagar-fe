@@ -7,42 +7,53 @@ import {
   type TAdminActiveAccount,
   type TAdminPendingAccount,
 } from "@/types";
-import { createServerApiClient } from "./server-api-client";
+import { createServerRpc } from "./server-rpc";
 
-export async function fetchAdminActiveAccounts(): Promise<
-  TAdminActiveAccount[]
-> {
-  const client = createServerApiClient();
-  const dto = await client.getActiveAccounts();
+export const fetchAdminActiveAccounts = createServerRpc(
+  {
+    operation: "fetchAdminActiveAccounts",
+  },
+  async ({ client }): Promise<TAdminActiveAccount[]> => {
+    const dto = await client.getActiveAccounts();
 
-  return dto.data.map(mapActiveAccountDtoToDomain);
-}
+    return dto.data.map(mapActiveAccountDtoToDomain);
+  },
+);
 
-export async function fetchAdminPendingAccounts(): Promise<
-  TAdminPendingAccount[]
-> {
-  const client = createServerApiClient();
-  const dto = await client.getPendingAccounts();
+export const fetchAdminPendingAccounts = createServerRpc(
+  {
+    operation: "fetchAdminPendingAccounts",
+  },
+  async ({ client }): Promise<TAdminPendingAccount[]> => {
+    const dto = await client.getPendingAccounts();
 
-  return dto.data.map(mapPendingAccountDtoToDomain);
-}
+    return dto.data.map(mapPendingAccountDtoToDomain);
+  },
+);
 
-export async function updateAdminAccountStatus(params: {
-  idUser: string;
-  status: TAdminAccountDecision;
-}) {
-  const client = createServerApiClient();
-  const dto = await client.updateAccountStatus({
+export const updateAdminAccountStatus = createServerRpc(
+  {
+    operation: "updateAdminAccountStatus",
+  },
+  async (
+    { client },
     params: {
-      id_user: params.idUser,
+      idUser: string;
+      status: TAdminAccountDecision;
     },
-    body: {
-      status: params.status,
-    },
-  });
+  ) => {
+    const dto = await client.updateAccountStatus({
+      params: {
+        id_user: params.idUser,
+      },
+      body: {
+        status: params.status,
+      },
+    });
 
-  return {
-    accountStatus: dto.data.account_status,
-    id: dto.data.id_user,
-  };
-}
+    return {
+      accountStatus: dto.data.account_status,
+      id: dto.data.id_user,
+    };
+  },
+);

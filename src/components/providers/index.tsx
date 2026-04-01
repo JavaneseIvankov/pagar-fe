@@ -1,16 +1,52 @@
 "use client";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  MutationCache,
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { debounce } from "nuqs";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { useState } from "react";
-import { Toaster } from "sonner";
+import { toast, Toaster } from "sonner";
+import {
+  handleClientApiError,
+  isAuthSessionExpiredError,
+} from "@/lib/api/client-error-handling";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { GlobalAlertDialog } from "@/hooks/use-alert-dialog";
 import GlobalDialog from "@/hooks/use-dialog";
 
 const createQueryClient = () => {
-  return new QueryClient();
+  let queryClient: QueryClient;
+  const handleError = (error: unknown) => {
+    handleClientApiError(error, {
+      notify: (message) => {
+        toast.error(message);
+      },
+      onAuthExpired: () => {
+        queryClient.clear();
+      },
+    });
+  };
+
+  queryClient = new QueryClient({
+    queryCache: new QueryCache({
+      onError: handleError,
+    }),
+    mutationCache: new MutationCache({
+      onError: handleError,
+    }),
+    defaultOptions: {
+      queries: {
+        retry: (failureCount, error) =>
+          !isAuthSessionExpiredError(error) && failureCount < 2,
+      },
+    },
+  });
+
+  return queryClient;
 };
 
 export default function Providers({

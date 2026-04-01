@@ -1,12 +1,12 @@
 "use server";
 
-import { dto } from "@/lib/api";
+import { API_REQUEST_FAILED_MESSAGE, dto } from "@/lib/api";
 import { requireCurrentRole } from "@/lib/auth/server";
 import {
   mapReviewSppgTargetDtoToDomain,
   type TReviewSppgTarget,
 } from "@/types";
-import { createServerApiClient } from "./server-api-client";
+import { createServerRpc } from "./server-rpc";
 
 type ReviewSubmissionRole = "PUBLIC" | "SCHOOL";
 
@@ -52,42 +52,67 @@ function getSingleValue(formData: FormData, key: string) {
   return typeof value === "string" ? value : "";
 }
 
-export async function fetchCurrentReviewSubmissionContext(): Promise<CurrentReviewSubmissionContext> {
-  const role = await getCurrentReviewRole();
-  const client = createServerApiClient();
+export const fetchCurrentReviewSubmissionContext = createServerRpc(
+  {
+    operation: "fetchCurrentReviewSubmissionContext",
+  },
+  async ({ client }): Promise<CurrentReviewSubmissionContext> => {
+    const role = await getCurrentReviewRole();
 
-  if (role === "PUBLIC") {
-    const response = await client.getPublicSppgList();
+    if (role === "PUBLIC") {
+      const response = await client.getPublicSppgList();
+
+      return {
+        role,
+        targets: response.data.map(mapReviewSppgTargetDtoToDomain),
+      };
+    }
+
+    const response = await client.getSchoolSppgList();
 
     return {
       role,
       targets: response.data.map(mapReviewSppgTargetDtoToDomain),
     };
-  }
+  },
+);
 
-  const response = await client.getSchoolSppgList();
+export const submitCurrentRoleReview = createServerRpc(
+  {
+    operation: "submitCurrentRoleReview",
+  },
+  async (
+    { client, parse },
+    formData: FormData,
+  ): Promise<SubmitCurrentRoleReviewResult> => {
+    const role = await getCurrentReviewRole();
+    const attachment = getOptionalAttachment(formData);
+    const input = parse(
+      dto.createPublicReviewBodySchema,
+      {
+        id_sppg: getSingleValue(formData, "id_sppg"),
+        title: getSingleValue(formData, "title"),
+        description: getSingleValue(formData, "description"),
+        rating_score: Number(getSingleValue(formData, "rating_score")),
+      },
+      "payload",
+      API_REQUEST_FAILED_MESSAGE,
+    );
 
-  return {
-    role,
-    targets: response.data.map(mapReviewSppgTargetDtoToDomain),
-  };
-}
+    if (role === "PUBLIC") {
+      const response = await client.createPublicReview({
+        body: input,
+        files: {
+          attachments: attachment,
+        },
+      });
 
-export async function submitCurrentRoleReview(
-  formData: FormData,
-): Promise<SubmitCurrentRoleReviewResult> {
-  const role = await getCurrentReviewRole();
-  const attachment = getOptionalAttachment(formData);
-  const input = dto.createPublicReviewBodySchema.parse({
-    id_sppg: getSingleValue(formData, "id_sppg"),
-    title: getSingleValue(formData, "title"),
-    description: getSingleValue(formData, "description"),
-    rating_score: Number(getSingleValue(formData, "rating_score")),
-  });
-  const client = createServerApiClient();
+      return {
+        message: `Ulasan berhasil dikirim dengan ID ${response.data.id_review}.`,
+      };
+    }
 
-  if (role === "PUBLIC") {
-    const response = await client.createPublicReview({
+    const response = await client.createSchoolReview({
       body: input,
       files: {
         attachments: attachment,
@@ -97,16 +122,5 @@ export async function submitCurrentRoleReview(
     return {
       message: `Ulasan berhasil dikirim dengan ID ${response.data.id_review}.`,
     };
-  }
-
-  const response = await client.createSchoolReview({
-    body: input,
-    files: {
-      attachments: attachment,
-    },
-  });
-
-  return {
-    message: `Ulasan berhasil dikirim dengan ID ${response.data.id_review}.`,
-  };
-}
+  },
+);

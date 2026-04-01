@@ -1,11 +1,15 @@
 "use server";
 
 import { mapSppgDashboardDtoToDomain, type TSppgDashboard } from "@/types";
-import { createServerApiClient } from "./server-api-client";
+import { createServerRpc } from "./server-rpc";
 
-export async function fetchSppgDashboard(): Promise<TSppgDashboard> {
-  const client = createServerApiClient();
-  const dto = await client.getSppgDashboard();
+export const fetchSppgDashboard = createServerRpc(
+  {
+    operation: "fetchSppgDashboard",
+  },
+  async ({ client }): Promise<TSppgDashboard> => {
+    const dto = await client.getSppgDashboard();
 
-  return mapSppgDashboardDtoToDomain(dto.data);
-}
+    return mapSppgDashboardDtoToDomain(dto.data);
+  },
+);

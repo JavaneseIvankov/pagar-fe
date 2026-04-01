@@ -9,7 +9,7 @@ import {
   mapRegisterDtoToDomain,
   type TAuthRegistrationResult,
 } from "@/types";
-import { createServerApiClient } from "./server-api-client";
+import { createServerRpc } from "./server-rpc";
 
 type AuthActionErrorResult = {
   message: string;
@@ -74,63 +74,75 @@ function getErrorMessage(error: unknown, fallbackMessage: string) {
   return fallbackMessage;
 }
 
-async function registerWithBackend(
-  input: RegisterUserInput,
-): Promise<TAuthRegistrationResult> {
-  const client = createServerApiClient();
+const registerWithBackend = createServerRpc(
+  {
+    operation: "registerWithBackend",
+  },
+  async (
+    { client },
+    input: RegisterUserInput,
+  ): Promise<TAuthRegistrationResult> => {
+    if (input.role === "PUBLIC") {
+      const response = await client.registerPublic({
+        body: {
+          email: input.email,
+          password: input.password,
+          username: input.username,
+        },
+      });
 
-  if (input.role === "PUBLIC") {
-    const response = await client.registerPublic({
+      return mapRegisterDtoToDomain(response);
+    }
+
+    if (input.role === "SCHOOL") {
+      const response = await client.registerSchool({
+        body: {
+          email: input.email,
+          password: input.password,
+          registration_code: input.registrationCode,
+          school_address: input.schoolAddress,
+          school_name: input.schoolName,
+          username: input.username,
+        },
+      });
+
+      return mapRegisterDtoToDomain(response);
+    }
+
+    const response = await client.registerSppg({
       body: {
+        bgn_code: input.bgnCode,
         email: input.email,
         password: input.password,
+        sppg_address: input.sppgAddress,
+        sppg_name: input.sppgName,
         username: input.username,
       },
     });
 
     return mapRegisterDtoToDomain(response);
-  }
+  },
+);
 
-  if (input.role === "SCHOOL") {
-    const response = await client.registerSchool({
+const loginWithBackend = createServerRpc(
+  {
+    operation: "loginWithBackend",
+  },
+  async ({ client }, input: LoginUserInput) => {
+    return client.login({
       body: {
-        email: input.email,
         password: input.password,
-        registration_code: input.registrationCode,
-        school_address: input.schoolAddress,
-        school_name: input.schoolName,
         username: input.username,
       },
     });
-
-    return mapRegisterDtoToDomain(response);
-  }
-
-  const response = await client.registerSppg({
-    body: {
-      bgn_code: input.bgnCode,
-      email: input.email,
-      password: input.password,
-      sppg_address: input.sppgAddress,
-      sppg_name: input.sppgName,
-      username: input.username,
-    },
-  });
-
-  return mapRegisterDtoToDomain(response);
-}
+  },
+);
 
 export async function loginUser(
   input: LoginUserInput,
 ): Promise<AuthActionResult> {
   try {
-    const client = createServerApiClient();
-    const response = await client.login({
-      body: {
-        password: input.password,
-        username: input.username,
-      },
-    });
+    const response = await loginWithBackend(input);
     const session = mapLoginDtoToDomain(response.data);
     const safeReturnTo = getSafeReturnToPath(input.returnTo);
 

@@ -1,21 +1,14 @@
-import { cookies } from "next/headers";
 import { DashboardMobileHeader } from "@/components/layout/dashboard-mobile-header";
 import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import {
-  AUTH_SESSION_COOKIE_NAME,
-  parseAuthSessionCookieValue,
-} from "@/lib/auth";
+import { getAuthSession } from "@/lib/auth/server";
 
 export default async function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const session = parseAuthSessionCookieValue(
-    cookieStore.get(AUTH_SESSION_COOKIE_NAME)?.value,
-  );
+  const session = await getAuthSession();
 
   return (
     <SidebarProvider>

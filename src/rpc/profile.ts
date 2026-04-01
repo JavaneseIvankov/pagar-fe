@@ -1,12 +1,8 @@
 "use server";
 
-import { cookies } from "next/headers";
 import z from "zod/v3";
-import {
-  AUTH_SESSION_COOKIE_NAME,
-  parseAuthSessionCookieValue,
-} from "@/lib/auth";
 import { admins, publicUsers } from "@/mock-data";
+import { getAuthSession, requireCurrentRole } from "@/lib/auth/server";
 import { delayedValue } from "@/lib/utils";
 import {
   mapSchoolProfileDtoToDomain,
@@ -81,14 +77,6 @@ function buildCurrentPublicProfileMock(): CurrentProfileMock {
   };
 }
 
-async function getCurrentSession() {
-  const cookieStore = await cookies();
-
-  return parseAuthSessionCookieValue(
-    cookieStore.get(AUTH_SESSION_COOKIE_NAME)?.value,
-  );
-}
-
 function buildCurrentAdminProfileMock(): CurrentAdminProfileMock {
   const admin = admins[0];
 
@@ -116,7 +104,7 @@ function buildCurrentAdminProfileMock(): CurrentAdminProfileMock {
 }
 
 export async function fetchCurrentProfile(): Promise<TCurrentProfile> {
-  const session = await getCurrentSession();
+  const session = await getAuthSession();
 
   if (session?.user.role === "SCHOOL") {
     const client = createServerApiClient();
@@ -163,13 +151,10 @@ export type UpdateCurrentSchoolProfileInput = {
 export async function updateCurrentSchoolProfile(
   input: UpdateCurrentSchoolProfileInput,
 ): Promise<TCurrentProfile> {
-  const session = await getCurrentSession();
-
-  if (session?.user.role !== "SCHOOL") {
-    throw new Error(
-      "Pembaruan profil sekolah hanya tersedia untuk akun sekolah.",
-    );
-  }
+  const session = await requireCurrentRole(
+    ["SCHOOL"],
+    "Pembaruan profil sekolah hanya tersedia untuk akun sekolah.",
+  );
 
   const client = createServerApiClient();
   const dto = await client.updateSchoolProfile({

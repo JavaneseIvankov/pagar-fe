@@ -1,15 +1,9 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { ApiClientError } from "@/lib/api";
-import {
-  AUTH_SESSION_COOKIE_NAME,
-  AUTH_SESSION_MAX_AGE_SECONDS,
-  serializeAuthSessionCookie,
-} from "@/lib/auth/cookie";
-import { isProduction } from "@/lib/env/server";
 import { getAuthenticatedLandingPath } from "@/lib/auth/navigation";
 import { getSafeReturnToPath } from "@/lib/auth/redirects";
+import { clearAuthSession, setAuthSession } from "@/lib/auth/server";
 import {
   mapLoginDtoToDomain,
   mapRegisterDtoToDomain,
@@ -67,16 +61,6 @@ type RegisterUserInput =
   | RegisterPublicInput
   | RegisterSchoolInput
   | RegisterSppgInput;
-
-function getSessionCookieOptions(maxAge: number) {
-  return {
-    httpOnly: true,
-    maxAge,
-    path: "/",
-    sameSite: "lax" as const,
-    secure: isProduction,
-  };
-}
 
 function getErrorMessage(error: unknown, fallbackMessage: string) {
   if (error instanceof ApiClientError) {
@@ -148,14 +132,9 @@ export async function loginUser(
       },
     });
     const session = mapLoginDtoToDomain(response.data);
-    const cookieStore = await cookies();
     const safeReturnTo = getSafeReturnToPath(input.returnTo);
 
-    cookieStore.set(
-      AUTH_SESSION_COOKIE_NAME,
-      serializeAuthSessionCookie(session),
-      getSessionCookieOptions(AUTH_SESSION_MAX_AGE_SECONDS),
-    );
+    await setAuthSession(session);
 
     return {
       status: "success",
@@ -191,7 +170,5 @@ export async function registerUser(
 }
 
 export async function logoutUser() {
-  const cookieStore = await cookies();
-
-  cookieStore.set(AUTH_SESSION_COOKIE_NAME, "", getSessionCookieOptions(0));
+  await clearAuthSession();
 }

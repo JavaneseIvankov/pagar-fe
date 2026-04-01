@@ -1,11 +1,7 @@
 "use server";
 
-import { cookies } from "next/headers";
-import {
-  AUTH_SESSION_COOKIE_NAME,
-  parseAuthSessionCookieValue,
-} from "@/lib/auth";
 import { dto } from "@/lib/api";
+import { requireCurrentRole } from "@/lib/auth/server";
 import {
   mapReviewSppgTargetDtoToDomain,
   type TReviewSppgTarget,
@@ -24,16 +20,12 @@ export type SubmitCurrentRoleReviewResult = {
 };
 
 async function getCurrentReviewRole(): Promise<ReviewSubmissionRole> {
-  const cookieStore = await cookies();
-  const session = parseAuthSessionCookieValue(
-    cookieStore.get(AUTH_SESSION_COOKIE_NAME)?.value,
+  const session = await requireCurrentRole(
+    ["PUBLIC", "SCHOOL"],
+    "Halaman ini hanya tersedia untuk akun publik dan sekolah.",
   );
 
-  if (session?.user.role === "PUBLIC" || session?.user.role === "SCHOOL") {
-    return session.user.role;
-  }
-
-  throw new Error("Halaman ini hanya tersedia untuk akun publik dan sekolah.");
+  return session.user.role;
 }
 
 function getOptionalAttachment(formData: FormData) {
@@ -88,6 +80,7 @@ export async function submitCurrentRoleReview(
   const attachment = getOptionalAttachment(formData);
   const input = dto.createPublicReviewBodySchema.parse({
     id_sppg: getSingleValue(formData, "id_sppg"),
+    title: getSingleValue(formData, "title"),
     description: getSingleValue(formData, "description"),
     rating_score: Number(getSingleValue(formData, "rating_score")),
   });

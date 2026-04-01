@@ -49,6 +49,7 @@ export async function submitSppgDailyReport(
     date_report: getSingleValue(formData, "date_report"),
     menu_name: getSingleValue(formData, "menu_name"),
     meal_time: getSingleValue(formData, "meal_time"),
+    total_portion: Number(getSingleValue(formData, "total_portion")),
     energy: Number(getSingleValue(formData, "energy")),
     protein: Number(getSingleValue(formData, "protein")),
     fat: Number(getSingleValue(formData, "fat")),

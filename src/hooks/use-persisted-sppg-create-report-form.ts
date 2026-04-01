@@ -22,6 +22,7 @@ function hasOnlySupportedAttachments(files: unknown[]) {
   return files.every(
     (file) =>
       file instanceof File &&
+      file.size <= 3 * 1024 * 1024 &&
       supportedAttachmentMimeTypes.includes(
         file.type as (typeof supportedAttachmentMimeTypes)[number],
       ),
@@ -32,13 +33,17 @@ export const createReportSchema = z.object({
   tanggalLaporan: z.string().min(1, "Tanggal laporan wajib diisi"),
   namaMenu: z.string().min(3, "Nama menu minimal 3 karakter"),
   waktuMakan: z.string().min(1, "Pilih waktu makan"),
+  jumlahPorsi: z
+    .number({ message: "Wajib diisi" })
+    .int("Jumlah porsi harus berupa bilangan bulat")
+    .min(1, "Jumlah porsi minimal 1"),
   deskripsi: z.string().optional(),
   fotoMakanan: z
     .array(z.any())
     .min(1, "Wajib mengunggah 1 foto makanan")
     .refine(
       hasOnlySupportedAttachments,
-      "Foto makanan harus berupa JPG, PNG, atau WEBP",
+      "Foto makanan harus berupa JPG, PNG, atau WEBP dengan ukuran maksimal 3MB",
     ),
   gizi: z.object({
     energi: z.number({ message: "Wajib diisi" }).min(0),
@@ -59,13 +64,13 @@ export const createReportSchema = z.object({
     .min(1, "Wajib mengunggah bukti anggaran")
     .refine(
       hasOnlySupportedAttachments,
-      "Bukti anggaran sementara hanya bisa berupa JPG, PNG, atau WEBP",
+      "Bukti anggaran harus berupa JPG, PNG, atau WEBP dengan ukuran maksimal 3MB",
     ),
 });
 
 export type TCreateReportForm = z.infer<typeof createReportSchema>;
 
-const CREATE_REPORT_FORM_DRAFT_VERSION = 2;
+const CREATE_REPORT_FORM_DRAFT_VERSION = 3;
 
 function getTodayDateValue() {
   return new Date().toISOString().slice(0, 10);
@@ -76,6 +81,7 @@ function createReportFormDefaultValues(): DefaultValues<TCreateReportForm> {
     tanggalLaporan: getTodayDateValue(),
     namaMenu: "",
     waktuMakan: "",
+    jumlahPorsi: undefined,
     deskripsi: "",
     fotoMakanan: [],
     gizi: {
@@ -129,6 +135,7 @@ export function usePersistedSppgCreateReportForm() {
       formData.set("date_report", data.tanggalLaporan);
       formData.set("menu_name", data.namaMenu);
       formData.set("meal_time", data.waktuMakan);
+      formData.set("total_portion", String(data.jumlahPorsi));
       formData.set("energy", String(data.gizi.energi));
       formData.set("protein", String(data.gizi.protein));
       formData.set("fat", String(data.gizi.lemak));
@@ -162,6 +169,8 @@ export function usePersistedSppgCreateReportForm() {
   });
 
   const rincianAnggaran = watch("rincianAnggaran") ?? [];
+  const jumlahPorsi = watch("jumlahPorsi") ?? 0;
+  const targetKalori = watch("gizi.energi") ?? 0;
   const totalAnggaranPerPorsi = rincianAnggaran.reduce(
     (acc, curr) => acc + (Number(curr.biayaSatuan) || 0),
     0,
@@ -190,9 +199,11 @@ export function usePersistedSppgCreateReportForm() {
     handleSubmit,
     isHydrating,
     isSubmitting: submitMutation.isPending,
+    jumlahPorsi,
     onSubmit,
     register,
     remove,
+    targetKalori,
     totalAnggaranPerPorsi,
   };
 }

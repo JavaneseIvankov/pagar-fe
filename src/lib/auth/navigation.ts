@@ -32,10 +32,16 @@ export function canRoleAccessPath(role: TRole, pathname: string) {
   }
 
   if (
+    normalizedPathname.startsWith("/laporan-masyarakat") ||
+    normalizedPathname.startsWith("/laporan-sppg") ||
     normalizedPathname.startsWith("/profil") ||
     normalizedPathname.startsWith("/tambah-laporan")
   ) {
     return role === "PUBLIC" || role === "SCHOOL";
+  }
+
+  if (normalizedPathname === "/" || normalizedPathname.startsWith("/auth")) {
+    return true;
   }
 
   return true;

@@ -529,6 +529,8 @@ export function updateMockAccountStatus(params: {
 }
 
 export function buildSppgPeriodicReportsResponse(): SppgPeriodicReportsResponse {
+  const totalItems = sppgPeriodicReports.length;
+
   return {
     status: "success" as const,
     data: {
@@ -536,11 +538,15 @@ export function buildSppgPeriodicReportsResponse(): SppgPeriodicReportsResponse 
         start_date: "2024-01-01",
         end_date: "2024-09-30",
       },
-      total_reports: sppgPeriodicReports.length,
       total_budget_spent: sppgPeriodicReports.reduce(
         (sum, report) => sum + report.totalBudget,
         0,
       ),
+      pagination: {
+        totalItems,
+        totalPages: totalItems > 0 ? 1 : 0,
+        currentPage: totalItems > 0 ? 1 : 0,
+      },
       reports: sppgPeriodicReports.map((report, index) => {
         return {
           id_daily_report: createEntityUuid(index + 601),

@@ -20,6 +20,7 @@ import GlobalDialog from "@/hooks/use-dialog";
 
 const createQueryClient = () => {
   let queryClient: QueryClient;
+  const queryStaleTimeMs = 30 * 1000;
   const handleError = (error: unknown) => {
     handleClientApiError(error, {
       notify: (message) => {
@@ -40,6 +41,7 @@ const createQueryClient = () => {
     }),
     defaultOptions: {
       queries: {
+        staleTime: queryStaleTimeMs,
         retry: (failureCount, error) =>
           !isAuthSessionExpiredError(error) && failureCount < 2,
       },

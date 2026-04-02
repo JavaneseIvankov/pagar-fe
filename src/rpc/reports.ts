@@ -2,9 +2,12 @@
 
 import { ApiClientError } from "@/lib/api";
 import { requireCurrentRole } from "@/lib/auth/server";
+import { REPORT_LIST_PAGE_SIZE } from "@/lib/pagination/constants";
+import { toPaginatedResult } from "@/lib/pagination/to-paginated-result";
 import {
   mapPublicDashboardReviewDtoToDomain,
   mapPublicDashboardSppgReportDtoToDomain,
+  type TPaginatedResult,
   type TPublicReview,
   type TSppg,
   type TSppgReport,
@@ -13,6 +16,41 @@ import {
 import { createServerRpc } from "./server-rpc";
 
 type ReportViewerRole = "PUBLIC" | "SCHOOL";
+
+export interface FetchReportListParams {
+  limit?: number;
+  page?: number;
+}
+
+function resolveListParams(params?: FetchReportListParams) {
+  return {
+    page: params?.page && params.page > 0 ? Math.floor(params.page) : 1,
+    limit:
+      params?.limit && params.limit > 0
+        ? Math.floor(params.limit)
+        : REPORT_LIST_PAGE_SIZE,
+  };
+}
+
+function paginateLocalItems<TItem>(
+  items: TItem[],
+  params: {
+    limit: number;
+    page: number;
+  },
+): TPaginatedResult<TItem> {
+  const startIndex = (params.page - 1) * params.limit;
+  const pagedItems = items.slice(startIndex, startIndex + params.limit);
+
+  return toPaginatedResult({
+    items: pagedItems,
+    defaults: {
+      page: params.page,
+      limit: params.limit,
+      itemCount: items.length,
+    },
+  });
+}
 
 // TODO: this will cause all other client files to error, because this fn is server-only
 async function getCurrentReportViewerRole(): Promise<ReportViewerRole> {
@@ -46,14 +84,36 @@ export const fetchSppgReports = createServerRpc(
     operation: "fetchSppgReports",
     onAuthExpired: "redirect",
   },
-  async ({ client }): Promise<TSppgReport[]> => {
+  async (
+    { client },
+    params?: FetchReportListParams,
+  ): Promise<TPaginatedResult<TSppgReport>> => {
+    const normalizedParams = resolveListParams(params);
     const role = await getCurrentReportViewerRole();
-    const response =
-      role === "PUBLIC"
-        ? await client.getPublicDashboardSppgReports()
-        : await client.getSchoolDashboardSppgReports();
 
-    return response.data.map(mapPublicDashboardSppgReportDtoToDomain);
+    if (role === "PUBLIC") {
+      const response = await client.getPublicDashboardSppgReports();
+      const mapped = response.data.map(mapPublicDashboardSppgReportDtoToDomain);
+
+      return paginateLocalItems(mapped, normalizedParams);
+    }
+
+    const response = await client.getSchoolDashboardSppgReports({
+      query: {
+        page: normalizedParams.page,
+        limit: normalizedParams.limit,
+      },
+    });
+
+    return toPaginatedResult({
+      items: response.data.map(mapPublicDashboardSppgReportDtoToDomain),
+      envelope: response,
+      defaults: {
+        page: normalizedParams.page,
+        limit: normalizedParams.limit,
+        itemCount: response.data.length,
+      },
+    });
   },
 );
 
@@ -62,14 +122,36 @@ export const fetchPublicReviews = createServerRpc(
     operation: "fetchPublicReviews",
     onAuthExpired: "redirect",
   },
-  async ({ client }): Promise<TPublicReview[]> => {
+  async (
+    { client },
+    params?: FetchReportListParams,
+  ): Promise<TPaginatedResult<TPublicReview>> => {
+    const normalizedParams = resolveListParams(params);
     const role = await getCurrentReportViewerRole();
-    const response =
-      role === "PUBLIC"
-        ? await client.getPublicDashboardReviews()
-        : await client.getSchoolDashboardReviews();
 
-    return response.data.map(mapPublicDashboardReviewDtoToDomain);
+    if (role === "PUBLIC") {
+      const response = await client.getPublicDashboardReviews();
+      const mapped = response.data.map(mapPublicDashboardReviewDtoToDomain);
+
+      return paginateLocalItems(mapped, normalizedParams);
+    }
+
+    const response = await client.getSchoolDashboardReviews({
+      query: {
+        page: normalizedParams.page,
+        limit: normalizedParams.limit,
+      },
+    });
+
+    return toPaginatedResult({
+      items: response.data.map(mapPublicDashboardReviewDtoToDomain),
+      envelope: response,
+      defaults: {
+        page: normalizedParams.page,
+        limit: normalizedParams.limit,
+        itemCount: response.data.length,
+      },
+    });
   },
 );
 
@@ -85,7 +167,11 @@ export const fetchSppgReportDetail = createServerRpc(
           id_daily_report: id,
         },
       });
-      const reports = await fetchSppgReports();
+      const reportsResponse = await fetchSppgReports({
+        limit: 50,
+        page: 1,
+      });
+      const reports = reportsResponse.items;
       const matchedReport = reports.find((report) => report.id === id);
       const detail = response.data;
       const author =

@@ -1,10 +1,16 @@
 export const queryKeys = {
   reports: {
-    list: () => ["reports", "list"] as const,
+    list: (params: { limit: number; page: number }) =>
+      ["reports", "list", params.page, params.limit] as const,
+    infinite: (params: { limit: number }) =>
+      ["reports", "infinite", params.limit] as const,
     detail: (id: string) => ["reports", "detail", id] as const,
   },
   publicReviews: {
-    list: () => ["public-reviews", "list"] as const,
+    list: (params: { limit: number; page: number }) =>
+      ["public-reviews", "list", params.page, params.limit] as const,
+    infinite: (params: { limit: number }) =>
+      ["public-reviews", "infinite", params.limit] as const,
   },
   reviewSubmission: {
     context: () => ["review-submission", "context"] as const,

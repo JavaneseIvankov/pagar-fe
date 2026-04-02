@@ -101,28 +101,28 @@ export function SppgReportNutritionCard({
             label="Kalori"
             value={nutritionBreakdown.displayCalories}
             unit="kkal"
-            supportingText="Hasil hitung per porsi"
+            supportingText={`${nutritionBreakdown.akg.energy}% AKG`}
             className="border-[#4ade80] bg-[#4ade80]/10"
           />
           <NutritionFactTile
             label="Protein"
             value={nutritionalFacts.proteinGrams.inGrams}
             unit="gram"
-            supportingText={`${nutritionBreakdown.shares.protein.percentage}% kalori`}
+            supportingText={`${nutritionBreakdown.akg.protein}% AKG`}
             className="border-[#38bdf8] bg-[#38bdf8]/10"
           />
           <NutritionFactTile
             label="Karbo"
             value={nutritionalFacts.carbGrams.inGrams}
             unit="gram"
-            supportingText={`${nutritionBreakdown.shares.carb.percentage}% kalori`}
+            supportingText={`${nutritionBreakdown.akg.carb}% AKG`}
             className="border-[#fb923c] bg-[#fb923c]/10"
           />
           <NutritionFactTile
             label="Lemak"
             value={nutritionalFacts.fatGrams.inGrams}
             unit="gram"
-            supportingText={`${nutritionBreakdown.shares.fat.percentage}% kalori`}
+            supportingText={`${nutritionBreakdown.akg.fat}% AKG`}
             className="border-[#a855f7] bg-[#a855f7]/10"
           />
         </div>

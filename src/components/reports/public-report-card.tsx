@@ -14,7 +14,7 @@ export function PublicReportCard({ review }: PublicReportCardProps) {
   const author = review.reporterName;
 
   return (
-    <Card className="card-surface group w-full max-w-[933px] overflow-hidden rounded-[20px] sm:rounded-[24px]">
+    <Card className="card-surface group w-full overflow-hidden rounded-[20px] sm:rounded-[24px]">
       <CardHeader className="flex flex-row items-center gap-2.5 border-border/50 border-b px-3 py-3 sm:gap-3 sm:px-6 sm:py-4">
         <Avatar className="h-9 w-9 sm:h-10 sm:w-10">
           <AvatarFallbackIcon />

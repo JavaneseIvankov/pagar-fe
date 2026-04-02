@@ -21,7 +21,7 @@ export function useSubmitCurrentRoleReview() {
     mutationFn: (formData: FormData) => submitCurrentRoleReview(formData),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: queryKeys.publicReviews.list(),
+        queryKey: ["public-reviews"],
       });
     },
   });

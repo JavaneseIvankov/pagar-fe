@@ -95,6 +95,19 @@ export type TAdminProfile = TAdmin & {
 
 export type TCurrentProfile = TPublicProfile | TSchoolProfile;
 
+export type TPaginationMeta = {
+  page: number;
+  limit: number;
+  totalItems: number;
+  totalPages: number;
+  hasNextPage: boolean;
+};
+
+export type TPaginatedResult<TItem> = {
+  items: TItem[];
+  meta: TPaginationMeta;
+};
+
 export type TNutritionalFacts = {
   calories: {
     inKcal: number;

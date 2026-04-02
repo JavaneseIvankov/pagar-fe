@@ -1,24 +1,32 @@
-import { notFound } from "next/navigation";
+"use client";
+
 import { SppgReportBudgetCard } from "@/components/sppg-report-detail/sppg-report-budget-card";
 import { SppgReportDetailLayout } from "@/components/sppg-report-detail/sppg-report-detail-layout";
+import { SppgReportDetailSkeleton } from "@/components/sppg-report-detail/sppg-report-detail-skeleton";
 import { SppgReportDiscrepancyCard } from "@/components/sppg-report-detail/sppg-report-discrepancy-card";
 import { SppgReportHero } from "@/components/sppg-report-detail/sppg-report-hero";
 import { SppgReportNutritionCard } from "@/components/sppg-report-detail/sppg-report-nutrition-card";
 import { SppgReportRelatedReports } from "@/components/sppg-report-detail/sppg-report-related-reports";
 import { SppgReportVendorCard } from "@/components/sppg-report-detail/sppg-report-vendor-card";
-import { fetchSppgReportDetail } from "@/rpc/reports";
+import { useSppgReportDetail } from "@/hooks/use-sppg-report-detail";
 
 export interface SppgReportDetailContainerProps {
   id: string;
 }
 
-export async function SppgReportDetailContainer({
+export function SppgReportDetailContainer({
   id,
 }: SppgReportDetailContainerProps) {
-  const report = await fetchSppgReportDetail(id);
+  const { data: report, isLoading, isError } = useSppgReportDetail(id);
 
-  if (!report) {
-    notFound();
+  if (isLoading) {
+    return <SppgReportDetailSkeleton />;
+  }
+
+  if (isError || !report) {
+    return (
+      <div className="py-8 text-destructive">Gagal memuat detail laporan.</div>
+    );
   }
 
   return (

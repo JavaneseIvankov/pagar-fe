@@ -33,6 +33,11 @@ const nextConfig: NextConfig = {
     },
   },
   typedRoutes: false,
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "5mb",
+    },
+  },
 };
 
 export default nextConfig;

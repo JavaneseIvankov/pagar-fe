@@ -24,10 +24,34 @@ type AuthActionSuccessResult = {
 
 export type AuthActionResult = AuthActionErrorResult | AuthActionSuccessResult;
 
+type PasswordRecoveryErrorResult = {
+  message: string;
+  status: "error";
+};
+
+type PasswordRecoverySuccessResult = {
+  message: string;
+  redirectTo?: string;
+  status: "success";
+};
+
+export type PasswordRecoveryActionResult =
+  | PasswordRecoveryErrorResult
+  | PasswordRecoverySuccessResult;
+
 type LoginUserInput = {
   password: string;
   returnTo?: string;
   username: string;
+};
+
+type RequestPasswordResetInput = {
+  email: string;
+};
+
+type ResetPasswordInput = {
+  newPassword: string;
+  token: string;
 };
 
 type RegisterPublicInput = {
@@ -138,6 +162,35 @@ const loginWithBackend = createServerRpc(
   },
 );
 
+const requestPasswordResetWithBackend = createServerRpc(
+  {
+    operation: "requestPasswordResetWithBackend",
+  },
+  async ({ client }, input: RequestPasswordResetInput) => {
+    return client.forgotPassword({
+      body: {
+        email: input.email,
+      },
+    });
+  },
+);
+
+const resetPasswordWithBackend = createServerRpc(
+  {
+    operation: "resetPasswordWithBackend",
+  },
+  async ({ client }, input: ResetPasswordInput) => {
+    return client.resetPassword({
+      params: {
+        token: input.token,
+      },
+      body: {
+        newPassword: input.newPassword,
+      },
+    });
+  },
+);
+
 export async function loginUser(
   input: LoginUserInput,
 ): Promise<AuthActionResult> {
@@ -177,6 +230,46 @@ export async function registerUser(
     return {
       status: "error",
       message: getErrorMessage(error, "Gagal mendaftarkan akun."),
+    };
+  }
+}
+
+export async function requestPasswordReset(
+  input: RequestPasswordResetInput,
+): Promise<PasswordRecoveryActionResult> {
+  try {
+    const result = await requestPasswordResetWithBackend(input);
+
+    return {
+      status: "success",
+      message: result.message,
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: getErrorMessage(
+        error,
+        "Gagal memproses permintaan reset kata sandi.",
+      ),
+    };
+  }
+}
+
+export async function resetPassword(
+  input: ResetPasswordInput,
+): Promise<PasswordRecoveryActionResult> {
+  try {
+    const result = await resetPasswordWithBackend(input);
+
+    return {
+      status: "success",
+      message: result.message,
+      redirectTo: "/auth/masuk",
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: getErrorMessage(error, "Gagal mengatur ulang kata sandi."),
     };
   }
 }

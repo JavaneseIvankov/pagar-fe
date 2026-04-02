@@ -4,7 +4,14 @@ export {
   updateAdminAccountStatus,
 } from "./admin-accounts";
 export { fetchAdminDashboard } from "./admin-dashboard";
-export { loginUser, logoutUser, registerUser } from "./auth";
+export {
+  loginUser,
+  logoutUser,
+  registerUser,
+  requestPasswordReset,
+  resetPassword,
+} from "./auth";
+export type { PasswordRecoveryActionResult } from "./auth";
 export {
   type FetchSppgPeriodicReportsParams,
   fetchSppgPeriodicReports,
@@ -13,8 +20,12 @@ export {
   fetchCurrentAdminProfile,
   fetchCurrentProfile,
   fetchCurrentSppgProfile,
+  type UpdateCurrentAdminProfileInput,
   type UpdateCurrentSchoolProfileInput,
+  type UpdateCurrentSppgProfileInput,
+  updateCurrentAdminProfile,
   updateCurrentSchoolProfile,
+  updateCurrentSppgProfile,
 } from "./profile";
 export {
   type CurrentReviewSubmissionContext,

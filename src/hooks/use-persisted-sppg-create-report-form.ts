@@ -37,7 +37,7 @@ export const createReportSchema = z.object({
     .number({ message: "Wajib diisi" })
     .int("Jumlah porsi harus berupa bilangan bulat")
     .min(1, "Jumlah porsi minimal 1"),
-  deskripsi: z.string().optional(),
+  deskripsi: z.string().min(10, "Deskripsi minimal 10 karakter"),
   fotoMakanan: z
     .array(z.any())
     .min(1, "Wajib mengunggah 1 foto makanan")
@@ -138,6 +138,7 @@ export function usePersistedSppgCreateReportForm() {
       formData.set("menu_name", data.namaMenu);
       formData.set("meal_time", data.waktuMakan);
       formData.set("total_portion", String(data.jumlahPorsi));
+      formData.set("description", data.deskripsi);
       formData.set("energy", String(data.gizi.energi));
       formData.set("protein", String(data.gizi.protein));
       formData.set("fat", String(data.gizi.lemak));

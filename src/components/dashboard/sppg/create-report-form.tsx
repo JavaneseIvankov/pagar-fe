@@ -6,6 +6,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Controller } from "react-hook-form";
+import { toast } from "sonner";
 import { DashboardCard } from "@/components/dashboard/dashboard-card";
 import {
   ForkAndSpoonIcon,
@@ -80,6 +81,11 @@ export function CreateReportForm({
   targetKalori,
   totalAnggaranPerPorsi,
 }: DashboardCreateReportFormProps) {
+  const rincianAnggaranErrorMessage =
+    typeof errors.rincianAnggaran?.message === "string"
+      ? errors.rincianAnggaran.message
+      : null;
+
   if (isHydrating) {
     return (
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_350px]">
@@ -95,7 +101,9 @@ export function CreateReportForm({
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit, () => {
+        toast.error("Form belum valid. Periksa field yang ditandai merah.");
+      })}
       className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_350px]"
     >
       {/* KIRI - Form Section */}
@@ -180,9 +188,8 @@ export function CreateReportForm({
                 aria-invalid={!!errors.deskripsi}
               />
               <FieldDescription>
-                Catatan khusus ini masih disimpan di draft lokal. Backend saat
-                ini belum menyediakan field catatan tambahan untuk laporan
-                harian.
+                Jelaskan informasi tambahan mengenai menu atau kondisi khusus
+                (minimal 10 karakter).
               </FieldDescription>
               {errors.deskripsi && (
                 <FieldError>{errors.deskripsi.message}</FieldError>
@@ -399,6 +406,11 @@ export function CreateReportForm({
               </TableBody>
             </Table>
           </div>
+          {rincianAnggaranErrorMessage && (
+            <FieldError className="mt-3">
+              {rincianAnggaranErrorMessage}
+            </FieldError>
+          )}
 
           <div className="mt-4 flex items-center justify-between rounded-lg bg-emerald-500 px-6 py-4 text-white">
             <span className="font-semibold">Total Anggaran Per Porsi</span>

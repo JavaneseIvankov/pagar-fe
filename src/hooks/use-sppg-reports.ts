@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/query-keys";
-import { fetchSppgReports } from "@/rpc";
+import { fetchSppgReports } from "@/rpc/reports";
 
 export function useSppgReports() {
   return useQuery({

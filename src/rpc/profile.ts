@@ -1,9 +1,9 @@
 "use server";
 
 import z from "zod/v3";
-import { admins, publicUsers } from "@/mock-data";
 import { getAuthSession, requireCurrentRole } from "@/lib/auth/server";
 import { delayedValue } from "@/lib/utils";
+import { admins, publicUsers } from "@/mock-data";
 import {
   mapSchoolProfileDtoToDomain,
   mapSppgProfileDtoToDomain,

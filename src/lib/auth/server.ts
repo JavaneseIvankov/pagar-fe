@@ -1,8 +1,8 @@
 import "server-only";
 
 import { cookies } from "next/headers";
-import type { TAuthSession, TRole } from "@/types";
 import { isProduction } from "@/lib/env/server";
+import type { TAuthSession, TRole } from "@/types";
 import {
   AUTH_SESSION_COOKIE_NAME,
   AUTH_SESSION_MAX_AGE_SECONDS,

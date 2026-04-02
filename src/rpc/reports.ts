@@ -1,3 +1,5 @@
+"use server";
+
 import { ApiClientError } from "@/lib/api";
 import { requireCurrentRole } from "@/lib/auth/server";
 import {
@@ -12,6 +14,7 @@ import { createServerRpc } from "./server-rpc";
 
 type ReportViewerRole = "PUBLIC" | "SCHOOL";
 
+// TODO: this will cause all other client files to error, because this fn is server-only
 async function getCurrentReportViewerRole(): Promise<ReportViewerRole> {
   const session = await requireCurrentRole(
     ["PUBLIC", "SCHOOL"],

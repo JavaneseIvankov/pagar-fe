@@ -1,13 +1,12 @@
-import {
-  Building01Icon,
-  CheckmarkBadge01Icon,
-  TruckIcon,
-  UniversityIcon,
-  UserGroupIcon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import type { Variants } from "motion";
 import { motion } from "motion/react";
+import {
+  CheckCircleIcon,
+  PeopleIcon,
+  PersonShieldIcon,
+  SchoolIcon,
+  TruckIcon,
+} from "../exported-icons";
 
 const STAGGER_CHILD: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -30,7 +29,7 @@ const STAGGER_CONTAINER: Variants = {
 
 const TARGET_AUDIENCE = [
   {
-    icon: UserGroupIcon,
+    icon: PeopleIcon,
     iconColor: "text-purple-600",
     title: "Masyarakat Umum",
     items: [
@@ -41,7 +40,7 @@ const TARGET_AUDIENCE = [
     bgIcon: "bg-purple-100",
   },
   {
-    icon: UniversityIcon,
+    icon: SchoolIcon,
     iconColor: "text-green-600",
     title: "Sekolah",
     items: [
@@ -63,7 +62,7 @@ const TARGET_AUDIENCE = [
     bgIcon: "bg-blue-100",
   },
   {
-    icon: Building01Icon,
+    icon: PersonShieldIcon,
     iconColor: "text-red-600",
     title: "Pemerintah",
     items: [
@@ -103,11 +102,7 @@ export function TargetAudienceSection() {
                 <div
                   className={`h-12 w-12 rounded-xl ${card.bgIcon} mb-6 flex items-center justify-center`}
                 >
-                  <HugeiconsIcon
-                    icon={card.icon}
-                    size={24}
-                    className={card.iconColor}
-                  />
+                  <card.icon className={`size-5 ${card.iconColor}`} />
                 </div>
                 <h3 className="mb-4 font-bold text-lg text-neutral-900">
                   {card.title}
@@ -118,11 +113,7 @@ export function TargetAudienceSection() {
                       key={item}
                       className="flex items-start gap-3 text-neutral-600 text-sm leading-tight"
                     >
-                      <HugeiconsIcon
-                        icon={CheckmarkBadge01Icon}
-                        size={16}
-                        className="mt-0.5 shrink-0 text-green-500"
-                      />
+                      <CheckCircleIcon className="mt-0.5 size-4 shrink-0 text-green-500" />
                       <span>{item}</span>
                     </li>
                   ))}

@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import Image from "next/image";
 
 export function InfoBannerSection() {
   return (
@@ -41,10 +42,17 @@ export function InfoBannerSection() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
-          className="h-64 w-64 shrink-0 overflow-hidden rounded-full border-8 border-white/20 bg-white/10 md:h-80 md:w-80"
+          className="relative h-64 w-64 shrink-0 overflow-hidden rounded-full border-8 border-white/20 bg-white/10 md:h-80 md:w-80"
         >
           {/* Mock circular image */}
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-green-400 to-green-600 opacity-80 mix-blend-multiply" />
+          <Image
+            fill
+            className="object-cover"
+            src={
+              "https://bhnybebpsxnfyazsjxtk.supabase.co/storage/v1/object/public/pagar-assets/landing-info-banner.jpg"
+            }
+            alt="info banner"
+          />
         </motion.div>
       </div>
     </section>

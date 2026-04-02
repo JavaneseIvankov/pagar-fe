@@ -41,7 +41,7 @@ export function Navbar({ session, onLogout }: NavbarProps) {
     session?.user.role === "SPPG" || session?.user.role === "ADMIN";
 
   return (
-    <header className="sticky top-0 z-50 w-full border-border/60 border-b bg-card/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-border/60 border-b bg-card backdrop-blur-md">
       <div className="container mx-auto flex h-16 max-w-7xl items-center">
         <Link
           href="#beranda"

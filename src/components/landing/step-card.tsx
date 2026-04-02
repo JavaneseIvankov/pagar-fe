@@ -1,5 +1,3 @@
-import type { HugeiconsProps } from "@hugeicons/react";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { motion, type Variants } from "motion/react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
@@ -11,7 +9,7 @@ export interface StepCardProps
   stepNumber: string;
   title: ReactNode;
   content: ReactNode;
-  icon: NonNullable<HugeiconsProps["icon"]>;
+  icon: ReactNode;
   iconPosition?: "left" | "right";
   className?: string;
   variants?: Variants;
@@ -20,7 +18,7 @@ export interface StepCardProps
 const colorStyles = {
   purple: {
     bgDefault: "transform bg-purple-700 text-white shadow-xl",
-    bgOutline: "border border-purple-200 bg-purple-50",
+    bgOutline: "ring-2 ring-purple-700 bg-purple-50",
     stepDefault: "text-purple-300",
     stepOutline: "text-purple-700",
     contentDefault: "text-purple-100",
@@ -29,7 +27,7 @@ const colorStyles = {
   },
   green: {
     bgDefault: "transform bg-green-700 text-white shadow-xl",
-    bgOutline: "border border-green-200 bg-green-50",
+    bgOutline: "ring-2 ring-green-700 bg-green-50",
     stepDefault: "text-green-300",
     stepOutline: "text-green-700",
     contentDefault: "text-green-100",
@@ -38,7 +36,7 @@ const colorStyles = {
   },
   blue: {
     bgDefault: "transform bg-sky-500 text-white shadow-xl",
-    bgOutline: "border border-sky-200 bg-sky-50",
+    bgOutline: "ring-2 ring-sky-500 bg-sky-50",
     stepDefault: "text-sky-200",
     stepOutline: "text-sky-600",
     contentDefault: "text-sky-50",
@@ -83,15 +81,15 @@ export function StepCard({
       <h3
         className={cn(
           "mb-3 font-bold text-xl",
-          !isDefault && "text-neutral-900",
+          !isDefault && "text-foreground",
         )}
       >
         {title}
       </h3>
       <p
         className={cn(
-          "mb-10 text-sm leading-relaxed",
-          isDefault ? styles.contentDefault : "text-neutral-600",
+          "mb-14 text-sm leading-relaxed",
+          isDefault ? styles.contentDefault : "text-foreground",
         )}
       >
         {content}
@@ -105,7 +103,7 @@ export function StepCard({
             : "right-6 origin-bottom-right",
         )}
       >
-        <HugeiconsIcon icon={icon} size={40} />
+        {icon}
       </div>
     </motion.div>
   );

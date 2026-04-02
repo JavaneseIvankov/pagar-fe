@@ -31,7 +31,7 @@ export function LandingPageClient({
   };
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-neutral-50 font-sans text-neutral-900 selection:bg-green-200 selection:text-green-900">
+    <div className="min-h-screen overflow-x-clip bg-neutral-50 font-sans text-neutral-900 selection:bg-green-200 selection:text-green-900">
       <Navbar session={session} onLogout={handleLogout} />
       <HeroSection />
       <InfoBannerSection />

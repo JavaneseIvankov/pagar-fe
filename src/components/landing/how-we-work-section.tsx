@@ -10,9 +10,6 @@ import {
   Note01Icon,
   StarIcon,
   Task01Icon,
-  TruckIcon,
-  UniversityIcon,
-  UserGroupIcon,
   Wallet01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -20,6 +17,7 @@ import { AnimatePresence, motion, type Variants } from "motion/react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { StepCard } from "./step-card";
+import { PeopleIcon, SchoolIcon, TruckIcon } from "../exported-icons";
 
 const STAGGER_CONTAINER: Variants = {
   hidden: { opacity: 1 },
@@ -43,7 +41,8 @@ const CATEGORIES = [
   {
     id: "masyarakat",
     title: "Masyarakat Umum",
-    icon: UserGroupIcon,
+    // icon: <HugeiconsIcon icon={UserGroupIcon} size={24} />,
+    icon: <PeopleIcon className="size-5" />,
     color: "purple" as const,
     bgIcon: "bg-purple-100 text-purple-600",
     steps: [
@@ -52,28 +51,29 @@ const CATEGORIES = [
         title: "Pantau Data",
         content:
           "Mengakses dashboard publik untuk melihat rincian gizi dan transparansi anggaran harian.",
-        icon: EyeIcon,
+        icon: <HugeiconsIcon icon={EyeIcon} size={40} />,
       },
       {
         stepNumber: "02",
         title: "Laporan",
         content:
           "Mengunggah foto atau laporan jika menemukan distribusi makanan yang tidak layak.",
-        icon: Note01Icon,
+        icon: <HugeiconsIcon icon={Note01Icon} size={40} />,
       },
       {
         stepNumber: "03",
         title: "Umpan Balik",
         content:
           "Mendukung terciptanya ekosistem gizi yang jujur melalui partisipasi aktif di kolom ulasan.",
-        icon: BubbleChatIcon,
+        icon: <HugeiconsIcon icon={BubbleChatIcon} size={40} />,
       },
     ],
   },
   {
     id: "sekolah",
     title: "Sekolah",
-    icon: UniversityIcon,
+    // icon: <HugeiconsIcon icon={UniversityIcon} size={24} />,
+    icon: <SchoolIcon className="size-5" />,
     color: "green" as const,
     bgIcon: "bg-green-100 text-green-600",
     steps: [
@@ -82,28 +82,29 @@ const CATEGORIES = [
         title: "Terima & Cek",
         content:
           "Sekolah menerima distribusi makanan dari SPPG dan melakukan pengecekan fisik di tempat.",
-        icon: CheckListIcon,
+        icon: <HugeiconsIcon icon={CheckListIcon} size={40} />,
       },
       {
         stepNumber: "02",
         title: "Validasi",
         content:
           "Melihat detail menu di platform untuk memastikan kesesuaian sajian.",
-        icon: Task01Icon,
+        icon: <HugeiconsIcon icon={Task01Icon} size={40} />,
       },
       {
         stepNumber: "03",
         title: "Beri Ulasan",
         content:
           "Memberikan rating atau laporan jika ditemukan ketidaksesuaian kualitas atau porsi.",
-        icon: StarIcon,
+        icon: <HugeiconsIcon icon={StarIcon} size={40} />,
       },
     ],
   },
   {
     id: "sppg",
     title: "Tim SPPG",
-    icon: TruckIcon,
+    // icon: <HugeiconsIcon icon={TruckIcon} size={24} />,
+    icon: <TruckIcon className="size-5" />,
     color: "blue" as const,
     bgIcon: "bg-sky-100 text-sky-600",
     steps: [
@@ -112,21 +113,21 @@ const CATEGORIES = [
         title: "Input Laporan",
         content:
           "Mengunggah detail menu harian, rincian kalori, dan foto makanan sebelum distribusi.",
-        icon: Note01Icon,
+        icon: <HugeiconsIcon icon={Note01Icon} size={40} />,
       },
       {
         stepNumber: "02",
         title: "Kelola Anggaran",
         content:
           "Mencatat penggunaan dana bahan baku secara transparan sebagai bukti.",
-        icon: Wallet01Icon,
+        icon: <HugeiconsIcon icon={Wallet01Icon} size={40} />,
       },
       {
         stepNumber: "03",
         title: "Evaluasi Kinerja",
         content:
           "Menerima rating dari sekolah & masyarakat untuk perbaikan kualitas layanan berkelanjutan.",
-        icon: ChartLineData01Icon,
+        icon: <HugeiconsIcon icon={ChartLineData01Icon} size={40} />,
       },
     ],
   },
@@ -164,7 +165,7 @@ export function HowWeWorkSection() {
           <div
             className={`flex h-12 w-12 items-center justify-center rounded-xl ${activeCategory.bgIcon}`}
           >
-            <HugeiconsIcon icon={activeCategory.icon} size={24} />
+            {activeCategory.icon}
           </div>
           <h3 className="font-bold text-2xl text-neutral-900">
             {activeCategory.title}

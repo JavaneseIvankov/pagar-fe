@@ -4,6 +4,7 @@ import type { Variants } from "motion";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 const STAGGER_CHILD: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -45,7 +46,7 @@ export function HeroSection() {
         </motion.h1>
         <motion.p
           variants={STAGGER_CHILD}
-          className="mt-6 text-lg text-neutral-600 leading-relaxed"
+          className="mt-6 text-lg leading-relaxed"
         >
           Platform terintegrasi untuk memantau{" "}
           <strong>kualitas nutrisi makanan</strong> dan{" "}
@@ -76,17 +77,35 @@ export function HeroSection() {
         {/* Mock image wrappers with blur reveals and staggered float animations */}
         <div className="absolute top-0 right-0 h-3/4 w-3/4 rotate-3 transform overflow-hidden rounded-3xl border-4 border-white bg-neutral-200 shadow-2xl">
           <div className="absolute inset-0 flex items-center justify-center bg-green-100/50 font-bold text-2xl text-green-800/20">
-            Visual Makanan Sehat
+            <Image
+              fill
+              src={
+                "https://bhnybebpsxnfyazsjxtk.supabase.co/storage/v1/object/public/pagar-assets/landing-hero-biggest.jpg"
+              }
+              alt="main hero"
+            />
           </div>
         </div>
         <div className="absolute bottom-10 left-10 h-1/2 w-1/2 -rotate-6 transform overflow-hidden rounded-3xl border-4 border-white bg-neutral-200 shadow-2xl">
           <div className="absolute inset-0 flex items-center justify-center bg-orange-100/50 font-bold text-orange-800/20 text-xl">
-            Nutrisi
+            <Image
+              fill
+              src={
+                "https://bhnybebpsxnfyazsjxtk.supabase.co/storage/v1/object/public/pagar-assets/landing-hero-small.jpg"
+              }
+              alt="smaller hero"
+            />
           </div>
         </div>
         <div className="absolute top-1/2 -ml-10 h-1/3 w-1/3 rotate-12 transform overflow-hidden rounded-3xl border-4 border-white bg-neutral-200 shadow-xl">
           <div className="absolute inset-0 flex items-center justify-center bg-blue-100/50 font-bold text-blue-800/20 text-sm">
-            Gizi
+            <Image
+              fill
+              src={
+                "https://bhnybebpsxnfyazsjxtk.supabase.co/storage/v1/object/public/pagar-assets/landing-hero-small-1.jpg"
+              }
+              alt="smaller hero"
+            />
           </div>
         </div>
       </motion.div>

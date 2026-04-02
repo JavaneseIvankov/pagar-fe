@@ -49,7 +49,7 @@ function FaqAccordion({
   return (
     <AccordionItem
       value={value}
-      className="mb-4 rounded-xl bg-muted border border-primary px-6 last:mb-0 last:border-b"
+      className="mb-4 rounded-xl border border-primary bg-muted px-6 py-3 last:mb-0 last:border-b"
     >
       <AccordionTrigger
         showArrow={false}
@@ -69,13 +69,10 @@ function FaqAccordion({
 
 export function FaqAccordions({ className }: { className?: string }) {
   return (
-    <Accordion
-      type="single"
-      collapsible={true}
-      className={cn("max-w-[800px]", className)}
-    >
+    <Accordion type="multiple" className={cn("max-w-[800px]", className)}>
       {FAQ_DATA.map((faq, idx) => (
         <FaqAccordion
+          // biome-ignore lint/suspicious/noArrayIndexKey: stable index
           key={`faq-${idx}`}
           value={`faq-${idx}`}
           title={faq.title}

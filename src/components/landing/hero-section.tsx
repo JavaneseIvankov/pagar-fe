@@ -71,7 +71,7 @@ export function HeroSection() {
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }} // Strong ease-out
-        className="relative mx-auto aspect-square w-full max-w-[400px] lg:max-w-[500px]"
+        className="relative ml-auto aspect-square w-full max-w-[400px] lg:mx-auto lg:max-w-[500px]"
       >
         {/* Mock image wrappers with blur reveals and staggered float animations */}
         <div className="absolute top-0 right-0 h-3/4 w-3/4 rotate-3 transform overflow-hidden rounded-3xl border-4 border-white bg-neutral-200 shadow-2xl">

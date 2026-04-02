@@ -29,7 +29,7 @@ const STATS = [
 
 export function StatsSection() {
   return (
-    <section className="bg-green-700 px-6 py-12 text-white">
+    <section id="data-publik" className="bg-green-700 px-6 py-12 text-white">
       <div className="mx-auto max-w-5xl">
         <motion.div
           initial="hidden"

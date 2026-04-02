@@ -32,10 +32,9 @@ const STAGGER_CONTAINER: Variants = {
 };
 
 const STAGGER_CHILD: Variants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    y: 0,
     transition: { type: "spring", bounce: 0, duration: 0.6 },
   },
 };

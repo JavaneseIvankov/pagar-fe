@@ -26,6 +26,13 @@ export function CtaSection() {
           >
             <Link href="/auth/daftar">Daftar Sekarang</Link>
           </Button>
+          <Button
+            asChild
+            variant={"ghost"}
+            className="h-auto w-full origin-center px-8 py-3 font-medium transition-all duration-150 ease-out active:scale-[0.97] sm:w-auto"
+          >
+            <Link href="">Baca Selengkapnya</Link>
+          </Button>
         </div>
       </motion.div>
     </section>

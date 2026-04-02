@@ -1,6 +1,6 @@
 import type { z } from "zod/v3";
 
-import { apiContract, type ApiContract } from "./api-contract";
+import { type ApiContract, apiContract } from "./api-contract";
 import {
   API_REQUEST_FAILED_MESSAGE,
   API_RESPONSE_INVALID_MESSAGE,

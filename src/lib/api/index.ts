@@ -18,7 +18,6 @@ export type {
 } from "./api-client";
 export { ApiClientError, createApiClient } from "./api-client";
 export type { ApiContract } from "./api-contract";
-
 export { apiContract } from "./api-contract";
 export * as dto from "./dto";
 export {
@@ -28,3 +27,13 @@ export {
 } from "./error-messages";
 export { reportApiBoundaryFailure } from "./monitoring";
 export { parseWithMonitoring } from "./parse-with-monitoring";
+
+export type {
+  CreateSppgReportExportHelperOptions,
+  DownloadSppgReportExportRequest,
+  SppgReportExportDownload,
+} from "./report-export";
+export {
+  ApiDownloadError,
+  createSppgReportExportHelper,
+} from "./report-export";

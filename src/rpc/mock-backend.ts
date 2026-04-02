@@ -255,55 +255,71 @@ function createDailyReportRecord(
 }
 
 export function buildPublicDashboardSppgReportsResponse(): PublicDashboardSppgReportsResponse {
+  const data = sppgReports.map((report, index) => {
+    return {
+      ...createDailyReportRecord(report, index),
+      sppg: {
+        sppg_name: report.author.sppgName,
+        sppg_address: report.author.address,
+      },
+      attachments: [
+        {
+          file_url: report.imageUrl,
+        },
+      ],
+    } satisfies PublicDashboardSppgReportItem;
+  });
+
   return {
     status: "success" as const,
-    data: sppgReports.map((report, index) => {
-      return {
-        ...createDailyReportRecord(report, index),
-        sppg: {
-          sppg_name: report.author.sppgName,
-          sppg_address: report.author.address,
-        },
-        attachments: [
-          {
-            file_url: report.imageUrl,
-          },
-        ],
-      } satisfies PublicDashboardSppgReportItem;
-    }),
+    data,
+    meta: {
+      totalItems: data.length,
+      totalPages: 1,
+      currentPage: 1,
+      limit: data.length,
+    },
   } satisfies PublicDashboardSppgReportsResponse;
 }
 
 export function buildPublicDashboardReviewsResponse(): PublicDashboardReviewResponse {
+  const data = publicReviews.map((review, index) => {
+    return {
+      id_review: createEntityUuid(index + 201),
+      id_sppg: createEntityUuid(index + 101),
+      id_school: null,
+      id_user: createUserUuid(index + 100),
+      is_anonymous: true,
+      title: review.title,
+      description: review.content,
+      rating_score: Math.round(review.ratingScore),
+      status_review: "SELESAI" as const,
+      createdAt: toIsoDate(review.postedAt),
+      updatedAt: toIsoDate(review.postedAt),
+      school: null,
+      sppg: {
+        sppg_name: review.forSppg.sppgName,
+      },
+      attachments: [
+        {
+          file_url: review.imageUrl,
+        },
+      ],
+      school_name: review.forSppg.sppgName,
+      author_name: review.reporterName,
+      display_author: review.reporterName,
+    } satisfies PublicDashboardReviewItem;
+  });
+
   return {
     status: "success" as const,
-    data: publicReviews.map((review, index) => {
-      return {
-        id_review: createEntityUuid(index + 201),
-        id_sppg: createEntityUuid(index + 101),
-        id_school: null,
-        id_user: createUserUuid(index + 100),
-        is_anonymous: true,
-        title: review.title,
-        description: review.content,
-        rating_score: Math.round(review.ratingScore),
-        status_review: "SELESAI" as const,
-        createdAt: toIsoDate(review.postedAt),
-        updatedAt: toIsoDate(review.postedAt),
-        school: null,
-        sppg: {
-          sppg_name: review.forSppg.sppgName,
-        },
-        attachments: [
-          {
-            file_url: review.imageUrl,
-          },
-        ],
-        author_name: review.reporterName,
-        display_author: review.reporterName,
-        location_name: review.forSppg.sppgName,
-      } satisfies PublicDashboardReviewItem;
-    }),
+    data,
+    meta: {
+      totalItems: data.length,
+      totalPages: 1,
+      currentPage: 1,
+      limit: data.length,
+    },
   } satisfies PublicDashboardReviewResponse;
 }
 

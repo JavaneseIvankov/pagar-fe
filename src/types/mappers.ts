@@ -1,10 +1,12 @@
 import type { z } from "zod/v3";
 import type {
   getActiveAccountsSuccessResponseSchema,
+  getAdminProfileSuccessResponseSchema,
   getAdminDashboardSuccessResponseSchema,
   getDetailSppgReportSuccessResponseSchema,
   getPendingAccountsSuccessResponseSchema,
   getPublicDashboardReviewsSuccessResponseSchema,
+  getPublicProfileSuccessResponseSchema,
   getPublicDashboardSppgReportsSuccessResponseSchema,
   getPublicSppgListSuccessResponseSchema,
   getSchoolDashboardReviewsSuccessResponseSchema,
@@ -22,15 +24,18 @@ import type {
 } from "@/lib/api/dto";
 import type {
   TAdminActiveAccount,
+  TAdminAccessDetail,
   TAdminComplaint,
   TAdminComplaintStatus,
   TAdminDashboard,
   TAdminPendingAccount,
+  TAdminProfile,
   TAdminStatistics,
   TAdminVendorWarning,
   TAuthRegistrationResult,
   TAuthSession,
   TBudget,
+  TPublicProfile,
   TPublicReview,
   TReviewSppgTarget,
   TSchoolProfile,
@@ -79,6 +84,9 @@ type SppgDashboardResponse = z.infer<
 type AdminDashboardResponse = z.infer<
   typeof getAdminDashboardSuccessResponseSchema
 >["data"];
+type AdminProfileResponse = z.infer<
+  typeof getAdminProfileSuccessResponseSchema
+>["data"];
 type ActiveAccountsResponse = z.infer<
   typeof getActiveAccountsSuccessResponseSchema
 >["data"][number];
@@ -89,6 +97,9 @@ type PendingAccountsResponse = z.infer<
 type ReviewSppgTargetResponse =
   | z.infer<typeof getPublicSppgListSuccessResponseSchema>["data"][number]
   | z.infer<typeof getSchoolSppgListSuccessResponseSchema>["data"][number];
+type PublicProfileResponse = z.infer<
+  typeof getPublicProfileSuccessResponseSchema
+>["data"];
 type PeriodicReportsResponse = z.infer<
   typeof getSppgPeriodicReportsSuccessResponseSchema
 >["data"];
@@ -107,6 +118,20 @@ type DashboardRecentReportItem =
 
 const DEFAULT_ATTACHMENT_URL = "https://placehold.co/1200x800?text=No+Image";
 const DEFAULT_VENDOR_ADDRESS = "Alamat vendor belum tersedia";
+const DEFAULT_ADMIN_ACCESS_DETAILS: TAdminAccessDetail[] = [
+  {
+    id: "manage-sppg",
+    label: "Mengelola Vendor SPPG",
+  },
+  {
+    id: "manage-accounts",
+    label: "Mengelola Akun",
+  },
+  {
+    id: "monitor-data",
+    label: "Memantau Data",
+  },
+];
 
 function mapReviewStatusToAdminComplaintStatus(
   status: "MENUNGGU" | "INVESTIGASI" | "SELESAI",
@@ -122,10 +147,10 @@ function mapReviewStatusToAdminComplaintStatus(
 }
 
 function createNutritionalFacts(values: {
-  energy: number | null;
-  protein: number | null;
-  carbohydrate: number | null;
-  fat: number | null;
+  energy: number | null | undefined;
+  protein: number | null | undefined;
+  carbohydrate: number | null | undefined;
+  fat: number | null | undefined;
 }) {
   return {
     calories: {
@@ -387,6 +412,37 @@ export function mapSppgProfileDtoToDomain(
   };
 }
 
+export function mapPublicProfileDtoToDomain(
+  dto: PublicProfileResponse,
+  options: {
+    userId: string;
+  },
+): TPublicProfile {
+  return {
+    id: options.userId,
+    role: "PUBLIC",
+    username: dto.username,
+    displayName: dto.username,
+    email: dto.email,
+  };
+}
+
+export function mapAdminProfileDtoToDomain(
+  dto: AdminProfileResponse,
+  options: {
+    userId: string;
+  },
+): TAdminProfile {
+  return {
+    id: options.userId,
+    role: "ADMIN",
+    username: dto.username,
+    name: dto.name ?? dto.username,
+    email: dto.email,
+    accessDetails: DEFAULT_ADMIN_ACCESS_DETAILS,
+  };
+}
+
 // FIXME: fixate, this email fallback based on username is hacky
 
 export function mapSchoolProfileDtoToDomain(
@@ -427,8 +483,8 @@ export function mapPendingAccountDtoToDomain(
     username: dto.username,
     role: dto.role,
     createdAt: new Date(dto.createdAt),
-    registrationCode: dto.registration_code,
-    bgnCode: dto.bgn_code,
+    registrationCode: dto.registration_code ?? null,
+    bgnCode: dto.bgn_code ?? null,
   };
 }
 
@@ -528,7 +584,6 @@ export function mapPeriodicReportsDtoToDomain(
       }).format(date);
       buckets.set(key, {
         id: key,
-        url: `https://example.com/reports/${year}-${String(monthIndex + 1).padStart(2, "0")}.pdf`,
         periode,
         monthIndex,
         status: "VERIFIED",

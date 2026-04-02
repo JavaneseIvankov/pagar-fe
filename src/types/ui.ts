@@ -216,7 +216,6 @@ export type TSppgDashboard = {
 
 export type TSppgPeriodicReport = {
   id: string;
-  url: string;
   periode: string;
   monthIndex: number;
   status: "VERIFIED" | "NOT_VERIFIED";

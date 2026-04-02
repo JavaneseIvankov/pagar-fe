@@ -117,9 +117,9 @@ const attachmentEntitySchema = z.object({
   entity_type: z.string(),
   id_entity: uuidSchema,
   file_url: z.string(),
-  file_type: z.string().nullable(),
-  file_size: z.number().int().nullable(),
-  file_category: z.string().nullable(),
+  file_type: z.string().nullish(),
+  file_size: z.number().int().nullish(),
+  file_category: z.string().nullish(),
 });
 
 const budgetEntitySchema = z.object({
@@ -134,25 +134,25 @@ const dailyReportEntitySchema = z.object({
   id_sppg: uuidSchema,
   date_report: z.string(),
   menu_name: z.string(),
-  meal_time: z.string().nullable(),
-  total_portion: z.number().int().nullable(),
-  menu_description: z.string().nullable(),
+  meal_time: z.string().nullish(),
+  total_portion: z.number().int().nullish(),
+  menu_description: z.string().nullish(),
   total_expense: z.number().int(),
-  energy: z.number().nullable(),
-  protein: z.number().nullable(),
-  fat: z.number().nullable(),
-  carbohydrate: z.number().nullable(),
+  energy: z.number().nullish(),
+  protein: z.number().nullish(),
+  fat: z.number().nullish(),
+  carbohydrate: z.number().nullish(),
 });
 
 const reviewEntitySchema = z.object({
   id_review: uuidSchema,
   id_sppg: uuidSchema,
-  id_school: uuidSchema.nullable(),
+  id_school: uuidSchema.nullish(),
   id_user: uuidSchema,
-  is_anonymous: z.boolean().nullable(),
-  title: z.string().nullable(),
-  description: z.string().nullable(),
-  rating_score: z.number().int().min(1).max(5).nullable(),
+  is_anonymous: z.boolean().nullish(),
+  title: z.string().nullish(),
+  description: z.string().nullish(),
+  rating_score: z.number().int().min(1).max(5).nullish(),
   status_review: reviewStatusSchema,
 });
 
@@ -160,28 +160,28 @@ const schoolEntitySchema = z.object({
   id_school: uuidSchema,
   id_user: uuidSchema,
   school_name: z.string(),
-  school_address: z.string().nullable(),
+  school_address: z.string().nullish(),
 });
 
 const sppgEntitySchema = z.object({
   id_sppg: uuidSchema,
   id_user: uuidSchema,
   sppg_name: z.string(),
-  sppg_address: z.string().nullable(),
-  latitude: z.string().nullable(),
-  longitude: z.string().nullable(),
+  sppg_address: z.string().nullish(),
+  latitude: z.string().nullish(),
+  longitude: z.string().nullish(),
   monthly_budget: z.number().int(),
 });
 
 const userEntitySchema = z.object({
   id_user: uuidSchema,
   role: roleSchema,
-  name: z.string().nullable(),
+  name: z.string().nullish(),
   username: z.string(),
   email: z.string(),
   password: z.string(),
-  registration_code: z.string().nullable(),
-  bgn_code: z.string().nullable(),
+  registration_code: z.string().nullish(),
+  bgn_code: z.string().nullish(),
   account_status: accountStatusSchema,
 });
 
@@ -220,8 +220,8 @@ const pendingAccountItemSchema = z.object({
   username: z.string(),
   email: z.string().email(),
   role: schoolOrSppgRoleSchema,
-  registration_code: z.string().nullable(),
-  bgn_code: z.string().nullable(),
+  registration_code: z.string().nullish(),
+  bgn_code: z.string().nullish(),
   createdAt: z.string(),
 });
 
@@ -230,8 +230,8 @@ const activeAccountItemSchema = z.object({
   username: z.string(),
   email: z.string().email(),
   role: schoolOrSppgRoleSchema,
-  registration_code: z.string().nullable(),
-  bgn_code: z.string().nullable(),
+  registration_code: z.string().nullish(),
+  bgn_code: z.string().nullish(),
   createdAt: z.string(),
 });
 
@@ -251,7 +251,7 @@ const sppgNameOnlySchema = z.object({
 
 const sppgNameAddressSchema = z.object({
   sppg_name: z.string(),
-  sppg_address: z.string().nullable(),
+  sppg_address: z.string().nullish(),
 });
 
 const attachmentUrlOnlySchema = z.object({
@@ -260,7 +260,7 @@ const attachmentUrlOnlySchema = z.object({
 
 const attachmentUrlWithTypeSchema = z.object({
   file_url: z.string(),
-  file_type: z.string().nullable(),
+  file_type: z.string().nullish(),
 });
 
 const reviewRecordSchema = reviewEntitySchema.extend(timestampFields);
@@ -269,7 +269,7 @@ const createReviewRecordSchema = reviewRecordSchema.extend({
   is_anonymous: z.boolean().nullish(),
   rating_score: z
     .union([z.number().int().min(1).max(5), numericStringSchema])
-    .nullable(),
+    .nullish(),
 });
 const budgetRecordSchema = budgetEntitySchema
   .extend({
@@ -284,13 +284,23 @@ const dailyReportRecordSchema = dailyReportEntitySchema
   .extend(timestampFields);
 
 const schoolProfileDataSchema = schoolEntitySchema.extend(timestampFields);
+const adminProfileDataSchema = z.object({
+  name: z.string().nullish(),
+  username: z.string(),
+  email: z.string().email(),
+  role: z.literal("ADMIN"),
+});
+const publicProfileDataSchema = z.object({
+  username: z.string(),
+  email: z.string().email(),
+});
 
 const sppgProfileDataSchema = sppgEntitySchema.extend(timestampFields).extend({
   user: z.object({
     username: z.string(),
     email: z.string().email(),
     account_status: accountStatusSchema,
-    bgn_code: z.string().nullable(),
+    bgn_code: z.string().nullish(),
   }),
 });
 
@@ -309,16 +319,16 @@ const adminSchoolItemSchema = schoolEntitySchema
   });
 
 const publicDashboardReviewItemSchema = reviewRecordSchema.extend({
-  school: schoolNameOnlySchema.nullable(),
-  sppg: sppgNameOnlySchema.nullable(),
+  school: schoolNameOnlySchema.nullish(),
+  sppg: sppgNameOnlySchema.nullish(),
   attachments: z.array(attachmentUrlOnlySchema),
   author_name: z.string(),
   display_author: z.string(),
-  location_name: z.string(),
+  school_name: z.string(),
 });
 
 const schoolDashboardReviewItemSchema = reviewRecordSchema.extend({
-  school: schoolNameOnlySchema.nullable(),
+  school: schoolNameOnlySchema.nullish(),
   attachments: z.array(attachmentUrlOnlySchema),
   author_name: z.string(),
   display_author: z.string(),
@@ -390,13 +400,13 @@ const sppgDashboardDataSchema = z.object({
   widgets: z.object({
     status_hari_ini: z.enum(["SELESAI", "BELUM"]),
     rata_rata_kalori: z.number(),
-    sisa_anggaran: z.number().nullable(),
+    sisa_anggaran: z.number().nullish(),
     total_laporan_masyarakat: z.number().int(),
   }),
   riwayat_laporan: z.array(dashboardRecentReportSchema),
   laporan_masyarakat: z.array(
     reviewRecordSchema.extend({
-      school: schoolNameOnlySchema.nullable(),
+      school: schoolNameOnlySchema.nullish(),
       attachments: z.array(attachmentUrlOnlySchema),
     }),
   ),
@@ -451,10 +461,18 @@ export const paginatedListQuerySchema = z.object({
   page: z.coerce.number().int().positive().optional(),
   limit: z.coerce.number().int().positive().optional(),
 });
+export const searchablePaginatedListQuerySchema =
+  paginatedListQuerySchema.extend({
+    search: z.string().optional(),
+  });
 export const schoolPaginatedListQuerySchema = z.object({
   page: z.coerce.number().int().positive().optional(),
   limit: z.coerce.number().int().min(1).max(100).optional(),
 });
+export const schoolSearchablePaginatedListQuerySchema =
+  schoolPaginatedListQuerySchema.extend({
+    search: z.string().optional(),
+  });
 
 export const registerPublicBodySchema = z.object({
   username: z.string().min(3),
@@ -520,6 +538,30 @@ export const loginSuccessResponseSchema = successMessageDataEnvelope(
 );
 export const loginErrorResponseSchema = statusErrorResponseSchema;
 
+export const forgotPasswordBodySchema = z.object({
+  email: z.string().email(),
+});
+
+export const forgotPasswordSuccessResponseSchema = z.object({
+  status: successStatusSchema,
+  message: z.string(),
+});
+export const forgotPasswordErrorResponseSchema = messageOnlyErrorSchema;
+
+export const resetPasswordParamsSchema = z.object({
+  token: z.string().min(1),
+});
+
+export const resetPasswordBodySchema = z.object({
+  newPassword: z.string().min(1),
+});
+
+export const resetPasswordSuccessResponseSchema = z.object({
+  status: successStatusSchema,
+  message: z.string(),
+});
+export const resetPasswordErrorResponseSchema = messageOnlyErrorSchema;
+
 export const getPendingAccountsSuccessResponseSchema =
   paginatedSuccessDataEnvelope(z.array(pendingAccountItemSchema));
 export const getPendingAccountsErrorResponseSchema = statusErrorResponseSchema;
@@ -566,12 +608,17 @@ export const updateAdminProfileSuccessResponseSchema =
   successMessageDataEnvelope(
     z.object({
       id_user: uuidSchema,
-      name: z.string().nullable(),
+      name: z.string().nullish(),
       username: z.string(),
       email: z.string().email(),
     }),
   );
 export const updateAdminProfileErrorResponseSchema = statusErrorResponseSchema;
+
+export const getAdminProfileSuccessResponseSchema = successDataEnvelope(
+  adminProfileDataSchema,
+);
+export const getAdminProfileErrorResponseSchema = statusErrorResponseSchema;
 
 export const getAdminDashboardSuccessResponseSchema = successDataEnvelope(
   adminDashboardDataSchema,
@@ -609,13 +656,24 @@ export const createPublicReviewSuccessResponseSchema = successDataEnvelope(
 );
 export const createPublicReviewErrorResponseSchema = messageOnlyErrorSchema;
 
+export const getPublicProfileSuccessResponseSchema = successDataEnvelope(
+  publicProfileDataSchema,
+);
+export const getPublicProfileErrorResponseSchema = statusErrorResponseSchema;
+
 export const getPublicDashboardReviewsSuccessResponseSchema =
-  successDataEnvelope(z.array(publicDashboardReviewItemSchema));
+  successDataMetaEnvelope(
+    z.array(publicDashboardReviewItemSchema),
+    schoolPaginationMetaSchema,
+  );
 export const getPublicDashboardReviewsErrorResponseSchema =
   messageOnlyErrorSchema;
 
 export const getPublicDashboardSppgReportsSuccessResponseSchema =
-  successDataEnvelope(z.array(dailyReportForDashboardSchema));
+  successDataMetaEnvelope(
+    z.array(dailyReportForDashboardSchema),
+    schoolPaginationMetaSchema,
+  );
 export const getPublicDashboardSppgReportsErrorResponseSchema =
   messageOnlyErrorSchema;
 
@@ -716,6 +774,7 @@ export const createSppgDailyReportBodySchema = z.object({
   menu_name: z.string().min(1),
   meal_time: z.string().min(1),
   total_portion: requiredPositiveIntInputSchema,
+  description: z.string().min(10),
   energy: requiredNumberInputSchema,
   protein: requiredNumberInputSchema,
   fat: requiredNumberInputSchema,
@@ -773,6 +832,8 @@ export type RegisterPublicBody = z.infer<typeof registerPublicBodySchema>;
 export type RegisterSchoolBody = z.infer<typeof registerSchoolBodySchema>;
 export type RegisterSppgBody = z.infer<typeof registerSppgBodySchema>;
 export type LoginBody = z.infer<typeof loginBodySchema>;
+export type ForgotPasswordBody = z.infer<typeof forgotPasswordBodySchema>;
+export type ResetPasswordBody = z.infer<typeof resetPasswordBodySchema>;
 export type UpdateAccountStatusBody = z.infer<
   typeof updateAccountStatusBodySchema
 >;

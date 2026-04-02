@@ -318,7 +318,6 @@ export const sppgStatistics: TSppgStatistics = {
 export const sppgPeriodicReports: TSppgPeriodicReport[] = [
   {
     id: "periodic-001",
-    url: "https://example.com/reports/2024-01.pdf",
     periode: "Januari 2024",
     monthIndex: 0,
     status: "VERIFIED",
@@ -327,7 +326,6 @@ export const sppgPeriodicReports: TSppgPeriodicReport[] = [
   },
   {
     id: "periodic-002",
-    url: "https://example.com/reports/2024-02.pdf",
     periode: "Februari 2024",
     monthIndex: 1,
     status: "VERIFIED",
@@ -336,7 +334,6 @@ export const sppgPeriodicReports: TSppgPeriodicReport[] = [
   },
   {
     id: "periodic-003",
-    url: "https://example.com/reports/2024-03.pdf",
     periode: "Maret 2024",
     monthIndex: 2,
     status: "VERIFIED",
@@ -345,7 +342,6 @@ export const sppgPeriodicReports: TSppgPeriodicReport[] = [
   },
   {
     id: "periodic-004",
-    url: "https://example.com/reports/2024-04.pdf",
     periode: "April 2024",
     monthIndex: 3,
     status: "VERIFIED",
@@ -354,7 +350,6 @@ export const sppgPeriodicReports: TSppgPeriodicReport[] = [
   },
   {
     id: "periodic-005",
-    url: "https://example.com/reports/2024-05.pdf",
     periode: "Mei 2024",
     monthIndex: 4,
     status: "VERIFIED",
@@ -363,7 +358,6 @@ export const sppgPeriodicReports: TSppgPeriodicReport[] = [
   },
   {
     id: "periodic-006",
-    url: "https://example.com/reports/2024-06.pdf",
     periode: "Juni 2024",
     monthIndex: 5,
     status: "VERIFIED",
@@ -372,7 +366,6 @@ export const sppgPeriodicReports: TSppgPeriodicReport[] = [
   },
   {
     id: "periodic-007",
-    url: "https://example.com/reports/2024-07.pdf",
     periode: "Juli 2024",
     monthIndex: 6,
     status: "VERIFIED",
@@ -381,7 +374,6 @@ export const sppgPeriodicReports: TSppgPeriodicReport[] = [
   },
   {
     id: "periodic-008",
-    url: "https://example.com/reports/2024-08.pdf",
     periode: "Agustus 2024",
     monthIndex: 7,
     status: "VERIFIED",
@@ -390,7 +382,6 @@ export const sppgPeriodicReports: TSppgPeriodicReport[] = [
   },
   {
     id: "periodic-009",
-    url: "https://example.com/reports/2024-09.pdf",
     periode: "September 2024",
     monthIndex: 8,
     status: "VERIFIED",

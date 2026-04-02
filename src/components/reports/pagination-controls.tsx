@@ -1,5 +1,7 @@
 "use client";
 
+import { ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -13,6 +15,25 @@ function clampPage(page: number, totalPages: number) {
   return Math.max(1, Math.min(totalPages, page));
 }
 
+function getVisiblePages(
+  currentPage: number,
+  totalPages: number,
+): (number | string)[] {
+  if (totalPages <= 5) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+
+  if (currentPage <= 3) {
+    return [1, 2, "...", totalPages - 1, totalPages];
+  }
+
+  if (currentPage >= totalPages - 2) {
+    return [1, 2, "...", totalPages - 1, totalPages]; // or maybe totalPages-2, totalPages-1, totalPages, but let's stick to 1, 2, ..., 9, 10
+  }
+
+  return [1, "...", currentPage, "...", totalPages];
+}
+
 export function PaginationControls({
   currentPage,
   totalPages,
@@ -22,41 +43,76 @@ export function PaginationControls({
     return null;
   }
 
-  const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
+  const pages = getVisiblePages(currentPage, totalPages);
 
   return (
     <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
       <Button
         type="button"
         variant="outline"
-        size="sm"
+        size="icon"
+        className={cn(
+          "size-10 rounded-lg",
+          currentPage <= 1
+            ? "border-transparent bg-gray-200 text-gray-400 opacity-100"
+            : "border-gray-200 bg-white text-gray-500",
+        )}
         onClick={() => onPageChange(clampPage(currentPage - 1, totalPages))}
         disabled={currentPage <= 1}
       >
-        Sebelumnya
+        <HugeiconsIcon icon={ArrowLeft01Icon} size={20} />
+        <span className="sr-only">Sebelumnya</span>
       </Button>
 
-      {pages.map((page) => (
-        <Button
-          key={page}
-          type="button"
-          variant={page === currentPage ? "default" : "outline"}
-          size="sm"
-          className={cn("min-w-9", page === currentPage ? "font-semibold" : "")}
-          onClick={() => onPageChange(page)}
-        >
-          {page}
-        </Button>
-      ))}
+      {pages.map((page, idx) => {
+        if (page === "...") {
+          return (
+            <div
+              // biome-ignore lint/suspicious/noArrayIndexKey: stable index
+              key={`ellipsis-${idx}`}
+              className="flex size-10 items-center justify-center rounded-lg border border-gray-200 bg-white font-bold text-black text-lg tracking-widest"
+            >
+              ...
+            </div>
+          );
+        }
+
+        const isCurrent = page === currentPage;
+
+        return (
+          <Button
+            key={`page-${page}`}
+            type="button"
+            variant={isCurrent ? "outline" : "outline"}
+            size="icon"
+            className={cn(
+              "size-10 rounded-lg font-bold text-lg",
+              isCurrent
+                ? "border-2 border-[#008A45] bg-[#E8F8EF] text-[#008A45] hover:bg-[#D1F1E0] hover:text-[#008A45]"
+                : "border border-gray-200 bg-white text-black hover:bg-gray-50",
+            )}
+            onClick={() => onPageChange(page as number)}
+          >
+            {page}
+          </Button>
+        );
+      })}
 
       <Button
         type="button"
         variant="outline"
-        size="sm"
+        size="icon"
+        className={cn(
+          "size-10 rounded-lg",
+          currentPage >= totalPages
+            ? "border-transparent bg-gray-200 text-gray-400 opacity-100"
+            : "border-gray-200 bg-white text-gray-500",
+        )}
         onClick={() => onPageChange(clampPage(currentPage + 1, totalPages))}
         disabled={currentPage >= totalPages}
       >
-        Berikutnya
+        <HugeiconsIcon icon={ArrowRight01Icon} size={20} />
+        <span className="sr-only">Berikutnya</span>
       </Button>
     </div>
   );

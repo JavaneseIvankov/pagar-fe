@@ -52,12 +52,15 @@ function SearchReportFallback({ className }: { className?: string }) {
 function SearchReportContainer({ className }: { className?: string }) {
   const [search, setSearch] = useQueryState("search", {
     defaultValue: "",
+    shallow: false,
     limitUrlUpdates: debounce(500),
   });
 
   const [kecamatanId, setKecamatanId] = useQueryState<number>(
     "kecamatanId",
-    parseAsInteger,
+    parseAsInteger.withOptions({
+      shallow: false,
+    }),
   );
 
   const selectedKecamatan = useMemo(() => {
@@ -112,6 +115,8 @@ function SearchReportLayout({
         placeholder="Cari laporan atau menu…"
         aria-label="Cari laporan atau menu"
       />
+      {/* 
+          FIXME: temprary
       <Combobox
         items={items}
         itemToStringValue={(k: KecamatanFilterEntry) => k.label}
@@ -141,6 +146,7 @@ function SearchReportLayout({
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
+      */}
     </div>
   );
 }

@@ -20,39 +20,22 @@ type ReportViewerRole = "PUBLIC" | "SCHOOL";
 export interface FetchReportListParams {
   limit?: number;
   page?: number;
+  search?: string;
 }
 
 function resolveListParams(params?: FetchReportListParams) {
+  const trimmedSearch = params?.search?.trim();
+
   return {
     page: params?.page && params.page > 0 ? Math.floor(params.page) : 1,
     limit:
       params?.limit && params.limit > 0
         ? Math.floor(params.limit)
         : REPORT_LIST_PAGE_SIZE,
+    search: trimmedSearch ? trimmedSearch : undefined,
   };
 }
 
-function paginateLocalItems<TItem>(
-  items: TItem[],
-  params: {
-    limit: number;
-    page: number;
-  },
-): TPaginatedResult<TItem> {
-  const startIndex = (params.page - 1) * params.limit;
-  const pagedItems = items.slice(startIndex, startIndex + params.limit);
-
-  return toPaginatedResult({
-    items: pagedItems,
-    defaults: {
-      page: params.page,
-      limit: params.limit,
-      itemCount: items.length,
-    },
-  });
-}
-
-// TODO: this will cause all other client files to error, because this fn is server-only
 async function getCurrentReportViewerRole(): Promise<ReportViewerRole> {
   const session = await requireCurrentRole(
     ["PUBLIC", "SCHOOL"],
@@ -92,16 +75,30 @@ export const fetchSppgReports = createServerRpc(
     const role = await getCurrentReportViewerRole();
 
     if (role === "PUBLIC") {
-      const response = await client.getPublicDashboardSppgReports();
-      const mapped = response.data.map(mapPublicDashboardSppgReportDtoToDomain);
+      const response = await client.getPublicDashboardSppgReports({
+        query: {
+          page: normalizedParams.page,
+          limit: normalizedParams.limit,
+          search: normalizedParams.search,
+        },
+      });
 
-      return paginateLocalItems(mapped, normalizedParams);
+      return toPaginatedResult({
+        items: response.data.map(mapPublicDashboardSppgReportDtoToDomain),
+        envelope: response,
+        defaults: {
+          page: normalizedParams.page,
+          limit: normalizedParams.limit,
+          itemCount: response.data.length,
+        },
+      });
     }
 
     const response = await client.getSchoolDashboardSppgReports({
       query: {
         page: normalizedParams.page,
         limit: normalizedParams.limit,
+        search: normalizedParams.search,
       },
     });
 
@@ -130,16 +127,30 @@ export const fetchPublicReviews = createServerRpc(
     const role = await getCurrentReportViewerRole();
 
     if (role === "PUBLIC") {
-      const response = await client.getPublicDashboardReviews();
-      const mapped = response.data.map(mapPublicDashboardReviewDtoToDomain);
+      const response = await client.getPublicDashboardReviews({
+        query: {
+          page: normalizedParams.page,
+          limit: normalizedParams.limit,
+          search: normalizedParams.search,
+        },
+      });
 
-      return paginateLocalItems(mapped, normalizedParams);
+      return toPaginatedResult({
+        items: response.data.map(mapPublicDashboardReviewDtoToDomain),
+        envelope: response,
+        defaults: {
+          page: normalizedParams.page,
+          limit: normalizedParams.limit,
+          itemCount: response.data.length,
+        },
+      });
     }
 
     const response = await client.getSchoolDashboardReviews({
       query: {
         page: normalizedParams.page,
         limit: normalizedParams.limit,
+        search: normalizedParams.search,
       },
     });
 
@@ -162,24 +173,61 @@ export const fetchSppgReportDetail = createServerRpc(
   },
   async ({ client }, id: string): Promise<TSppgReportDetail | null> => {
     try {
+      const role = await getCurrentReportViewerRole();
+      const reportsResponse =
+        role === "PUBLIC"
+          ? await client.getPublicDashboardSppgReports({
+              query: {
+                page: 1,
+                limit: 50,
+              },
+            })
+          : await client.getSchoolDashboardSppgReports({
+              query: {
+                page: 1,
+                limit: 50,
+              },
+            });
+      const reports = reportsResponse.data.map(
+        mapPublicDashboardSppgReportDtoToDomain,
+      );
+      const matchedReport = reports.find((report) => report.id === id);
+      const relatedReports = reports
+        .filter((report) => report.id !== id)
+        .slice(0, 2);
+
+      if (role === "SCHOOL") {
+        if (!matchedReport) {
+          return null;
+        }
+
+        return {
+          ...matchedReport,
+          budget: {
+            id: matchedReport.id,
+            items: [],
+            totalPrice: 0,
+            attachments: [],
+          },
+          relatedReports,
+        };
+      }
+
       const response = await client.getDetailSppgReport({
         params: {
           id_daily_report: id,
         },
       });
-      const reportsResponse = await fetchSppgReports({
-        limit: 50,
-        page: 1,
-      });
-      const reports = reportsResponse.items;
-      const matchedReport = reports.find((report) => report.id === id);
       const detail = response.data;
       const author =
         matchedReport?.author ??
         createFallbackAuthor({
           id: detail.id_sppg,
           name: detail.sppg.sppg_name,
-          address: detail.sppg.sppg_address,
+          address:
+            detail.sppg.sppg_address === undefined
+              ? null
+              : detail.sppg.sppg_address,
         });
 
       return {
@@ -218,9 +266,7 @@ export const fetchSppgReportDetail = createServerRpc(
           totalPrice: 0,
           attachments: [],
         },
-        relatedReports: reports
-          .filter((report) => report.id !== id)
-          .slice(0, 2),
+        relatedReports,
       };
     } catch (error) {
       if (error instanceof ApiClientError && error.status === 404) {

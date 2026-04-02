@@ -8,6 +8,7 @@ import { fetchSppgReports } from "@/rpc/reports";
 export interface SppgReportListParams {
   limit?: number;
   page: number;
+  search?: string;
 }
 
 export function useSppgReports(params: SppgReportListParams) {
@@ -17,26 +18,33 @@ export function useSppgReports(params: SppgReportListParams) {
     queryKey: queryKeys.reports.list({
       page: params.page,
       limit,
+      search: params.search,
     }),
     queryFn: () =>
       fetchSppgReports({
         page: params.page,
         limit,
+        search: params.search,
       }),
   });
 }
 
-export function useInfiniteSppgReports(params?: { limit?: number }) {
+export function useInfiniteSppgReports(params?: {
+  limit?: number;
+  search?: string;
+}) {
   const limit = params?.limit ?? REPORT_LIST_PAGE_SIZE;
 
   return useInfiniteQuery({
     queryKey: queryKeys.reports.infinite({
       limit,
+      search: params?.search,
     }),
     queryFn: ({ pageParam }) =>
       fetchSppgReports({
         page: pageParam,
         limit,
+        search: params?.search,
       }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {

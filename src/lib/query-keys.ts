@@ -1,16 +1,33 @@
 export const queryKeys = {
   reports: {
-    list: (params: { limit: number; page: number }) =>
-      ["reports", "list", params.page, params.limit] as const,
-    infinite: (params: { limit: number }) =>
-      ["reports", "infinite", params.limit] as const,
+    list: (params: { limit: number; page: number; search?: string }) =>
+      [
+        "reports",
+        "list",
+        params.page,
+        params.limit,
+        params.search ?? "",
+      ] as const,
+    infinite: (params: { limit: number; search?: string }) =>
+      ["reports", "infinite", params.limit, params.search ?? ""] as const,
     detail: (id: string) => ["reports", "detail", id] as const,
   },
   publicReviews: {
-    list: (params: { limit: number; page: number }) =>
-      ["public-reviews", "list", params.page, params.limit] as const,
-    infinite: (params: { limit: number }) =>
-      ["public-reviews", "infinite", params.limit] as const,
+    list: (params: { limit: number; page: number; search?: string }) =>
+      [
+        "public-reviews",
+        "list",
+        params.page,
+        params.limit,
+        params.search ?? "",
+      ] as const,
+    infinite: (params: { limit: number; search?: string }) =>
+      [
+        "public-reviews",
+        "infinite",
+        params.limit,
+        params.search ?? "",
+      ] as const,
   },
   reviewSubmission: {
     context: () => ["review-submission", "context"] as const,

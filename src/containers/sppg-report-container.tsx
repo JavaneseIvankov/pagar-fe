@@ -1,27 +1,41 @@
 "use client";
 
 import { parseAsInteger, useQueryState } from "nuqs";
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { FeedLoadMoreSentinel } from "@/components/reports/feed-load-more-sentinel";
 import { PaginationControls } from "@/components/reports/pagination-controls";
 import { SppgReportCard } from "@/components/reports/sppg-report-card";
 import { SppgReportListSkeleton } from "@/components/reports/sppg-report-list-skeleton";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { REPORT_LIST_PAGE_SIZE } from "@/lib/pagination/constants";
 import {
   useInfiniteSppgReports,
   useSppgReports,
 } from "@/hooks/use-sppg-reports";
+import { REPORT_LIST_PAGE_SIZE } from "@/lib/pagination/constants";
 
 export function SppgReportContainer() {
   const isMobile = useIsMobile();
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
+  const [search] = useQueryState("search", { defaultValue: "" });
+  const previousSearchRef = useRef(search);
+
+  useEffect(() => {
+    if (previousSearchRef.current === search) {
+      return;
+    }
+
+    previousSearchRef.current = search;
+    void setPage(1);
+  }, [search, setPage]);
+
   const pagedQuery = useSppgReports({
     page,
     limit: REPORT_LIST_PAGE_SIZE,
+    search,
   });
   const infiniteQuery = useInfiniteSppgReports({
     limit: REPORT_LIST_PAGE_SIZE,
+    search,
   });
 
   const pagedReports = pagedQuery.data?.items ?? [];

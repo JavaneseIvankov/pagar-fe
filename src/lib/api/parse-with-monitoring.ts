@@ -1,13 +1,6 @@
 import { ZodError, type ZodTypeAny } from "zod/v3";
 import { reportApiBoundaryFailure } from "./monitoring";
 
-export class PublicFacingError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "PublicFacingError";
-  }
-}
-
 export function parseWithMonitoring<TSchema extends ZodTypeAny>(options: {
   schema: TSchema;
   payload: unknown;
@@ -30,7 +23,7 @@ export function parseWithMonitoring<TSchema extends ZodTypeAny>(options: {
         metadata: options.metadata,
       });
 
-      throw new PublicFacingError(options.publicMessage);
+      throw new Error(options.publicMessage);
     }
 
     throw error;

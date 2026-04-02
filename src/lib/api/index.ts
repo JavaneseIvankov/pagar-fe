@@ -28,6 +28,5 @@ export {
 } from "./error-messages";
 export { reportApiBoundaryFailure } from "./monitoring";
 export {
-  PublicFacingError,
   parseWithMonitoring,
 } from "./parse-with-monitoring";

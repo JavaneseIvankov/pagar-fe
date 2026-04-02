@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight01Icon, Download01Icon } from "@hugeicons/core-free-icons";
+import { Download01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { AnimatePresence, motion } from "motion/react";
 
@@ -35,7 +35,9 @@ interface PeriodicReportFilterOption {
 
 interface PeriodicReportTableProps {
   data: TSppgPeriodicReport[];
+  downloadingReportId: null | string;
   monthOptions: readonly PeriodicReportFilterOption[];
+  onDownload: (report: TSppgPeriodicReport) => void;
   onMonthChange: (value: string) => void;
   onYearChange: (value: string) => void;
   selectedMonth: string;
@@ -43,11 +45,11 @@ interface PeriodicReportTableProps {
   yearOptions: readonly string[];
 }
 
-// FIXME: make the download actually downloads once the backend provide sufficient API for it.
-
 export function PeriodicReportTable({
   data,
+  downloadingReportId,
   monthOptions,
+  onDownload,
   onMonthChange,
   onYearChange,
   selectedMonth,
@@ -55,7 +57,7 @@ export function PeriodicReportTable({
   yearOptions,
 }: PeriodicReportTableProps) {
   return (
-    <div className="page-enter mt-4 flex flex-col">
+    <div className="mt-4 flex flex-col">
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
         <Select value={selectedMonth} onValueChange={onMonthChange}>
           <SelectTrigger className="h-10 w-full bg-background sm:w-[180px]">
@@ -92,15 +94,6 @@ export function PeriodicReportTable({
         {/* Table Header / Action */}
         <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-balance font-bold text-xl">Rekap Laporan</h2>
-          <Button className="h-10 w-full rounded-xl bg-emerald-600 px-5 text-white hover:bg-emerald-700 sm:w-auto sm:px-6">
-            Lihat Semua{" "}
-            <HugeiconsIcon
-              icon={ArrowRight01Icon}
-              className="ml-2"
-              size={18}
-              aria-hidden="true"
-            />
-          </Button>
         </div>
 
         <AnimatePresence mode="wait" initial={false}>
@@ -161,6 +154,8 @@ export function PeriodicReportTable({
                         size="icon"
                         className="size-9 text-foreground hover:bg-gray-100"
                         aria-label={`Unduh rekap ${report.periode}`}
+                        disabled={downloadingReportId === report.id}
+                        onClick={() => onDownload(report)}
                       >
                         <HugeiconsIcon
                           icon={Download01Icon}
@@ -229,6 +224,8 @@ export function PeriodicReportTable({
                           size="icon"
                           className="text-foreground hover:bg-gray-100"
                           aria-label={`Unduh rekap ${report.periode}`}
+                          disabled={downloadingReportId === report.id}
+                          onClick={() => onDownload(report)}
                         >
                           <HugeiconsIcon
                             icon={Download01Icon}

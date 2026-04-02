@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import { SppgPeriodicReportsSkeleton } from "@/components/dashboard/sppg/sppg-periodic-reports-skeleton";
 import { PeriodicReportTable } from "@/components/dashboard/sppg/periodic-report-table";
 import { useSppgPeriodicReports } from "@/hooks/use-sppg-periodic-reports";
+import type { TSppgPeriodicReport } from "@/types";
 
 const PERIOD_OPTIONS = [
   { label: "Januari", value: "01" },
@@ -39,11 +41,74 @@ function createMonthlyDateRange(month: string, year: string) {
   };
 }
 
+function parseDownloadFilename(contentDisposition: string | null) {
+  if (!contentDisposition) {
+    return null;
+  }
+
+  const utf8Match = /filename\*=UTF-8''([^;]+)/i.exec(contentDisposition);
+
+  if (utf8Match) {
+    return decodeURIComponent(utf8Match[1]);
+  }
+
+  const filenameMatch = /filename="?([^"]+)"?/i.exec(contentDisposition);
+
+  return filenameMatch ? filenameMatch[1] : null;
+}
+
 export function SppgPeriodicReportsContainer() {
   const [selectedMonth, setSelectedMonth] = useState(DEFAULT_MONTH);
   const [selectedYear, setSelectedYear] = useState(DEFAULT_YEAR);
+  const [downloadingReportId, setDownloadingReportId] = useState<null | string>(
+    null,
+  );
   const period = createMonthlyDateRange(selectedMonth, selectedYear);
   const { data, isLoading, isError } = useSppgPeriodicReports(period);
+
+  const handleDownload = async (report: TSppgPeriodicReport) => {
+    setDownloadingReportId(report.id);
+
+    try {
+      const searchParams = new URLSearchParams({
+        start_date: period.startDate,
+        end_date: period.endDate,
+        format: "pdf",
+      });
+      const response = await fetch(
+        `/dashboard/sppg/laporan-periodik/export?${searchParams.toString()}`,
+      );
+
+      if (!response.ok) {
+        const message =
+          (await response.text()) || "Gagal mengunduh laporan periodik.";
+        throw new Error(message);
+      }
+
+      const blob = await response.blob();
+      const filename =
+        parseDownloadFilename(response.headers.get("content-disposition")) ??
+        `laporan-periodik-${selectedYear}-${selectedMonth}.pdf`;
+      const downloadUrl = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+
+      anchor.href = downloadUrl;
+      anchor.download = filename;
+      document.body.append(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(downloadUrl);
+      toast.success(`Rekap ${report.periode} berhasil diunduh.`);
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Gagal mengunduh laporan periodik.",
+      );
+    } finally {
+      setDownloadingReportId(null);
+    }
+  };
 
   if (isLoading) {
     return <SppgPeriodicReportsSkeleton />;
@@ -67,7 +132,9 @@ export function SppgPeriodicReportsContainer() {
       </div>
       <PeriodicReportTable
         data={data}
+        downloadingReportId={downloadingReportId}
         monthOptions={PERIOD_OPTIONS}
+        onDownload={handleDownload}
         onMonthChange={setSelectedMonth}
         onYearChange={setSelectedYear}
         selectedMonth={selectedMonth}

@@ -1,39 +1,37 @@
 import type { z } from "zod/v3";
 import type {
+  getActiveAccountsSuccessResponseSchema,
+  getAdminDashboardSuccessResponseSchema,
+  getPendingAccountsSuccessResponseSchema,
+  getPublicSppgListSuccessResponseSchema,
+  getSchoolProfileSuccessResponseSchema,
+  getSchoolSppgListSuccessResponseSchema,
+  getSppgDashboardSuccessResponseSchema,
+  getSppgPeriodicReportsSuccessResponseSchema,
+  getSppgProfileSuccessResponseSchema,
   loginSuccessResponseSchema,
   registerPublicSuccessResponseSchema,
   registerSchoolSuccessResponseSchema,
   registerSppgSuccessResponseSchema,
 } from "@/lib/api/dto";
 import type {
-  getAdminDashboardSuccessResponseSchema,
-  getActiveAccountsSuccessResponseSchema,
-  getPublicSppgListSuccessResponseSchema,
-  getSchoolProfileSuccessResponseSchema,
-  getSchoolSppgListSuccessResponseSchema,
-  getPendingAccountsSuccessResponseSchema,
-  getSppgPeriodicReportsSuccessResponseSchema,
-  getSppgProfileSuccessResponseSchema,
-  getSppgDashboardSuccessResponseSchema,
-} from "@/lib/api/dto";
-import type {
   TAdminActiveAccount,
-  TAdminPendingAccount,
-  TAuthRegistrationResult,
-  TAuthSession,
   TAdminComplaint,
   TAdminComplaintStatus,
   TAdminDashboard,
+  TAdminPendingAccount,
   TAdminStatistics,
   TAdminVendorWarning,
+  TAuthRegistrationResult,
+  TAuthSession,
   TBudget,
   TPublicReview,
   TReviewSppgTarget,
   TSchoolProfile,
   TSppg,
   TSppgDashboard,
-  TSppgProfile,
   TSppgPeriodicReport,
+  TSppgProfile,
   TSppgReport,
   TSppgReportDetail,
   TSppgReportSummary,
@@ -58,6 +56,7 @@ type PublicDashboardReviewItem = {
   title: string | null;
   updatedAt?: string;
 };
+
 type PublicDashboardReportItem = {
   attachments?: Array<{
     file_url: string;
@@ -210,15 +209,14 @@ export function mapPublicDashboardReviewDtoToDomain(
   dto: PublicDashboardReviewItem,
 ): TPublicReview {
   const imageUrl = dto.attachments?.[0]?.file_url ?? DEFAULT_ATTACHMENT_URL;
+
   return {
     id: String(dto.id_review),
     title: dto.title ?? "Laporan Masyarakat",
     imageUrl,
-    postedAt: new Date(
-      dto.createdAt ?? dto.updatedAt ?? new Date().toISOString(),
-    ),
+    postedAt: new Date(dto.createdAt ?? new Date().toISOString()),
     ratingScore: dto.rating_score ?? 0,
-    reporterName: dto.display_author,
+    reporterName: dto.display_author.split("-")[0] ?? "Anonim",
     forSppg: createReviewTarget({
       id: dto.id_sppg,
       name: dto.sppg?.sppg_name,
@@ -348,14 +346,18 @@ export function mapSppgDashboardDtoToDomain(
     sppgName: dto.sppg_name,
     statistics,
     recentReports: dto.riwayat_laporan.map(mapDashboardRecentReportDtoToDomain),
-    publicReviews: dto.laporan_masyarakat.map((review) =>
-      mapPublicDashboardReviewDtoToDomain({
-        ...review,
-        author_name: review.school?.school_name ?? "Anonim",
-        display_author: review.school?.school_name ?? "Anonim",
-        location_name: review.school?.school_name ?? "Sekolah",
-      }),
-    ),
+    publicReviews: dto.laporan_masyarakat.map((review) => {
+      const role = review.school !== null ? "SCHOOL" : "PUBLIC";
+      return mapPublicDashboardReviewDtoToDomain(
+        {
+          ...review,
+          author_name: review.school?.school_name ?? "Anonim",
+          display_author: review.school?.school_name ?? "Anonim",
+          location_name: review.school?.school_name ?? "Sekolah",
+        },
+        role,
+      );
+    }),
   };
 }
 

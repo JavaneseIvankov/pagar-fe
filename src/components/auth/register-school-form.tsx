@@ -105,9 +105,11 @@ export function RegisterSchoolForm() {
             aria-invalid={!!errors.username}
             disabled={isPending}
           />
-          {errors.username && (
-            <FieldError>{errors.username.message}</FieldError>
-          )}
+          <div className="motion-error-slot" data-visible={!!errors.username}>
+            {errors.username ? (
+              <FieldError>{errors.username.message}</FieldError>
+            ) : null}
+          </div>
         </Field>
 
         <Field data-invalid={!!errors.email}>
@@ -120,7 +122,11 @@ export function RegisterSchoolForm() {
             aria-invalid={!!errors.email}
             disabled={isPending}
           />
-          {errors.email && <FieldError>{errors.email.message}</FieldError>}
+          <div className="motion-error-slot" data-visible={!!errors.email}>
+            {errors.email ? (
+              <FieldError>{errors.email.message}</FieldError>
+            ) : null}
+          </div>
         </Field>
 
         <Field data-invalid={!!errors.namaSekolah}>
@@ -132,9 +138,14 @@ export function RegisterSchoolForm() {
             aria-invalid={!!errors.namaSekolah}
             disabled={isPending}
           />
-          {errors.namaSekolah && (
-            <FieldError>{errors.namaSekolah.message}</FieldError>
-          )}
+          <div
+            className="motion-error-slot"
+            data-visible={!!errors.namaSekolah}
+          >
+            {errors.namaSekolah ? (
+              <FieldError>{errors.namaSekolah.message}</FieldError>
+            ) : null}
+          </div>
         </Field>
 
         <Field data-invalid={!!errors.alamatSekolah}>
@@ -146,9 +157,14 @@ export function RegisterSchoolForm() {
             aria-invalid={!!errors.alamatSekolah}
             disabled={isPending}
           />
-          {errors.alamatSekolah && (
-            <FieldError>{errors.alamatSekolah.message}</FieldError>
-          )}
+          <div
+            className="motion-error-slot"
+            data-visible={!!errors.alamatSekolah}
+          >
+            {errors.alamatSekolah ? (
+              <FieldError>{errors.alamatSekolah.message}</FieldError>
+            ) : null}
+          </div>
         </Field>
 
         <Field data-invalid={!!errors.kodeRegistrasi}>
@@ -162,9 +178,14 @@ export function RegisterSchoolForm() {
             aria-invalid={!!errors.kodeRegistrasi}
             disabled={isPending}
           />
-          {errors.kodeRegistrasi && (
-            <FieldError>{errors.kodeRegistrasi.message}</FieldError>
-          )}
+          <div
+            className="motion-error-slot"
+            data-visible={!!errors.kodeRegistrasi}
+          >
+            {errors.kodeRegistrasi ? (
+              <FieldError>{errors.kodeRegistrasi.message}</FieldError>
+            ) : null}
+          </div>
         </Field>
 
         <Field data-invalid={!!errors.kataSandi}>
@@ -176,9 +197,11 @@ export function RegisterSchoolForm() {
             aria-invalid={!!errors.kataSandi}
             disabled={isPending}
           />
-          {errors.kataSandi && (
-            <FieldError>{errors.kataSandi.message}</FieldError>
-          )}
+          <div className="motion-error-slot" data-visible={!!errors.kataSandi}>
+            {errors.kataSandi ? (
+              <FieldError>{errors.kataSandi.message}</FieldError>
+            ) : null}
+          </div>
         </Field>
 
         <Field data-invalid={!!errors.ulangiKataSandi}>
@@ -190,14 +213,31 @@ export function RegisterSchoolForm() {
             aria-invalid={!!errors.ulangiKataSandi}
             disabled={isPending}
           />
-          {errors.ulangiKataSandi && (
-            <FieldError>{errors.ulangiKataSandi.message}</FieldError>
-          )}
+          <div
+            className="motion-error-slot"
+            data-visible={!!errors.ulangiKataSandi}
+          >
+            {errors.ulangiKataSandi ? (
+              <FieldError>{errors.ulangiKataSandi.message}</FieldError>
+            ) : null}
+          </div>
         </Field>
       </FieldGroup>
 
-      <Button type="submit" className="w-full" disabled={isPending}>
-        {isPending ? "Memproses..." : "Daftar"}
+      <Button
+        type="submit"
+        className="motion-press w-full"
+        disabled={isPending}
+      >
+        <span className="inline-flex items-center justify-center gap-2">
+          {isPending ? (
+            <span
+              aria-hidden="true"
+              className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent"
+            />
+          ) : null}
+          <span>{isPending ? "Memproses..." : "Daftar"}</span>
+        </span>
       </Button>
       <div className="flex w-full justify-end">
         <Link href="/auth/masuk" className="text-body-4 underline">

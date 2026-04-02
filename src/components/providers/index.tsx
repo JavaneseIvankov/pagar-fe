@@ -6,6 +6,7 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { MotionConfig } from "motion/react";
 import { debounce } from "nuqs";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { useState } from "react";
@@ -17,6 +18,8 @@ import {
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { GlobalAlertDialog } from "@/hooks/use-alert-dialog";
 import GlobalDialog from "@/hooks/use-dialog";
+import { useMotionPreferences } from "@/hooks/use-motion-preferences";
+import { MOTION_TRANSITIONS } from "@/lib/motion/tokens";
 
 const createQueryClient = () => {
   let queryClient: QueryClient;
@@ -57,16 +60,23 @@ export default function Providers({
   children: React.ReactNode;
 }>) {
   const [qc] = useState(() => createQueryClient());
+  const { reducedMotionMode } = useMotionPreferences();
+
   return (
     <QueryClientProvider client={qc}>
       <NuqsAdapter defaultOptions={{ limitUrlUpdates: debounce(500) }}>
         <ReactQueryDevtools initialIsOpen={false} />
-        <TooltipProvider>
-          <Toaster />
-          {children}
-          <GlobalDialog />
-          <GlobalAlertDialog />
-        </TooltipProvider>
+        <MotionConfig
+          reducedMotion={reducedMotionMode}
+          transition={MOTION_TRANSITIONS.baseOut}
+        >
+          <TooltipProvider>
+            <Toaster />
+            {children}
+            <GlobalDialog />
+            <GlobalAlertDialog />
+          </TooltipProvider>
+        </MotionConfig>
       </NuqsAdapter>
     </QueryClientProvider>
   );

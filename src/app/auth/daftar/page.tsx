@@ -69,7 +69,7 @@ function RoleSelectionCard({
   return (
     <div
       className={cn(
-        "flex gap-4 rounded-md border-1 border-foreground/10 p-4 xl:gap-6 xl:p-4",
+        "motion-press flex gap-4 rounded-md border-1 border-foreground/10 p-4 transition-[transform,box-shadow,border-color,background-color] duration-[var(--motion-duration-fast)] ease-[var(--motion-ease-out)] hover:-translate-y-px hover:border-foreground/20 hover:shadow-md xl:gap-6 xl:p-4",
         className,
       )}
     >

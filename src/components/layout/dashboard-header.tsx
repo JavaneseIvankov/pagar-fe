@@ -23,18 +23,18 @@ export function DashboardHeader() {
 
       <div className="flex items-center gap-4">
         <div className="relative w-[360px]">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground transition-[color,transform] duration-[var(--motion-duration-fast)] ease-[var(--motion-ease-out)]">
             <HugeiconsIcon icon={Search01Icon} size={18} />
           </div>
           <Input
             placeholder="Cari laporan..."
-            className="h-11 rounded-lg border-transparent bg-muted/50 pl-10 focus-visible:bg-white focus-visible:ring-1"
+            className="h-11 rounded-lg border-transparent bg-muted/50 pl-10 transition-[background-color,box-shadow] duration-[var(--motion-duration-fast)] ease-[var(--motion-ease-out)] focus-visible:bg-white focus-visible:ring-1"
           />
         </div>
         <Button
           variant="ghost"
           size="icon"
-          className="h-11 w-11 rounded-full text-muted-foreground hover:text-foreground"
+          className="motion-press h-11 w-11 rounded-full text-muted-foreground hover:text-foreground"
         >
           <HugeiconsIcon icon={Notification01Icon} size={24} />
         </Button>

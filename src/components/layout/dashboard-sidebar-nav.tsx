@@ -1,4 +1,5 @@
 "use client";
+import { motion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -8,6 +9,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { MOTION_TRANSITIONS } from "@/lib/motion/tokens";
 import { cn } from "@/lib/utils";
 import {
   DashboardIcon,
@@ -91,7 +93,7 @@ export function DashboardSidebarNav() {
               >
                 <Link
                   href={item.href}
-                  className="flex items-center gap-3"
+                  className="relative flex items-center gap-3"
                   prefetch={item.prefetch}
                   onClick={() => {
                     if (isMobile) {
@@ -99,9 +101,18 @@ export function DashboardSidebarNav() {
                     }
                   }}
                 >
-                  <item.icon />
+                  {isActive ? (
+                    <motion.span
+                      layoutId="dashboard-sidebar-active-indicator"
+                      className="pointer-events-none absolute -inset-x-1 -inset-y-1 rounded-lg bg-primary/10"
+                      transition={MOTION_TRANSITIONS.fastOut}
+                    />
+                  ) : null}
+                  <item.icon className="relative z-10" />
                   <span
-                    className={cn("group-data-[collapsible=icon]:opacity-0")}
+                    className={cn(
+                      "relative z-10 max-w-[200px] overflow-hidden whitespace-nowrap transition-[max-width,opacity,transform] duration-[var(--motion-duration-fast)] ease-[var(--motion-ease-out)] group-data-[collapsible=icon]:max-w-0 group-data-[collapsible=icon]:-translate-x-1 group-data-[collapsible=icon]:opacity-0",
+                    )}
                   >
                     {item.title}
                   </span>

@@ -81,7 +81,16 @@ export function CreateReportForm({
   totalAnggaranPerPorsi,
 }: DashboardCreateReportFormProps) {
   if (isHydrating) {
-    return <div className="overflow-y-scroll"></div>;
+    return (
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_350px]">
+        <div className="space-y-6">
+          <div className="h-60 animate-pulse rounded-2xl bg-muted/50" />
+          <div className="h-52 animate-pulse rounded-2xl bg-muted/50" />
+          <div className="h-72 animate-pulse rounded-2xl bg-muted/50" />
+        </div>
+        <div className="h-80 animate-pulse rounded-2xl bg-muted/50" />
+      </div>
+    );
   }
 
   return (

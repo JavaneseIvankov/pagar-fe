@@ -12,6 +12,9 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+const ALERT_EXIT_DURATION_MS = 180;
+let clearAlertTimer: ReturnType<typeof setTimeout> | null = null;
+
 type AlertOptions = {
   title?: string;
   description?: string;
@@ -34,6 +37,11 @@ export const useAlertDialogStore = create<AlertDialogStore>((set) => ({
   options: {},
 
   showAlert: (options) => {
+    if (clearAlertTimer) {
+      clearTimeout(clearAlertTimer);
+      clearAlertTimer = null;
+    }
+
     set({
       isOpen: true,
       options,
@@ -43,8 +51,12 @@ export const useAlertDialogStore = create<AlertDialogStore>((set) => ({
   closeAlert: () => {
     set({
       isOpen: false,
-      options: {},
     });
+
+    clearAlertTimer = setTimeout(() => {
+      set({ options: {} });
+      clearAlertTimer = null;
+    }, ALERT_EXIT_DURATION_MS);
   },
 }));
 
@@ -52,7 +64,14 @@ export function GlobalAlertDialog() {
   const { isOpen, options, closeAlert } = useAlertDialogStore();
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={closeAlert}>
+    <AlertDialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+          closeAlert();
+        }
+      }}
+    >
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{options.title}</AlertDialogTitle>

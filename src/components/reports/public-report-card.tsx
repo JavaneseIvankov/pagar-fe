@@ -37,7 +37,7 @@ export function PublicReportCard({ review }: PublicReportCardProps) {
             fill
             src={review.imageUrl}
             alt={review.title}
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            className="motion-image-reveal object-cover transition-transform duration-[var(--motion-duration-slow)] ease-[var(--motion-ease-out)] group-hover:scale-[1.03]"
           />
         </div>
 

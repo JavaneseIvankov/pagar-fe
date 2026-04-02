@@ -6,12 +6,12 @@ import { FeedLoadMoreSentinel } from "@/components/reports/feed-load-more-sentin
 import { PaginationControls } from "@/components/reports/pagination-controls";
 import { PublicReportCard } from "@/components/reports/public-report-card";
 import { PublicReportListSkeleton } from "@/components/reports/public-report-list-skeleton";
-import { REPORT_LIST_PAGE_SIZE } from "@/lib/pagination/constants";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   useInfinitePublicReviews,
   usePublicReviews,
 } from "@/hooks/use-public-reviews";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { REPORT_LIST_PAGE_SIZE } from "@/lib/pagination/constants";
 
 export function PublicReportContainer() {
   const isMobile = useIsMobile();
@@ -80,8 +80,8 @@ export function PublicReportContainer() {
   }
 
   return (
-    <div className="page-enter flex w-full max-w-[1200px] flex-col gap-4 sm:gap-6">
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+    <div className="page-enter flex w-full flex-col gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {reviews.map((review) => (
           <PublicReportCard key={review.id} review={review} />
         ))}

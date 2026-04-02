@@ -1,8 +1,8 @@
+import Link from "next/link";
 import { SpeakerIcon } from "@/components/exported-icons";
 import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
 
 export interface SppgReportDiscrepancyCardProps {
   sppgId: string;

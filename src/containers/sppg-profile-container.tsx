@@ -2,8 +2,8 @@
 
 import { toast } from "sonner";
 import { ProfileHeaderCard } from "@/components/profile/profile-header-card";
-import { SppgProfessionalInfoCard } from "@/components/profile/sppg-professional-info-card";
 import { SppgAccountSettingsCard } from "@/components/profile/sppg-account-settings-card";
+import { SppgProfessionalInfoCard } from "@/components/profile/sppg-professional-info-card";
 import { SppgProfileSkeleton } from "@/components/profile/sppg-profile-skeleton";
 import {
   useCurrentSppgProfile,

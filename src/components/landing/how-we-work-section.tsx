@@ -16,8 +16,8 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { AnimatePresence, motion, type Variants } from "motion/react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { StepCard } from "./step-card";
 import { PeopleIcon, SchoolIcon, TruckIcon } from "../exported-icons";
+import { StepCard } from "./step-card";
 
 const STAGGER_CONTAINER: Variants = {
   hidden: { opacity: 1 },

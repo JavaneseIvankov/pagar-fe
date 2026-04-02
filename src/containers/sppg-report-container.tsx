@@ -80,8 +80,8 @@ export function SppgReportContainer() {
   }
 
   return (
-    <div className="page-enter flex w-full max-w-[1200px] flex-col gap-4 sm:gap-6">
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+    <div className="page-enter flex w-full flex-col gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {reports.map((report) => (
           <SppgReportCard key={report.id} report={report} />
         ))}

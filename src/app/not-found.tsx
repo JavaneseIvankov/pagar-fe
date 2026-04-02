@@ -2,9 +2,9 @@
 
 import { Search01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { useRouter } from "next/navigation";
 import { AppLogo } from "@/components/app-logo";
 import { buttonVariants } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
 import "@/app/globals.css";
 
 export default function NotFound() {

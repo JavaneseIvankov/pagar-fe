@@ -1,4 +1,17 @@
 import type { z } from "zod/v3";
+import type {
+  getActiveAccountsSuccessResponseSchema,
+  getAdminDashboardSuccessResponseSchema,
+  getPendingAccountsSuccessResponseSchema,
+  getPublicDashboardReviewsSuccessResponseSchema,
+  getPublicDashboardSppgReportsSuccessResponseSchema,
+  getSchoolProfileSuccessResponseSchema,
+  getSppgDailyReportByIdSuccessResponseSchema,
+  getSppgDashboardSuccessResponseSchema,
+  getSppgPeriodicReportsSuccessResponseSchema,
+  updateAccountStatusBodySchema,
+  updateAccountStatusSuccessResponseSchema,
+} from "@/lib/api/dto";
 import {
   adminStatistics,
   budgets,
@@ -10,19 +23,6 @@ import {
   sppgStatistics,
   sppgs,
 } from "@/mock-data";
-import type {
-  getAdminDashboardSuccessResponseSchema,
-  getActiveAccountsSuccessResponseSchema,
-  getPublicDashboardReviewsSuccessResponseSchema,
-  getPublicDashboardSppgReportsSuccessResponseSchema,
-  getPendingAccountsSuccessResponseSchema,
-  getSchoolProfileSuccessResponseSchema,
-  getSppgDashboardSuccessResponseSchema,
-  getSppgDailyReportByIdSuccessResponseSchema,
-  getSppgPeriodicReportsSuccessResponseSchema,
-  updateAccountStatusBodySchema,
-  updateAccountStatusSuccessResponseSchema,
-} from "@/lib/api/dto";
 
 type PublicDashboardSppgReportsResponse = z.infer<
   typeof getPublicDashboardSppgReportsSuccessResponseSchema

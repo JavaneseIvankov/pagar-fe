@@ -1,10 +1,10 @@
 "use server";
 
 import {
+  type AuthActionResult,
   loginUser,
   logoutUser,
   registerUser,
-  type AuthActionResult,
 } from "@/rpc/auth";
 
 export async function loginAction(input: {

@@ -64,7 +64,7 @@ export default function AuthLayout({
 
   return (
     <div className="grid min-h-dvh w-full grid-cols-1 bg-background md:grid-cols-2">
-      <section className="auth-thumbnail relative md:sticky top-0 left-0 max-h-[10dvh] min-h-[240px] overflow-hidden bg-primary md:min-h-dvh">
+      <section className="auth-thumbnail relative top-0 left-0 max-h-[10dvh] min-h-[240px] overflow-hidden bg-primary md:sticky md:min-h-dvh">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={content.image}

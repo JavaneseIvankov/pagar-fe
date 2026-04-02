@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { SppgPeriodicReportsSkeleton } from "@/components/dashboard/sppg/sppg-periodic-reports-skeleton";
 import { PeriodicReportTable } from "@/components/dashboard/sppg/periodic-report-table";
+import { SppgPeriodicReportsSkeleton } from "@/components/dashboard/sppg/sppg-periodic-reports-skeleton";
 import { useSppgPeriodicReports } from "@/hooks/use-sppg-periodic-reports";
 import type { TSppgPeriodicReport } from "@/types";
 

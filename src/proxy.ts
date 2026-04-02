@@ -1,12 +1,14 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { getAuthenticatedLandingPath } from "@/lib/auth/navigation";
-import { getAuthSessionFromRequest } from "@/lib/auth/request";
-import { canRoleAccessPath } from "@/lib/auth/navigation";
+import {
+  canRoleAccessPath,
+  getAuthenticatedLandingPath,
+} from "@/lib/auth/navigation";
 import {
   AUTH_SESSION_EXPIRED_PATH,
   buildReturnToPath,
   LOGIN_RETURN_TO_PARAM,
 } from "@/lib/auth/redirects";
+import { getAuthSessionFromRequest } from "@/lib/auth/request";
 
 function isProtectedPath(pathname: string) {
   return (

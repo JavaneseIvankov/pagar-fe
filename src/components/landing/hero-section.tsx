@@ -2,9 +2,9 @@ import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import type { Variants } from "motion";
 import { motion } from "motion/react";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 
 const STAGGER_CHILD: Variants = {
   hidden: { opacity: 0, y: 20 },

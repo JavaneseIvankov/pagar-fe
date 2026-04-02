@@ -1,8 +1,8 @@
 import { Location01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Card, CardContent } from "@/components/ui/card";
-import { FlowerIcon } from "../exported-icons";
 import type { TSppgProfile } from "@/types";
+import { FlowerIcon } from "../exported-icons";
 
 export interface ProfileHeaderCardProps {
   profile: Pick<TSppgProfile, "description" | "location" | "sppgName">;

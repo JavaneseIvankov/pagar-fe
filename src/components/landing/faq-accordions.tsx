@@ -1,13 +1,12 @@
 import { ChevronDown } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-
+import { cn } from "@/lib/utils";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "../animate-ui/components/radix/accordion";
-import { cn } from "@/lib/utils";
 
 const FAQ_DATA: { title: string; content: string }[] = [
   {

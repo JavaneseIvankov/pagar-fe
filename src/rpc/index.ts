@@ -4,6 +4,7 @@ export {
   updateAdminAccountStatus,
 } from "./admin-accounts";
 export { fetchAdminDashboard } from "./admin-dashboard";
+export type { PasswordRecoveryActionResult } from "./auth";
 export {
   loginUser,
   logoutUser,
@@ -11,7 +12,6 @@ export {
   requestPasswordReset,
   resetPassword,
 } from "./auth";
-export type { PasswordRecoveryActionResult } from "./auth";
 export {
   type FetchSppgPeriodicReportsParams,
   fetchSppgPeriodicReports,

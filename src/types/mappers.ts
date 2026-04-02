@@ -1,13 +1,13 @@
 import type { z } from "zod/v3";
 import type {
   getActiveAccountsSuccessResponseSchema,
-  getAdminProfileSuccessResponseSchema,
   getAdminDashboardSuccessResponseSchema,
+  getAdminProfileSuccessResponseSchema,
   getDetailSppgReportSuccessResponseSchema,
   getPendingAccountsSuccessResponseSchema,
   getPublicDashboardReviewsSuccessResponseSchema,
-  getPublicProfileSuccessResponseSchema,
   getPublicDashboardSppgReportsSuccessResponseSchema,
+  getPublicProfileSuccessResponseSchema,
   getPublicSppgListSuccessResponseSchema,
   getSchoolDashboardReviewsSuccessResponseSchema,
   getSchoolDashboardSppgReportsSuccessResponseSchema,
@@ -23,8 +23,8 @@ import type {
   registerSppgSuccessResponseSchema,
 } from "@/lib/api/dto";
 import type {
-  TAdminActiveAccount,
   TAdminAccessDetail,
+  TAdminActiveAccount,
   TAdminComplaint,
   TAdminComplaintStatus,
   TAdminDashboard,

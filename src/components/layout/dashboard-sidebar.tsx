@@ -4,6 +4,7 @@ import { Logout01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -11,7 +12,6 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
 import { logoutUser } from "@/rpc";
 import type { TAuthSession, TRole } from "@/types";
 import { DashboardAppLogo } from "../dashboard/dashboard-app-logo";

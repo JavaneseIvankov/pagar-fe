@@ -4,14 +4,6 @@ import { debounce, parseAsInteger, useQueryState } from "nuqs";
 import { Suspense, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { SearchInput } from "../search-input";
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from "../ui/combobox";
 
 type KecamatanFilterEntry = {
   value: number;
@@ -90,13 +82,13 @@ interface SearchReportLayoutProps {
 }
 
 function SearchReportLayout({
-  className,
-  items,
-  searchValue,
+  _className,
+  _items,
+  _searchValue,
   isReadOnly = false,
   onSearchChange,
-  selectedKecamatan,
-  onKecamatanChange,
+  _selectedKecamatan,
+  _onKecamatanChange,
 }: SearchReportLayoutProps) {
   // FIXME: this has bad tab-navigation
   return (

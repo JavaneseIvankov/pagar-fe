@@ -1,11 +1,11 @@
 "use client";
 
 import { toast } from "sonner";
+import { ProfileFormSkeleton } from "@/components/profile/profile-form-skeleton";
 import {
   PublicProfileForm,
   type PublicProfileFormValues,
 } from "@/components/profile/public-profile-form";
-import { ProfileFormSkeleton } from "@/components/profile/profile-form-skeleton";
 import {
   SchoolProfileForm,
   type SchoolProfileFormValues,

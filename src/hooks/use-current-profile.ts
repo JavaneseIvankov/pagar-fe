@@ -6,12 +6,12 @@ import {
   fetchCurrentAdminProfile,
   fetchCurrentProfile,
   fetchCurrentSppgProfile,
-  updateCurrentAdminProfile,
-  updateCurrentSchoolProfile,
-  updateCurrentSppgProfile,
   type UpdateCurrentAdminProfileInput,
   type UpdateCurrentSchoolProfileInput,
   type UpdateCurrentSppgProfileInput,
+  updateCurrentAdminProfile,
+  updateCurrentSchoolProfile,
+  updateCurrentSppgProfile,
 } from "@/rpc";
 
 export function useCurrentProfile() {

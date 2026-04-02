@@ -10,15 +10,15 @@ import { MotionConfig } from "motion/react";
 import { debounce } from "nuqs";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { useState } from "react";
-import { toast, Toaster } from "sonner";
-import {
-  handleClientApiError,
-  isAuthSessionExpiredError,
-} from "@/lib/api/client-error-handling";
+import { Toaster, toast } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { GlobalAlertDialog } from "@/hooks/use-alert-dialog";
 import GlobalDialog from "@/hooks/use-dialog";
 import { useMotionPreferences } from "@/hooks/use-motion-preferences";
+import {
+  handleClientApiError,
+  isAuthSessionExpiredError,
+} from "@/lib/api/client-error-handling";
 import { MOTION_TRANSITIONS } from "@/lib/motion/tokens";
 
 const createQueryClient = () => {

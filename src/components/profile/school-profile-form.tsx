@@ -1,8 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod/v3";
@@ -16,8 +14,8 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import type { TSchoolProfile } from "@/types";
-import { Avatar } from "../ui/avatar";
 import { AvatarFallbackIcon } from "../avatar-fallback-icon";
+import { Avatar } from "../ui/avatar";
 
 const schoolProfileFormSchema = z.object({
   schoolName: z.string().min(3, "Nama sekolah minimal 3 karakter"),

@@ -27,6 +27,4 @@ export {
   AUTH_SESSION_EXPIRED_MESSAGE,
 } from "./error-messages";
 export { reportApiBoundaryFailure } from "./monitoring";
-export {
-  parseWithMonitoring,
-} from "./parse-with-monitoring";
+export { parseWithMonitoring } from "./parse-with-monitoring";

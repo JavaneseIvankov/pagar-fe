@@ -2,8 +2,8 @@
 
 import { PublicReportsList } from "@/components/dashboard/public-reports-list";
 import { ReportHistoryTable } from "@/components/dashboard/report-history-table";
-import { SummaryCard } from "@/components/dashboard/summary-card";
 import { SppgDashboardSkeleton } from "@/components/dashboard/sppg-dashboard-skeleton";
+import { SummaryCard } from "@/components/dashboard/summary-card";
 import {
   CheckCircleIcon,
   HeartIcon,

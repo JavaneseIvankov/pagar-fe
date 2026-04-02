@@ -9,7 +9,7 @@ Use this skill when wiring frontend code to the backend through the copied PAGAR
 
 Assumption:
 
-- the consuming frontend copied `client/index.ts`, `client/api-client.ts`, `client/api-contract.ts`, and `client/dto.ts` into its own local `client/` directory
+- the consuming frontend copied `client/index.ts`, `client/api-client.ts`, `client/api-contract.ts`, `client/dto.ts`, and `client/report-export.ts` into its own local `client/` directory
 - frontend code should use that copied entrypoint, not reimplement the transport layer from scratch
 
 ## Use The Single Entry Point
@@ -17,12 +17,19 @@ Assumption:
 Import from the copied `client/index.ts`, not from deep internal files, unless you are editing the copied client itself.
 
 ```ts
-import { ApiClientError, createApiClient, dto } from '../client';
+import {
+  ApiClientError,
+  ApiDownloadError,
+  createApiClient,
+  createSppgReportExportHelper,
+  dto,
+} from '../client';
 ```
 
 Default rule:
 
 - use `createApiClient()` for real backend calls
+- use `createSppgReportExportHelper()` for the SPPG export download route
 - use `dto` only for compatibility or schema validation needs
 - use `apiContract` only when route metadata is the actual need
 
@@ -48,6 +55,32 @@ Typical frontend pattern:
 - read `baseUrl` from frontend env config
 - inject auth through `getAuthToken()`
 - reuse the configured client instead of scattering raw `fetch` calls across components
+
+## Download Helper
+
+Use the dedicated helper for `GET /pagar/v1/sppg/reports/export`. That route returns a file and is intentionally outside the JSON `apiContract` surface.
+
+```ts
+const exportHelper = createSppgReportExportHelper({
+  baseUrl: import.meta.env.VITE_API_BASE_URL,
+  getAuthToken: () => localStorage.getItem('token'),
+});
+
+const result = await exportHelper.downloadSppgReportExport({
+  query: {
+    start_date: '2026-03-01',
+    end_date: '2026-03-31',
+    format: 'pdf',
+  },
+});
+```
+
+Important behavior:
+
+- validates `start_date`, `end_date`, and `format` before transport
+- defaults `format` to `xlsx`
+- returns `{ blob, contentType, filename }`
+- uses `content-disposition` to derive `filename` when present
 
 ## Lifecycle Hooks
 
@@ -149,6 +182,7 @@ await client.createSppgDailyReport({
     menu_name: 'Nasi Uduk',
     meal_time: '07.00',
     total_portion: 50,
+    description: 'Nasi uduk lengkap untuk sarapan siswa.',
     energy: 450,
     protein: 12,
     fat: 8,
@@ -197,6 +231,8 @@ Example:
 - missing auth for protected endpoints can fail client-side because the request does not satisfy the declared `authorization` header schema
 - invalid bearer tokens pass client validation and fail on the server as `ApiClientError`
 
+Download failures from `createSppgReportExportHelper()` come back as `ApiDownloadError`.
+
 ## DTO Compatibility
 
 DTO exports are intentionally available for backward compatibility with frontend code that already validates mock payloads.
@@ -225,3 +261,4 @@ const url = apiContract.getPendingAccounts.buildPath();
 
 Prefer the client methods unless route metadata is the actual goal.
 
+Do not try to force file-download routes like `reports/export` into `apiContract`; use the dedicated export helper instead.

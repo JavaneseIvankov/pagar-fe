@@ -2,10 +2,16 @@ import type { z } from "zod/v3";
 import type {
   getActiveAccountsSuccessResponseSchema,
   getAdminDashboardSuccessResponseSchema,
+  getDetailSppgReportSuccessResponseSchema,
   getPendingAccountsSuccessResponseSchema,
+  getPublicDashboardReviewsSuccessResponseSchema,
+  getPublicDashboardSppgReportsSuccessResponseSchema,
   getPublicSppgListSuccessResponseSchema,
+  getSchoolDashboardReviewsSuccessResponseSchema,
+  getSchoolDashboardSppgReportsSuccessResponseSchema,
   getSchoolProfileSuccessResponseSchema,
   getSchoolSppgListSuccessResponseSchema,
+  getSppgDailyReportByIdSuccessResponseSchema,
   getSppgDashboardSuccessResponseSchema,
   getSppgPeriodicReportsSuccessResponseSchema,
   getSppgProfileSuccessResponseSchema,
@@ -38,68 +44,35 @@ import type {
   TSppgStatistics,
 } from "./ui";
 
-type PublicDashboardReviewItem = {
-  attachments?: Array<{
-    file_url: string;
-  }>;
-  author_name?: string;
-  createdAt?: string;
-  description: string | null;
-  display_author: string;
-  id_review: number | string;
-  id_sppg: null | number | string;
-  location_name?: string;
-  rating_score: number | null;
-  sppg?: {
-    sppg_name: string;
-  } | null;
-  title: string | null;
-  updatedAt?: string;
-};
+type PublicDashboardReviewItem =
+  | z.infer<
+      typeof getPublicDashboardReviewsSuccessResponseSchema
+    >["data"][number]
+  | z.infer<
+      typeof getSchoolDashboardReviewsSuccessResponseSchema
+    >["data"][number];
+type SppgDashboardReviewItem =
+  SppgDashboardResponse["laporan_masyarakat"][number];
+type DashboardReviewMapperInput =
+  | PublicDashboardReviewItem
+  | (SppgDashboardReviewItem & {
+      author_name: string;
+      display_author: string;
+      location_name: string;
+      sppg?: { sppg_name: string } | null;
+    });
 
-type PublicDashboardReportItem = {
-  attachments?: Array<{
-    file_url: string;
-  }>;
-  carbohydrate: number | null;
-  date_report: string;
-  energy: number | null;
-  fat: number | null;
-  id_daily_report: number | string;
-  id_sppg: number | string;
-  meal_time: string | null;
-  menu_description: null | string;
-  menu_name: string;
-  protein: number | null;
-  sppg: {
-    sppg_address: string | null;
-    sppg_name: string;
-  };
-};
-type SppgDailyReportDetailItem = {
-  attachments?: Array<{
-    entity_type: string;
-    file_category: string | null;
-    file_type: string | null;
-    file_url: string;
-    id_attachment: number | string;
-  }>;
-  budgets?: Array<{
-    id_budget: number | string;
-    item_name: string;
-    item_price: number | string;
-  }>;
-  carbohydrate: number | null;
-  date_report: string;
-  energy: number | null;
-  fat: number | null;
-  id_daily_report: number | string;
-  id_sppg: number | string;
-  meal_time: string | null;
-  menu_description: null | string;
-  menu_name: string;
-  protein: number | null;
-};
+type PublicDashboardReportItem =
+  | z.infer<
+      typeof getPublicDashboardSppgReportsSuccessResponseSchema
+    >["data"][number]
+  | z.infer<
+      typeof getSchoolDashboardSppgReportsSuccessResponseSchema
+    >["data"][number];
+
+type SppgDailyReportDetailItem =
+  | z.infer<typeof getSppgDailyReportByIdSuccessResponseSchema>["data"]
+  | z.infer<typeof getDetailSppgReportSuccessResponseSchema>["data"];
 type SppgDashboardResponse = z.infer<
   typeof getSppgDashboardSuccessResponseSchema
 >["data"];
@@ -129,6 +102,8 @@ type RegisterResponse =
   | z.infer<typeof registerPublicSuccessResponseSchema>
   | z.infer<typeof registerSchoolSuccessResponseSchema>
   | z.infer<typeof registerSppgSuccessResponseSchema>;
+type DashboardRecentReportItem =
+  SppgDashboardResponse["riwayat_laporan"][number];
 
 const DEFAULT_ATTACHMENT_URL = "https://placehold.co/1200x800?text=No+Image";
 const DEFAULT_VENDOR_ADDRESS = "Alamat vendor belum tersedia";
@@ -205,10 +180,43 @@ function createReviewTarget(values: {
   };
 }
 
+function hasSppgName(
+  dto: DashboardReviewMapperInput,
+): dto is DashboardReviewMapperInput & { sppg: { sppg_name: string } | null } {
+  return "sppg" in dto;
+}
+
+function hasBudgets(
+  dto: SppgDailyReportDetailItem,
+): dto is SppgDailyReportDetailItem & {
+  budgets: Array<{
+    id_budget: number | string;
+    item_name: string;
+    item_price: number | string;
+  }>;
+} {
+  return "budgets" in dto;
+}
+
+function hasAttachmentMetadata(
+  attachment: SppgDailyReportDetailItem["attachments"][number],
+): attachment is SppgDailyReportDetailItem["attachments"][number] & {
+  entity_type: string;
+  file_category: null | string;
+  id_attachment: number | string;
+} {
+  return (
+    "id_attachment" in attachment &&
+    "entity_type" in attachment &&
+    "file_category" in attachment
+  );
+}
+
 export function mapPublicDashboardReviewDtoToDomain(
-  dto: PublicDashboardReviewItem,
+  dto: DashboardReviewMapperInput,
 ): TPublicReview {
   const imageUrl = dto.attachments?.[0]?.file_url ?? DEFAULT_ATTACHMENT_URL;
+  const sppgName = hasSppgName(dto) ? dto.sppg?.sppg_name : undefined;
 
   return {
     id: String(dto.id_review),
@@ -219,7 +227,7 @@ export function mapPublicDashboardReviewDtoToDomain(
     reporterName: dto.display_author.split("-")[0] ?? "Anonim",
     forSppg: createReviewTarget({
       id: dto.id_sppg,
-      name: dto.sppg?.sppg_name,
+      name: sppgName,
     }),
     content: dto.description ?? "",
   };
@@ -263,6 +271,8 @@ export function mapPublicDashboardSppgReportDtoToDomain(
 export function mapSppgDailyReportDetailDtoToDomain(
   dto: SppgDailyReportDetailItem,
 ): TSppgReportDetail {
+  const budgets = hasBudgets(dto) ? dto.budgets : [];
+
   const report: TSppgReport = {
     id: String(dto.id_daily_report),
     title: dto.menu_name,
@@ -285,18 +295,20 @@ export function mapSppgDailyReportDetailDtoToDomain(
 
   const budget: TBudget = {
     id: String(dto.id_daily_report),
-    items:
-      dto.budgets?.map((item) => ({
-        id: String(item.id_budget),
-        name: item.item_name,
-        price: Number(item.item_price),
-      })) ?? [],
-    totalPrice:
-      dto.budgets?.reduce((sum, item) => sum + Number(item.item_price), 0) ?? 0,
+    items: budgets.map((item) => ({
+      id: String(item.id_budget),
+      name: item.item_name,
+      price: Number(item.item_price),
+    })),
+    totalPrice: budgets.reduce((sum, item) => sum + Number(item.item_price), 0),
     attachments:
       dto.attachments?.map((attachment) => ({
-        id: String(attachment.id_attachment),
-        label: attachment.file_category ?? attachment.entity_type,
+        id: hasAttachmentMetadata(attachment)
+          ? String(attachment.id_attachment)
+          : attachment.file_url,
+        label: hasAttachmentMetadata(attachment)
+          ? (attachment.file_category ?? attachment.entity_type)
+          : "Lampiran",
         url: attachment.file_url,
         mimeType: attachment.file_type ?? "application/octet-stream",
       })) ?? [],
@@ -309,11 +321,9 @@ export function mapSppgDailyReportDetailDtoToDomain(
   };
 }
 
-function mapDashboardRecentReportDtoToDomain(dto: {
-  id_daily_report: number | string;
-  menu_name: string;
-  date_report: string;
-}): TSppgReportSummary {
+function mapDashboardRecentReportDtoToDomain(
+  dto: DashboardRecentReportItem,
+): TSppgReportSummary {
   return {
     id: String(dto.id_daily_report),
     title: dto.menu_name,
@@ -347,16 +357,12 @@ export function mapSppgDashboardDtoToDomain(
     statistics,
     recentReports: dto.riwayat_laporan.map(mapDashboardRecentReportDtoToDomain),
     publicReviews: dto.laporan_masyarakat.map((review) => {
-      const role = review.school !== null ? "SCHOOL" : "PUBLIC";
-      return mapPublicDashboardReviewDtoToDomain(
-        {
-          ...review,
-          author_name: review.school?.school_name ?? "Anonim",
-          display_author: review.school?.school_name ?? "Anonim",
-          location_name: review.school?.school_name ?? "Sekolah",
-        },
-        role,
-      );
+      return mapPublicDashboardReviewDtoToDomain({
+        ...review,
+        author_name: review.school?.school_name ?? "Anonim",
+        display_author: review.school?.school_name ?? "Anonim",
+        location_name: review.school?.school_name ?? "Sekolah",
+      });
     }),
   };
 }

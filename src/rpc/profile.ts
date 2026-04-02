@@ -2,9 +2,9 @@
 
 import z from "zod/v3";
 import { getAuthSession, requireCurrentRole } from "@/lib/auth/server";
-import { delayedValue } from "@/lib/utils";
-import { admins, publicUsers } from "@/mock-data";
 import {
+  mapAdminProfileDtoToDomain,
+  mapPublicProfileDtoToDomain,
   mapSchoolProfileDtoToDomain,
   mapSppgProfileDtoToDomain,
   type TAdminProfile,
@@ -63,45 +63,6 @@ const currentAdminProfileSchema = z.object({
 });
 
 type CurrentProfileMock = z.infer<typeof currentProfileSchema>;
-type CurrentAdminProfileMock = z.infer<typeof currentAdminProfileSchema>;
-
-function buildCurrentPublicProfileMock(): CurrentProfileMock {
-  const publicUser = publicUsers[0];
-
-  return {
-    role: "PUBLIC",
-    id: publicUser?.id ?? "user-public-001",
-    username: publicUser?.username ?? "pengguna",
-    displayName: "Pengguna Publik",
-    email: "warga@pagar.app",
-  };
-}
-
-function buildCurrentAdminProfileMock(): CurrentAdminProfileMock {
-  const admin = admins[0];
-
-  return {
-    role: "ADMIN",
-    id: admin?.id ?? "user-admin-001",
-    username: admin?.username ?? "admin",
-    name: "Admin Pagar",
-    email: "admin@pagar.app",
-    accessDetails: [
-      {
-        id: "manage-sppg",
-        label: "Mengelola Vendor SPPG",
-      },
-      {
-        id: "manage-accounts",
-        label: "Mengelola Akun",
-      },
-      {
-        id: "monitor-data",
-        label: "Memantau Data",
-      },
-    ],
-  };
-}
 
 export const fetchCurrentProfile = createServerRpc(
   {
@@ -123,9 +84,15 @@ export const fetchCurrentProfile = createServerRpc(
     }
 
     if (session?.user.role === "PUBLIC") {
-      const rawData = await delayedValue(buildCurrentPublicProfileMock(), 300);
+      const dto = await client.getPublicProfile();
 
-      return parse(currentProfileSchema, rawData, "public-profile");
+      return parse(
+        currentProfileSchema,
+        mapPublicProfileDtoToDomain(dto.data, {
+          userId: session.user.id,
+        }) satisfies CurrentProfileMock,
+        "public-profile",
+      );
     }
 
     if (!session) {
@@ -155,16 +122,38 @@ export const fetchCurrentAdminProfile = createServerRpc(
   {
     operation: "fetchCurrentAdminProfile",
   },
-  async ({ parse }): Promise<TAdminProfile> => {
-    const rawData = await delayedValue(buildCurrentAdminProfileMock(), 300);
+  async ({ client, parse }): Promise<TAdminProfile> => {
+    const session = await requireCurrentRole(
+      ["ADMIN"],
+      "Profil admin hanya tersedia untuk akun admin.",
+    );
+    const dto = await client.getAdminProfile();
 
-    return parse(currentAdminProfileSchema, rawData, "mock-response");
+    return parse(
+      currentAdminProfileSchema,
+      mapAdminProfileDtoToDomain(dto.data, {
+        userId: session.user.id,
+      }),
+      "admin-profile",
+    );
   },
 );
 
 export type UpdateCurrentSchoolProfileInput = {
   address: string;
   schoolName: string;
+};
+
+export type UpdateCurrentSppgProfileInput = {
+  address: string;
+  sppgName: string;
+};
+
+export type UpdateCurrentAdminProfileInput = {
+  email: string;
+  name: string;
+  password?: string;
+  username: string;
 };
 
 export const updateCurrentSchoolProfile = createServerRpc(
@@ -194,5 +183,59 @@ export const updateCurrentSchoolProfile = createServerRpc(
       }),
       "updated-school-profile",
     );
+  },
+);
+
+export const updateCurrentSppgProfile = createServerRpc(
+  {
+    operation: "updateCurrentSppgProfile",
+  },
+  async (
+    { client },
+    input: UpdateCurrentSppgProfileInput,
+  ): Promise<{ message: string }> => {
+    await requireCurrentRole(
+      ["SPPG"],
+      "Pembaruan profil SPPG hanya tersedia untuk akun SPPG.",
+    );
+
+    const dto = await client.updateSppgProfile({
+      body: {
+        sppg_name: input.sppgName,
+        sppg_address: input.address,
+      },
+    });
+
+    return {
+      message: dto.message,
+    };
+  },
+);
+
+export const updateCurrentAdminProfile = createServerRpc(
+  {
+    operation: "updateCurrentAdminProfile",
+  },
+  async (
+    { client },
+    input: UpdateCurrentAdminProfileInput,
+  ): Promise<{ message: string }> => {
+    await requireCurrentRole(
+      ["ADMIN"],
+      "Pembaruan profil admin hanya tersedia untuk akun admin.",
+    );
+
+    const dto = await client.updateProfile({
+      body: {
+        name: input.name,
+        username: input.username,
+        email: input.email,
+        password: input.password,
+      },
+    });
+
+    return {
+      message: dto.message,
+    };
   },
 );

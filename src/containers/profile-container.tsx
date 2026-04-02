@@ -44,17 +44,7 @@ export function ProfileContainer() {
     }
   };
 
-  const handlePublicSubmit = (data: PublicProfileFormValues) => {
-    console.log("Public Submit data", data);
-    toast.success("Profil pengguna berhasil diperbarui!");
-  };
-
-  const footerNote =
-    currentUser.role === "SCHOOL"
-      ? "Baca dan simpan nama/alamat sekolah sudah memakai backend. Username dan kata sandi masih menunggu kontrak pembaruan terpisah."
-      : currentUser.role === "PUBLIC"
-        ? "Data profil publik di halaman ini masih memakai fallback frontend karena kontrak baca profil publik belum tersedia. Perubahannya juga masih placeholder."
-        : null;
+  const handlePublicSubmit = async (_data: PublicProfileFormValues) => {};
 
   const profileForm =
     currentUser.role === "SCHOOL" ? (
@@ -64,6 +54,7 @@ export function ProfileContainer() {
       />
     ) : currentUser.role === "PUBLIC" ? (
       <PublicProfileForm
+        canEdit={false}
         initialData={currentUser}
         onSubmit={handlePublicSubmit}
       />
@@ -72,14 +63,7 @@ export function ProfileContainer() {
   return (
     <div className="flex w-full justify-center py-8">
       {profileForm ? (
-        <div className="flex w-full max-w-xl flex-col gap-3">
-          {profileForm}
-          {footerNote ? (
-            <div className="rounded-xl border border-amber-200/70 bg-amber-50/80 px-4 py-3 text-amber-950 text-sm leading-relaxed">
-              {footerNote}
-            </div>
-          ) : null}
-        </div>
+        <div className="flex w-full max-w-xl flex-col gap-3">{profileForm}</div>
       ) : (
         <div className="py-8 text-muted-foreground">
           Tipe profil ini belum didukung di halaman publik.

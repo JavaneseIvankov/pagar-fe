@@ -27,11 +27,13 @@ const publicProfileFormSchema = z
 export type PublicProfileFormValues = z.infer<typeof publicProfileFormSchema>;
 
 export interface PublicProfileFormProps {
+  canEdit?: boolean;
   initialData: TPublicProfile;
-  onSubmit: (data: PublicProfileFormValues) => void;
+  onSubmit: (data: PublicProfileFormValues) => Promise<void> | void;
 }
 
 export function PublicProfileForm({
+  canEdit = true,
   initialData,
   onSubmit,
 }: PublicProfileFormProps) {
@@ -52,8 +54,8 @@ export function PublicProfileForm({
     },
   });
 
-  const handleFormSubmit = (data: PublicProfileFormValues) => {
-    onSubmit(data);
+  const handleFormSubmit = async (data: PublicProfileFormValues) => {
+    await onSubmit(data);
     setIsEditing(false);
     reset({
       ...data,
@@ -83,7 +85,7 @@ export function PublicProfileForm({
             <Input
               id="username"
               placeholder="Username"
-              disabled={!isEditing}
+              disabled={!canEdit || !isEditing}
               {...register("username")}
               aria-invalid={!!errors.username}
             />
@@ -159,12 +161,16 @@ export function PublicProfileForm({
             <Button
               type="button"
               className="w-full bg-green-600 text-white hover:bg-green-700"
+              disabled={!canEdit}
               onClick={(e) => {
                 e.preventDefault();
+                if (!canEdit) {
+                  return;
+                }
                 setIsEditing(true);
               }}
             >
-              Edit Profil
+              {canEdit ? "Edit Profil" : "Pembaruan Profil Tidak Tersedia"}
             </Button>
           ) : (
             <>

@@ -24,7 +24,7 @@ export type ComputedNutritionBreakdown = {
   akg: NutrientAkgBreakdown;
 };
 
-function roundPercentage(value: number) {
+function truncateValue(value: number) {
   return Number(value.toFixed(1));
 }
 
@@ -47,17 +47,21 @@ export function computeNutritionBreakdown(
   const proteinCalories = nutritionalFacts.proteinGrams.inGrams * 4;
   const carbCalories = nutritionalFacts.carbGrams.inGrams * 4;
   const fatCalories = nutritionalFacts.fatGrams.inGrams * 9;
-  const inferredCalories = proteinCalories + carbCalories + fatCalories;
+  const inferredCalories = truncateValue(
+    proteinCalories + carbCalories + fatCalories,
+  );
   const displayCalories =
-    inferredCalories > 0 ? inferredCalories : nutritionalFacts.calories.inKcal;
+    inferredCalories > 0
+      ? inferredCalories
+      : truncateValue(nutritionalFacts.calories.inKcal);
   const hasMacroBreakdown = inferredCalories > 0;
   const totalCalories = displayCalories > 0 ? displayCalories : 0;
 
   const toShare = (value: number, grams: number): NutritionShare => ({
-    calories: value,
-    grams,
+    calories: truncateValue(value),
+    grams: truncateValue(grams),
     percentage:
-      totalCalories > 0 ? roundPercentage((value / totalCalories) * 100) : 0,
+      totalCalories > 0 ? truncateValue((value / totalCalories) * 100) : 0,
   });
 
   const proteinShareValue = hasMacroBreakdown
@@ -84,11 +88,11 @@ export function computeNutritionBreakdown(
     akg: {
       energy:
         AKG_REFERENCE.energyKcal > 0
-          ? roundPercentage((displayCalories / AKG_REFERENCE.energyKcal) * 100)
+          ? truncateValue((displayCalories / AKG_REFERENCE.energyKcal) * 100)
           : 0,
       protein:
         AKG_REFERENCE.proteinGrams > 0
-          ? roundPercentage(
+          ? truncateValue(
               (nutritionalFacts.proteinGrams.inGrams /
                 AKG_REFERENCE.proteinGrams) *
                 100,
@@ -96,14 +100,14 @@ export function computeNutritionBreakdown(
           : 0,
       carb:
         AKG_REFERENCE.carbGrams > 0
-          ? roundPercentage(
+          ? truncateValue(
               (nutritionalFacts.carbGrams.inGrams / AKG_REFERENCE.carbGrams) *
                 100,
             )
           : 0,
       fat:
         AKG_REFERENCE.fatGrams > 0
-          ? roundPercentage(
+          ? truncateValue(
               (nutritionalFacts.fatGrams.inGrams / AKG_REFERENCE.fatGrams) *
                 100,
             )

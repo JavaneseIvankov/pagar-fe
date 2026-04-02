@@ -56,8 +56,7 @@ export function SppgProfileSkeleton() {
       </div>
 
       <p className="mt-8 text-center text-muted-foreground text-sm">
-        Halaman ini masih bersifat baca-saja sampai kontrak pembaruan profil
-        SPPG tersedia.
+        Memuat pengaturan profil SPPG dan data akun saat ini.
       </p>
     </div>
   );

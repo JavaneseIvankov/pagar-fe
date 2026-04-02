@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import type { TSchoolProfile } from "@/types";
+import { Avatar } from "../ui/avatar";
+import { AvatarFallbackIcon } from "../avatar-fallback-icon";
 
 const schoolProfileFormSchema = z.object({
   schoolName: z.string().min(3, "Nama sekolah minimal 3 karakter"),
@@ -62,9 +64,9 @@ export function SchoolProfileForm({
   return (
     <div className="w-full max-w-xl rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
       <div className="mb-8 flex flex-col items-center">
-        <div className="mb-2 flex h-24 w-24 items-center justify-center rounded-full bg-gray-300">
-          <HugeiconsIcon icon={User} size={48} className="text-white" />
-        </div>
+        <Avatar className="mb-2 flex h-24 w-24 items-center justify-center rounded-full bg-gray-300">
+          <AvatarFallbackIcon className="size-24" iconClassName="size-12" />
+        </Avatar>
       </div>
 
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
@@ -110,11 +112,6 @@ export function SchoolProfileForm({
               <FieldError>{errors.address.message}</FieldError>
             )}
           </Field>
-
-          <div className="rounded-lg border border-amber-200/70 bg-amber-50/80 px-4 py-3 text-amber-950 text-sm leading-relaxed">
-            Nama sekolah dan alamat sudah tersambung ke backend. Perubahan
-            username dan kata sandi masih menunggu kontrak pembaruan terpisah.
-          </div>
         </FieldGroup>
 
         <div className="flex flex-col gap-3 pt-4">

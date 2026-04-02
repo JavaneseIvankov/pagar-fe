@@ -6,8 +6,12 @@ import {
   fetchCurrentAdminProfile,
   fetchCurrentProfile,
   fetchCurrentSppgProfile,
+  updateCurrentAdminProfile,
   updateCurrentSchoolProfile,
+  updateCurrentSppgProfile,
+  type UpdateCurrentAdminProfileInput,
   type UpdateCurrentSchoolProfileInput,
+  type UpdateCurrentSppgProfileInput,
 } from "@/rpc";
 
 export function useCurrentProfile() {
@@ -40,6 +44,34 @@ export function useUpdateCurrentSchoolProfile() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: queryKeys.profile.current(),
+      });
+    },
+  });
+}
+
+export function useUpdateCurrentSppgProfile() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: UpdateCurrentSppgProfileInput) =>
+      updateCurrentSppgProfile(input),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.profile.sppg(),
+      });
+    },
+  });
+}
+
+export function useUpdateCurrentAdminProfile() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: UpdateCurrentAdminProfileInput) =>
+      updateCurrentAdminProfile(input),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.profile.admin(),
       });
     },
   });

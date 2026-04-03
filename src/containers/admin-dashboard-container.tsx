@@ -3,12 +3,12 @@
 import { toast } from "sonner";
 import { AdminComplaintsOverview } from "@/components/dashboard/admin-complaints-overview";
 import { AdminComplaintsTable } from "@/components/dashboard/admin-complaints-table";
-import { AdminDashboardHeader } from "@/components/dashboard/admin-dashboard-header";
 import { AdminDashboardSkeleton } from "@/components/dashboard/admin-dashboard-skeleton";
 import {
   type AdminSummaryStatItem,
   AdminSummaryStats,
 } from "@/components/dashboard/admin-summary-stats";
+import { DashboardPageHeader } from "@/components/dashboard/dashboard-page-header";
 import {
   PeopleIcon,
   ReportIcon,
@@ -94,10 +94,14 @@ export function AdminDashboardContainer() {
 
   return (
     <div className="mx-auto flex w-full flex-col gap-8">
-      <AdminDashboardHeader
-        title="Panel Monitoring Pusat"
-        description="Pantau real-time transparansi gizi dan realisasi anggaran publik"
-      />
+      <DashboardPageHeader>
+        <DashboardPageHeader.Title>
+          Panel Monitoring Pusat
+        </DashboardPageHeader.Title>
+        <DashboardPageHeader.Description>
+          Pantau real-time transparansi gizi dan realisasi anggaran publik
+        </DashboardPageHeader.Description>
+      </DashboardPageHeader>
 
       <AdminSummaryStats stats={summaryStats} />
 

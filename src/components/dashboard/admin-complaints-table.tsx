@@ -116,12 +116,11 @@ export function AdminComplaintsTable({
       <DashboardCard className="overflow-hidden p-6">
         <div className="mb-6 flex items-center justify-between">
           <h2 className="font-bold text-xl">Keluhan Terbaru</h2>
-          <Link
-            href="/dashboard/admin/keluhan"
-            className="flex items-center gap-2 font-semibold text-primary text-sm hover:text-primary"
-          >
-            Lihat Semua <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
-          </Link>
+          <Button asChild variant="ghost" className="h-auto w-fit gap-2 p-0">
+            <Link href="/dashboard/admin/keluhan">
+              Lihat Semua <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
+            </Link>
+          </Button>
         </div>
 
         <Table>

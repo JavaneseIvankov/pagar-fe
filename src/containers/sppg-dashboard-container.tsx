@@ -1,5 +1,6 @@
 "use client";
 
+import { DashboardPageHeader } from "@/components/dashboard/dashboard-page-header";
 import { PublicReportsList } from "@/components/dashboard/public-reports-list";
 import { ReportHistoryTable } from "@/components/dashboard/report-history-table";
 import { SppgDashboardSkeleton } from "@/components/dashboard/sppg-dashboard-skeleton";
@@ -86,14 +87,14 @@ export function SppgDashboardContainer() {
   return (
     <div className="page-enter flex flex-col gap-6 sm:gap-8">
       {/* Header */}
-      <div className="max-w-3xl">
-        <h2 className="text-balance font-bold text-2xl text-foreground tracking-tight sm:text-[28px] lg:text-[32px]">
+      <DashboardPageHeader className="max-w-3xl">
+        <DashboardPageHeader.Title className="text-balance text-foreground sm:text-[28px] lg:text-[32px]">
           Selamat Datang! {data.sppgName}!
-        </h2>
-        <p className="mt-2 text-pretty text-muted-foreground">
+        </DashboardPageHeader.Title>
+        <DashboardPageHeader.Description className="text-pretty">
           Berikut adalah ringkasan pengelolaan makanan hari ini, {currentDate}
-        </p>
-      </div>
+        </DashboardPageHeader.Description>
+      </DashboardPageHeader>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">

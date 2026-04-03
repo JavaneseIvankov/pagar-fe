@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import type { TPublicReview } from "@/types";
 import { AvatarFallbackIcon } from "../avatar-fallback-icon";
 import { DashboardCard } from "./dashboard-card";
+import Link from "next/link";
 
 interface PublicReportsListProps {
   reports: TPublicReview[];
@@ -17,12 +18,10 @@ export function PublicReportsList({ reports }: PublicReportsListProps) {
       <div className="flex flex-col gap-3 border-border/50 border-b px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <h3 className="font-bold text-lg">Laporan Masyarakat</h3>
         {/* TASK[ASCENT]: this should be a link (keep the current styling using buttonVariant) that when press will redirect to '/dashboard/sppg/laporan-publik/page.tsx' / */}
-        <Button
-          variant="ghost"
-          className="h-auto w-fit gap-2 p-0 font-semibold text-primary hover:bg-transparent hover:text-primary"
-        >
-          Lihat Semua{" "}
-          <HugeiconsIcon icon={ArrowRight01Icon} size={16} aria-hidden="true" />
+        <Button asChild variant="ghost" className="h-auto gap-2 p-0">
+          <Link href="/dashboard/sppg/laporan-publik">
+            Lihat Semua <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
+          </Link>
         </Button>
       </div>
       <div className="flex flex-col gap-4 p-4 sm:hidden">

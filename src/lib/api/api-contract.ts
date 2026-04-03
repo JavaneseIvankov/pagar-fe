@@ -173,6 +173,17 @@ export const apiContract = {
     successResponse: dto.getAdminDashboardSuccessResponseSchema,
     errorResponse: dto.getAdminDashboardErrorResponseSchema,
   },
+  getAdminDashboardReviews: {
+    method: "get",
+    path: "/pagar/v1/admin/reviews",
+    buildPath: createBuildPath("/pagar/v1/admin/reviews"),
+    requestFormat: "json",
+    headers: dto.protectedHeadersSchema,
+    params: dto.jsonEndpointParamsSchema,
+    query: dto.paginatedListQuerySchema,
+    successResponse: dto.getAdminDashboardReviewsSuccessResponseSchema,
+    errorResponse: dto.getAdminDashboardReviewsErrorResponseSchema,
+  },
   updateReviewStatus: {
     method: "patch",
     path: "/pagar/v1/admin/reviews/:id_review/status",

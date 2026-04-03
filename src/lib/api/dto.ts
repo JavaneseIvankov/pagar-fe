@@ -324,7 +324,8 @@ const publicDashboardReviewItemSchema = reviewRecordSchema.extend({
   attachments: z.array(attachmentUrlOnlySchema),
   author_name: z.string(),
   display_author: z.string(),
-  school_name: z.string(),
+  school_name: z.string().nullish(),
+  locationName: z.string(),
 });
 
 const schoolDashboardReviewItemSchema = reviewRecordSchema.extend({
@@ -332,7 +333,8 @@ const schoolDashboardReviewItemSchema = reviewRecordSchema.extend({
   attachments: z.array(attachmentUrlOnlySchema),
   author_name: z.string(),
   display_author: z.string(),
-  school_name: z.string(),
+  school_name: z.string().nullish(),
+  locationName: z.string(),
 });
 
 const dailyReportWithSppgSchema = dailyReportRecordSchema.extend({
@@ -353,6 +355,7 @@ const dailyReportForDashboardSchema = dailyReportRecordSchema.extend({
 
 const publicDailyReportDetailSchema = dailyReportRecordSchema.extend({
   sppg: sppgNameAddressSchema,
+  budgets: z.array(budgetRecordSchema),
   attachments: z.array(attachmentUrlWithTypeSchema),
 });
 
@@ -405,6 +408,7 @@ const reportPaginationSchema = z.object({
   totalItems: z.number().int(),
   totalPages: z.number().int(),
   currentPage: z.number().int(),
+  limit: z.number().int(),
 });
 
 const sppgDashboardDataSchema = z.object({
@@ -446,6 +450,24 @@ const adminDashboardDataSchema = z.object({
     }),
   ),
 });
+
+const adminDashboardReviewItemSchema = reviewRecordSchema.extend({
+  school: schoolNameOnlySchema.nullish(),
+  attachments: z.array(attachmentUrlOnlySchema),
+  user: z.object({
+    username: z.string(),
+    role: roleSchema,
+  }),
+});
+
+const adminDashboardReviewMetaSchema = z
+  .object({
+    totalItems: z.number().int().optional(),
+    totalPages: z.number().int().optional(),
+    currentPage: z.number().int().optional(),
+    limit: z.number().int().optional(),
+  })
+  .passthrough();
 
 const periodicReportsDataSchema = z.object({
   period: z.object({
@@ -636,6 +658,14 @@ export const getAdminDashboardSuccessResponseSchema = successDataEnvelope(
   adminDashboardDataSchema,
 );
 export const getAdminDashboardErrorResponseSchema = statusErrorResponseSchema;
+
+export const getAdminDashboardReviewsSuccessResponseSchema =
+  successDataMetaEnvelope(
+    z.array(adminDashboardReviewItemSchema),
+    adminDashboardReviewMetaSchema,
+  );
+export const getAdminDashboardReviewsErrorResponseSchema =
+  statusErrorResponseSchema;
 
 export const updateReviewStatusParamsSchema = z.object({
   id_review: z.string().min(1),

@@ -90,6 +90,7 @@ export type TAdminCreateManagedAccountInput =
 
 export type TAdminManagedAccount = {
   id: string;
+  email: string;
   username: string;
   role: TManagedAccountRole;
   createdAt: Date;

@@ -1,26 +1,26 @@
 "use client";
 
+import { Shield01Icon, UserGroupIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { CreateAkunDialog } from "@/components/admin/kelola-akun/create-akun-dialog";
 import { DataAkunCard } from "@/components/admin/kelola-akun/data-akun-card";
 import { ValidasiAkunCard } from "@/components/admin/kelola-akun/validasi-akun-card";
-import { Button } from "@/components/ui/button";
 import {
   useAdminActiveAccounts,
   useAdminPendingAccounts,
   useCreateAdminManagedAccount,
   useUpdateAdminAccountStatus,
 } from "@/hooks/use-admin-account-management";
+import { cn } from "@/lib/utils";
 import type {
   TAdminAccountRoleFilter,
   TAdminCreateManagedAccountInput,
 } from "@/types";
 
-// TASK: simplify this, abstract logic into hooks
-// TASK: make this responsive on smaller device
-
 export function AdminKelolaAkunContainer() {
+  const [activeTab, setActiveTab] = useState<"data" | "validasi">("data");
   const [selectedRoleFilter, setSelectedRoleFilter] =
     useState<TAdminAccountRoleFilter>("ALL");
   const [isCreateAkunDialogOpen, setIsCreateAkunDialogOpen] = useState(false);
@@ -96,8 +96,6 @@ export function AdminKelolaAkunContainer() {
     }
   };
 
-  // FIXME: fix header sytling
-
   return (
     <div className="flex h-full w-full flex-col pb-10">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -107,27 +105,55 @@ export function AdminKelolaAkunContainer() {
             Kelola akun pengguna platform PaGar
           </p>
         </div>
-        <Button type="button" onClick={() => setIsCreateAkunDialogOpen(true)}>
-          + Buat Akun
-        </Button>
+        <div className="flex items-center rounded-lg border border-border/50 bg-muted/40 p-1">
+          <button
+            type="button"
+            onClick={() => setActiveTab("data")}
+            className={cn(
+              "flex items-center gap-2 rounded-md px-4 py-2 font-semibold text-sm transition-colors",
+              activeTab === "data"
+                ? "bg-primary text-primary-foreground shadow"
+                : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            <HugeiconsIcon icon={UserGroupIcon} className="h-4 w-4" /> Data Akun
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("validasi")}
+            className={cn(
+              "flex items-center gap-2 rounded-md px-4 py-2 font-semibold text-sm transition-colors",
+              activeTab === "validasi"
+                ? "bg-primary text-primary-foreground shadow"
+                : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            <HugeiconsIcon icon={Shield01Icon} className="h-4 w-4" /> Validasi
+            Akun
+          </button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[1fr_400px]">
-        <DataAkunCard
-          items={filteredActiveAccounts}
-          selectedRoleFilter={selectedRoleFilter}
-          onRoleFilterChange={setSelectedRoleFilter}
-          isError={activeAccountsQuery.isError}
-          isLoading={activeAccountsQuery.isLoading}
-        />
-        <ValidasiAkunCard
-          items={pendingAccounts}
-          onApprove={handleApprove}
-          onReject={handleReject}
-          updatingAccountId={updatingAccountId}
-          isError={pendingAccountsQuery.isError}
-          isLoading={pendingAccountsQuery.isLoading}
-        />
+      <div className="w-full">
+        {activeTab === "data" ? (
+          <DataAkunCard
+            items={filteredActiveAccounts}
+            selectedRoleFilter={selectedRoleFilter}
+            onRoleFilterChange={setSelectedRoleFilter}
+            onAddData={() => setIsCreateAkunDialogOpen(true)}
+            isError={activeAccountsQuery.isError}
+            isLoading={activeAccountsQuery.isLoading}
+          />
+        ) : (
+          <ValidasiAkunCard
+            items={pendingAccounts}
+            onApprove={handleApprove}
+            onReject={handleReject}
+            updatingAccountId={updatingAccountId}
+            isError={pendingAccountsQuery.isError}
+            isLoading={pendingAccountsQuery.isLoading}
+          />
+        )}
       </div>
 
       <CreateAkunDialog

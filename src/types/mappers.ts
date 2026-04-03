@@ -486,6 +486,7 @@ export function mapActiveAccountDtoToDomain(
 ): TAdminActiveAccount {
   return {
     id: dto.id_user,
+    email: dto.email,
     username: dto.username,
     role: dto.role,
     createdAt: new Date(dto.createdAt),
@@ -497,6 +498,7 @@ export function mapPendingAccountDtoToDomain(
 ): TAdminPendingAccount {
   return {
     id: dto.id_user,
+    email: dto.email,
     username: dto.username,
     role: dto.role,
     createdAt: new Date(dto.createdAt),

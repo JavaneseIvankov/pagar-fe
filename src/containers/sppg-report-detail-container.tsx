@@ -1,7 +1,6 @@
 "use client";
 
 import { SppgReportAttachmentsCard } from "@/components/sppg-report-detail/sppg-report-attachments-card";
-import { SppgReportBudgetCard } from "@/components/sppg-report-detail/sppg-report-budget-card";
 import { SppgReportDetailLayout } from "@/components/sppg-report-detail/sppg-report-detail-layout";
 import { SppgReportDetailSkeleton } from "@/components/sppg-report-detail/sppg-report-detail-skeleton";
 import { SppgReportDiscrepancyCard } from "@/components/sppg-report-detail/sppg-report-discrepancy-card";
@@ -38,7 +37,9 @@ export function SppgReportDetailContainer({
         <SppgReportNutritionCard nutritionalFacts={report.nutritionalFacts} />
       }
       budget={
-        report.budget ? <SppgReportBudgetCard budget={report.budget} /> : null
+        // TODO: actually display budget card once backend actually sends enough data.
+        null
+        // report.budget ? <SppgReportBudgetCard budget={report.budget} /> : null
       }
       attachments={
         report.budget?.attachments?.length > 0 ? (

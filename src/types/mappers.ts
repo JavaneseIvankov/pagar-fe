@@ -1,6 +1,7 @@
 import type { z } from "zod/v3";
 import type {
   getActiveAccountsSuccessResponseSchema,
+  getAdminDashboardReviewsSuccessResponseSchema,
   getAdminDashboardSuccessResponseSchema,
   getAdminProfileSuccessResponseSchema,
   getDetailSppgReportSuccessResponseSchema,
@@ -68,7 +69,7 @@ type DashboardReviewMapperInput =
   | (SppgDashboardReviewItem & {
       author_name: string;
       display_author: string;
-      location_name: string;
+      locationName: string;
       sppg?: { sppg_name: string } | null;
     });
 
@@ -89,6 +90,9 @@ type SppgDashboardResponse = z.infer<
 type AdminDashboardResponse = z.infer<
   typeof getAdminDashboardSuccessResponseSchema
 >["data"];
+type AdminDashboardReviewItem = z.infer<
+  typeof getAdminDashboardReviewsSuccessResponseSchema
+>["data"][number];
 type AdminProfileResponse = z.infer<
   typeof getAdminProfileSuccessResponseSchema
 >["data"];
@@ -281,6 +285,20 @@ export function mapSppgReviewDtoToDomain(dto: SppgReviewItem): TSppgReview {
   };
 }
 
+export function mapAdminDashboardReviewDtoToDomain(
+  dto: AdminDashboardReviewItem,
+): TAdminComplaint {
+  return {
+    id: String(dto.id_review),
+    authorName: dto.user?.username ?? "Anonim",
+    description: dto.description ?? "Tidak ada detail keluhan.",
+    title: dto.title ?? "Keluhan",
+    vendorName: dto.id_sppg ? `SPPG ${dto.id_sppg}` : "Vendor",
+    imageUrl: dto.attachments[0]?.file_url ?? "",
+    status: mapReviewStatusToAdminComplaintStatus(dto.status_review),
+  };
+}
+
 export function mapReviewSppgTargetDtoToDomain(
   dto: ReviewSppgTargetResponse,
 ): TReviewSppgTarget {
@@ -409,7 +427,7 @@ export function mapSppgDashboardDtoToDomain(
         ...review,
         author_name: review.school?.school_name ?? "Anonim",
         display_author: review.school?.school_name ?? "Anonim",
-        location_name: review.school?.school_name ?? "Sekolah",
+        locationName: review.school?.school_name ?? "Sekolah",
       });
     }),
   };

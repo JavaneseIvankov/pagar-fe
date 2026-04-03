@@ -6,6 +6,7 @@ export {
 } from "./admin-accounts";
 export {
   fetchAdminDashboard,
+  fetchAdminDashboardReviews,
   updateAdminComplaintStatus,
 } from "./admin-dashboard";
 export type { PasswordRecoveryActionResult } from "./auth";

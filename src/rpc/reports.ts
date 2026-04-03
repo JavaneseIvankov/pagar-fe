@@ -283,8 +283,15 @@ export const fetchSppgReportDetail = createServerRpc(
           status: "SUBMITTED",
           budget: {
             id: String(detail.id_daily_report),
-            items: [],
-            totalPrice: 0,
+            items: detail.budgets.map((item) => ({
+              id: String(item.id_budget),
+              name: item.item_name,
+              price: Number(item.item_price),
+            })),
+            totalPrice: detail.budgets.reduce(
+              (sum, item) => sum + Number(item.item_price),
+              0,
+            ),
             attachments: detail.attachments.map((attachment, index) => ({
               id: `${detail.id_daily_report}-${index + 1}`,
               label: `Lampiran ${index + 1}`,
@@ -359,9 +366,21 @@ export const fetchSppgReportDetail = createServerRpc(
         status: "SUBMITTED",
         budget: {
           id: String(detail.id_daily_report),
-          items: [],
-          totalPrice: 0,
-          attachments: [],
+          items: detail.budgets.map((item) => ({
+            id: String(item.id_budget),
+            name: item.item_name,
+            price: Number(item.item_price),
+          })),
+          totalPrice: detail.budgets.reduce(
+            (sum, item) => sum + Number(item.item_price),
+            0,
+          ),
+          attachments: detail.attachments.map((attachment, index) => ({
+            id: `${detail.id_daily_report}-${index + 1}`,
+            label: `Lampiran ${index + 1}`,
+            url: attachment.file_url,
+            mimeType: attachment.file_type ?? "application/octet-stream",
+          })),
         },
         relatedReports,
       };

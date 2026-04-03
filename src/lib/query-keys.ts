@@ -43,6 +43,11 @@ export const queryKeys = {
   },
   adminDashboard: {
     detail: () => ["admin-dashboard"] as const,
+    reviews: {
+      all: () => ["admin-dashboard", "reviews"] as const,
+      list: (params: { limit: number; page: number }) =>
+        ["admin-dashboard", "reviews", params.page, params.limit] as const,
+    },
   },
   adminAccounts: {
     active: () => ["admin-accounts", "active"] as const,

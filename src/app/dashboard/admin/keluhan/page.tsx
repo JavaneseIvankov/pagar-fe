@@ -3,10 +3,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
 import { DashboardPageHeader } from "@/components/dashboard/dashboard-page-header";
 import { Button } from "@/components/ui/button";
-
-/* TASK[ASCENT]: this page will contain DataTable (shadcn + tanstack table) for admin complaints
-it's like a more complete view of the AdminComplaintsTable
-*/
+import { AdminKeluhanContainer } from "@/containers/admin-keluhan-container";
 
 export default function AdminKeluhanPage() {
   return (
@@ -31,11 +28,7 @@ export default function AdminKeluhanPage() {
           Tinjau seluruh keluhan masyarakat dalam tampilan lengkap.
         </DashboardPageHeader.Description>
       </DashboardPageHeader>
-
-      <div className="rounded-xl border border-muted-foreground/40 border-dashed bg-muted/20 p-8 text-muted-foreground">
-        DataTable keluhan admin akan hadir setelah endpoint list keluhan admin
-        dengan pagination tersedia.
-      </div>
+      <AdminKeluhanContainer />
     </div>
   );
 }

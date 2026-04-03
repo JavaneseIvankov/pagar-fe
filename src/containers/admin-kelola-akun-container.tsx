@@ -94,18 +94,16 @@ export function AdminKelolaAkunContainer() {
     );
   };
 
-  const handleCreateAkun = (input: TAdminCreateManagedAccountInput) => {
-    createAccountMutation.mutate(input, {
-      onSuccess: (result) => {
-        toast.success(`Akun ${result.user.username} berhasil dibuat.`);
-        setIsCreateAkunDialogOpen(false);
-      },
-      onError: (error) => {
-        toast.error(
-          error instanceof Error ? error.message : "Gagal membuat akun.",
-        );
-      },
-    });
+  const handleCreateAkun = async (input: TAdminCreateManagedAccountInput) => {
+    try {
+      const result = await createAccountMutation.mutateAsync(input);
+      toast.success(`Akun ${result.user.username} berhasil dibuat.`);
+      setIsCreateAkunDialogOpen(false);
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Gagal membuat akun.",
+      );
+    }
   };
 
   return (

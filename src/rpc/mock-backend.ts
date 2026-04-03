@@ -308,6 +308,7 @@ export function buildPublicDashboardReviewsResponse(): PublicDashboardReviewResp
       school_name: review.forSppg.sppgName,
       author_name: review.reporterName,
       display_author: review.reporterName,
+      locationName: review.forSppg.sppgName,
     } satisfies PublicDashboardReviewItem;
   });
 
@@ -562,6 +563,7 @@ export function buildSppgPeriodicReportsResponse(): SppgPeriodicReportsResponse 
         totalItems,
         totalPages: totalItems > 0 ? 1 : 0,
         currentPage: totalItems > 0 ? 1 : 0,
+        limit: totalItems > 0 ? totalItems : 1,
       },
       reports: sppgPeriodicReports.map((report, index) => {
         return {

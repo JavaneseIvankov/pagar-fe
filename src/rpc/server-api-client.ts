@@ -4,7 +4,7 @@ import { createApiClient } from "@/lib/api";
 import { getAuthToken } from "@/lib/auth/server";
 import { env } from "@/lib/env/server";
 
-const DEBUG = env.NODE_ENV === "development";
+const DEBUG = "true";
 
 let serverApiClient: ReturnType<typeof createApiClient> | null = null;
 
@@ -69,9 +69,9 @@ export function createServerApiClient() {
               error: context.error,
               response: context.response
                 ? {
-                  status: context.response.status,
-                  statusText: context.response.ok ? "OK" : "Error",
-                }
+                    status: context.response.status,
+                    statusText: context.response.ok ? "OK" : "Error",
+                  }
                 : "No response",
               payload: context.payload,
             },

@@ -1,8 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { InformationCircleIcon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod/v3";
@@ -16,6 +14,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { InfoCircleIcon } from "../exported-icons";
 
 const sppgProfessionalInfoSchema = z.object({
   sppgName: z.string().min(3, "Nama SPPG minimal 3 karakter"),
@@ -68,8 +67,8 @@ export function SppgProfessionalInfoCard({
     <Card className="flex h-full flex-col border-0 shadow-sm ring-0">
       <CardHeader className="p-6 pb-4">
         <CardTitle className="flex items-center gap-3 font-bold text-lg">
-          <div className="flex size-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
-            <HugeiconsIcon icon={InformationCircleIcon} size={18} />
+          <div className="flex items-center justify-center text-primary">
+            <InfoCircleIcon className="size-8" />
           </div>
           Informasi Profesional & Wilayah
         </CardTitle>

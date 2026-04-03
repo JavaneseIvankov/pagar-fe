@@ -68,6 +68,26 @@ export type TAdminAccountRoleFilter = "ALL" | TManagedAccountRole;
 
 export type TAdminAccountDecision = "APPROVED" | "REJECTED";
 
+export type TAdminCreateManagedAccountInput =
+  | {
+      email: string;
+      password: string;
+      registrationCode?: string;
+      role: "SCHOOL";
+      schoolAddress: string;
+      schoolName: string;
+      username: string;
+    }
+  | {
+      bgnCode?: string;
+      email: string;
+      password: string;
+      role: "SPPG";
+      sppgAddress: string;
+      sppgName: string;
+      username: string;
+    };
+
 export type TAdminManagedAccount = {
   id: string;
   username: string;

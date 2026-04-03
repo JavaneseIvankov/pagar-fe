@@ -1,4 +1,5 @@
 export {
+  createAdminManagedAccount,
   fetchAdminActiveAccounts,
   fetchAdminPendingAccounts,
   updateAdminAccountStatus,

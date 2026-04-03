@@ -2,6 +2,7 @@
 
 import { Alert02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import * as Sentry from "@sentry/nextjs";
 import Link from "next/link";
 import { useEffect } from "react";
 import { AppLogo } from "@/components/app-logo";
@@ -17,6 +18,7 @@ export default function GlobalError({
 }) {
   useEffect(() => {
     // Log the error to an error reporting service if needed
+    Sentry.captureException(error);
     console.error("Global error caught:", error);
   }, [error]);
 

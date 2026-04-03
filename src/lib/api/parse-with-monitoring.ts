@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import { ZodError, type ZodTypeAny } from "zod/v3";
 import { reportApiBoundaryFailure } from "./monitoring";
 
@@ -12,10 +13,26 @@ export function parseWithMonitoring<TSchema extends ZodTypeAny>(options: {
     return options.schema.parse(options.payload);
   } catch (error) {
     if (error instanceof ZodError) {
+      const kind = options.operation.startsWith("rpc:")
+        ? "rpc-parse"
+        : "api-response-parse";
+
+      Sentry.captureException(error, {
+        level: "error",
+        tags: {
+          boundary: "api",
+          kind,
+          operation: options.operation,
+        },
+        extra: {
+          publicMessage: options.publicMessage,
+          payload: options.payload,
+          metadata: options.metadata,
+        },
+      });
+
       reportApiBoundaryFailure({
-        kind: options.operation.startsWith("rpc:")
-          ? "rpc-parse"
-          : "api-response-parse",
+        kind,
         operation: options.operation,
         publicMessage: options.publicMessage,
         error,

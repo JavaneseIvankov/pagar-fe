@@ -59,7 +59,7 @@ function FaqAccordion({
           <HugeiconsIcon icon={ChevronDown} size={20} fill="currentColor" />
         </div>
       </AccordionTrigger>
-      <AccordionContent className="pb-6 text-[#047857]">
+      <AccordionContent className="pb-6 text-primary">
         {content}
       </AccordionContent>
     </AccordionItem>

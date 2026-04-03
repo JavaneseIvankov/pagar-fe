@@ -39,7 +39,7 @@ function NutritionFactTile({
         className,
       )}
     >
-      <p className="mb-1 font-bold text-[10px] text-foreground/50 uppercase tracking-widest md:text-[11px]">
+      <p className="mb-1 font-bold text-foreground/50 text-xs uppercase tracking-widest">
         {label}
       </p>
       <div className="my-0.5 flex flex-col items-center">
@@ -49,11 +49,9 @@ function NutritionFactTile({
         >
           {value}
         </p>
-        <p className="mt-1 font-semibold text-[10px] text-foreground/80">
-          {unit}
-        </p>
+        <p className="mt-1 font-semibold text-foreground/80 text-xs">{unit}</p>
       </div>
-      <p className="mt-1 font-semibold text-[10px] text-foreground/50">
+      <p className="mt-1 font-semibold text-foreground/50 text-xs">
         {supportingText}
       </p>
     </div>
@@ -92,7 +90,7 @@ export function SppgReportNutritionCard({
     <SppgDetailSectionCard>
       <SppgDetailSectionHeader
         title="Kandungan Gizi Per Porsi"
-        icon={<GraphBoxIcon className="h-6 w-6 text-green-500" />}
+        icon={<GraphBoxIcon className="h-6 w-6 text-primary" />}
         className="pt-5 pb-4"
       />
       <CardContent className="flex w-full flex-col gap-6">
@@ -102,28 +100,28 @@ export function SppgReportNutritionCard({
             value={nutritionBreakdown.displayCalories}
             unit="kkal"
             supportingText={`${nutritionBreakdown.akg.energy}% AKG`}
-            className="border-[#4ade80] bg-[#4ade80]/10"
+            className="border-primary/20 bg-primary/10"
           />
           <NutritionFactTile
             label="Protein"
             value={nutritionalFacts.proteinGrams.inGrams}
             unit="gram"
             supportingText={`${nutritionBreakdown.akg.protein}% AKG`}
-            className="border-[#38bdf8] bg-[#38bdf8]/10"
+            className="border-secondary/20 bg-secondary/10"
           />
           <NutritionFactTile
             label="Karbo"
             value={nutritionalFacts.carbGrams.inGrams}
             unit="gram"
             supportingText={`${nutritionBreakdown.akg.carb}% AKG`}
-            className="border-[#fb923c] bg-[#fb923c]/10"
+            className="border-accent/20 bg-accent/10"
           />
           <NutritionFactTile
             label="Lemak"
             value={nutritionalFacts.fatGrams.inGrams}
             unit="gram"
             supportingText={`${nutritionBreakdown.akg.fat}% AKG`}
-            className="border-[#a855f7] bg-[#a855f7]/10"
+            className="border-primary/20 bg-primary/10"
           />
         </div>
 
@@ -140,7 +138,7 @@ export function SppgReportNutritionCard({
                   PROTEIN_FILL_CLASS,
                 )}
               />
-              <span className="text-[11px] md:text-xs">
+              <span className="text-xs">
                 Protein {nutritionBreakdown.shares.protein.percentage}%
               </span>
             </div>
@@ -151,7 +149,7 @@ export function SppgReportNutritionCard({
                   CARB_FILL_CLASS,
                 )}
               />
-              <span className="text-[11px] md:text-xs">
+              <span className="text-xs">
                 Karbo {nutritionBreakdown.shares.carb.percentage}%
               </span>
             </div>
@@ -162,7 +160,7 @@ export function SppgReportNutritionCard({
                   FAT_FILL_CLASS,
                 )}
               />
-              <span className="text-[11px] md:text-xs">
+              <span className="text-xs">
                 Lemak {nutritionBreakdown.shares.fat.percentage}%
               </span>
             </div>

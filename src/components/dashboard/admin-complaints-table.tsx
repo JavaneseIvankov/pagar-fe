@@ -118,7 +118,7 @@ export function AdminComplaintsTable({
           <h2 className="font-bold text-xl">Keluhan Terbaru</h2>
           <Link
             href="/dashboard/admin/keluhan"
-            className="flex items-center gap-2 font-semibold text-emerald-600 text-sm hover:text-emerald-700"
+            className="flex items-center gap-2 font-semibold text-primary text-sm hover:text-primary"
           >
             Lihat Semua <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
           </Link>
@@ -171,7 +171,7 @@ export function AdminComplaintsTable({
                   </div>
                 </TableCell>
                 <TableCell className="py-4 align-top">
-                  <div className="h-16 w-16 overflow-hidden rounded-xl bg-gray-200">
+                  <div className="h-16 w-16 overflow-hidden rounded-xl bg-muted">
                     {complaint.imageUrl ? (
                       <Image
                         src={complaint.imageUrl}
@@ -181,7 +181,7 @@ export function AdminComplaintsTable({
                         height={64}
                       />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-muted text-[10px] text-muted-foreground">
+                      <div className="flex h-full w-full items-center justify-center bg-muted text-xs text-muted-foreground">
                         -
                       </div>
                     )}
@@ -202,7 +202,7 @@ export function AdminComplaintsTable({
                   <div className="flex justify-end gap-2">
                     <button
                       type="button"
-                      className="rounded p-2 text-gray-600 transition-colors hover:bg-gray-100"
+                      className="rounded p-2 text-muted-foreground transition-colors hover:bg-muted"
                       onClick={() => handleOpenDetail(complaint)}
                     >
                       <PencilIcon className="size-4" />

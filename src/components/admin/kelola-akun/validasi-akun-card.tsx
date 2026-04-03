@@ -91,7 +91,8 @@ export function ValidasiAkunCard({
                     <div className="flex flex-col items-stretch gap-2">
                       <Button
                         type="button"
-                        className="bg-emerald-600 px-3 py-1 font-semibold text-white text-xs hover:bg-emerald-700"
+                        size="sm"
+                        className="px-3 py-1 text-xs"
                         disabled={isLoading || isUpdating}
                         onClick={() => onApprove(item.id)}
                       >
@@ -99,8 +100,9 @@ export function ValidasiAkunCard({
                       </Button>
                       <Button
                         type="button"
-                        variant="outline"
-                        className="border-red-200 bg-red-50 px-3 py-1 font-semibold text-red-600 text-xs hover:bg-red-100 hover:text-red-700"
+                        variant="destructive"
+                        size="sm"
+                        className="px-3 py-1 text-xs"
                         disabled={isLoading || isUpdating}
                         onClick={() => onReject(item.id)}
                       >

@@ -129,7 +129,6 @@ export function AdminDashboardContainer() {
           schoolPercent={schoolPercent}
           publicPercent={publicPercent}
         />
-        <AdminVendorWarnings warnings={data.warnings} />
       </div>
     </div>
   );

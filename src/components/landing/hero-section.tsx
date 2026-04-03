@@ -39,10 +39,10 @@ export function HeroSection() {
       >
         <motion.h1
           variants={STAGGER_CHILD}
-          className="font-extrabold text-5xl text-neutral-900 leading-[1.1] tracking-tight lg:text-6xl"
+          className="font-extrabold text-5xl text-foreground leading-[1.1] tracking-tight lg:text-6xl"
         >
           Transparansi Gizi Untuk{" "}
-          <span className="text-green-600">Generasi Sehat</span>
+          <span className="text-primary">Generasi Sehat</span>
         </motion.h1>
         <motion.p
           variants={STAGGER_CHILD}
@@ -57,7 +57,7 @@ export function HeroSection() {
         <motion.div variants={STAGGER_CHILD} className="mt-8">
           <Button
             asChild
-            className="inline-flex h-auto origin-center items-center gap-2 px-6 py-3 transition-all duration-150 ease-out hover:bg-green-700 hover:shadow-lg active:scale-[0.97]"
+            className="inline-flex h-auto origin-center items-center gap-2 px-6 py-3 transition-all duration-150 ease-out hover:shadow-lg active:scale-[0.97]"
           >
             <Link href="#tentang-kami">
               Baca Selengkapnya

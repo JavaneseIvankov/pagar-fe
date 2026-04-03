@@ -194,13 +194,13 @@ export function PeriodicReportTable({
                       key={report.id}
                       className="border-none hover:bg-transparent"
                     >
-                      <TableCell className="py-5 font-medium text-[15px]">
+                      <TableCell className="py-5 font-medium text-base">
                         {report.periode}
                       </TableCell>
-                      <TableCell className="py-5 font-medium text-[15px]">
+                      <TableCell className="py-5 font-medium text-base">
                         {report.totalMeal} Buah
                       </TableCell>
-                      <TableCell className="py-5 font-medium text-[15px]">
+                      <TableCell className="py-5 font-medium text-base">
                         {formatCurrencyIdr(report.totalBudget)}
                       </TableCell>
                       <TableCell className="py-5">
@@ -222,7 +222,7 @@ export function PeriodicReportTable({
                           type="button"
                           variant="ghost"
                           size="icon"
-                          className="text-foreground hover:bg-gray-100"
+                          className="text-foreground hover:bg-muted"
                           aria-label={`Unduh rekap ${report.periode}`}
                           disabled={downloadingReportId === report.id}
                           onClick={() => onDownload(report)}

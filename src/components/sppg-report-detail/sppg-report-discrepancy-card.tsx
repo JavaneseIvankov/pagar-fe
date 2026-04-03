@@ -12,15 +12,15 @@ export function SppgReportDiscrepancyCard({
   sppgId,
 }: SppgReportDiscrepancyCardProps) {
   return (
-    <Card className="mt-2 mb-2 flex w-full flex-col items-center gap-4 rounded-xl border-0 bg-[#0a0a0a] p-6 text-center text-white shadow-none">
-      <div className="mt-2 text-green-500">
+    <Card className="mt-2 mb-2 flex w-full flex-col items-center gap-4 rounded-xl border-0 bg-foreground p-6 text-center text-background shadow-none">
+      <div className="mt-2 text-primary">
         <SpeakerIcon className="h-8 w-8" />
       </div>
       <div className="mb-2 space-y-1.5">
         <h3 className="font-bold text-base leading-tight">
           Temukan Ketidaksesuaian?
         </h3>
-        <p className="px-2 font-medium text-[11px] text-zinc-400 leading-relaxed">
+        <p className="px-2 text-muted text-xs leading-relaxed">
           Laporkan jika gizi atau porsi tidak sesuai dengan yang tertera di
           platform ini
         </p>
@@ -33,8 +33,8 @@ export function SppgReportDiscrepancyCard({
           },
         }}
         className={cn(
-          buttonVariants(),
-          "h-10 w-full max-w-[200px] rounded-lg bg-white font-extrabold text-black text-sm hover:bg-primary-200 hover:text-white",
+          buttonVariants({ variant: "outline" }),
+          "h-10 w-full max-w-[200px] rounded-lg border-transparent bg-background font-extrabold text-foreground text-sm hover:bg-primary hover:text-primary-foreground",
         )}
       >
         Laporkan

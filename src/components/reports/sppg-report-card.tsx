@@ -41,7 +41,7 @@ export function SppgReportCard({ report }: SppgReportCardProps) {
             <h4 className="truncate font-semibold @[40px]:text-base text-sm">
               {author}
             </h4>
-            <p className="truncate @[40px]:text-xs text-[11px] text-muted-foreground">
+            <p className="truncate @[40px]:text-xs text-muted-foreground text-xs">
               {postedAt} • {report.mealTime}
             </p>
           </div>
@@ -65,7 +65,7 @@ export function SppgReportCard({ report }: SppgReportCardProps) {
               Laporan Resmi
             </HoverCardContent>
           </HoverCard>
-          <span className="@xs:block hidden @[40px]:text-[11px] text-[10px]">
+          <span className="@xs:block hidden @[40px]:text-xs text-xs">
             Laporan Resmi
           </span>
         </Badge>

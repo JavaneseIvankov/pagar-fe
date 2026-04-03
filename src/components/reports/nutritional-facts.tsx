@@ -31,7 +31,7 @@ export function NutritionalFactItem({
     >
       <p
         className={cn(
-          "text-[9px] text-foreground/40 uppercase tracking-tight sm:text-[10px]",
+          "text-foreground/40 text-xs uppercase tracking-tight sm:text-xs",
           labelClassName,
         )}
       >
@@ -39,7 +39,7 @@ export function NutritionalFactItem({
       </p>
       <p
         className={cn(
-          "mt-0.5 font-bold text-[10px] leading-tight sm:text-[11px] lg:text-xs",
+          "mt-0.5 font-bold text-xs leading-tight sm:text-xs",
           valueClassName,
         )}
       >

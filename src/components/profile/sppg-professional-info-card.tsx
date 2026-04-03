@@ -68,7 +68,7 @@ export function SppgProfessionalInfoCard({
     <Card className="flex h-full flex-col border-0 shadow-sm ring-0">
       <CardHeader className="p-6 pb-4">
         <CardTitle className="flex items-center gap-3 font-bold text-lg">
-          <div className="flex size-8 items-center justify-center rounded-full bg-[#0eb363] text-white">
+          <div className="flex size-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
             <HugeiconsIcon icon={InformationCircleIcon} size={18} />
           </div>
           Informasi Profesional & Wilayah
@@ -148,7 +148,7 @@ export function SppgProfessionalInfoCard({
             {!isEditing ? (
               <Button
                 type="button"
-                className="w-full bg-green-600 text-white hover:bg-green-700"
+                className="w-full"
                 onClick={() => setIsEditing(true)}
               >
                 Edit Profil SPPG
@@ -157,7 +157,7 @@ export function SppgProfessionalInfoCard({
               <>
                 <Button
                   type="submit"
-                  className="w-full bg-green-600 text-white hover:bg-green-700"
+                  className="w-full"
                   disabled={isSubmitting || !isDirty}
                 >
                   Simpan Perubahan

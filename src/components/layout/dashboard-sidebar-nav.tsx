@@ -1,5 +1,4 @@
 "use client";
-import { motion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -9,7 +8,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { MOTION_TRANSITIONS } from "@/lib/motion/tokens";
 import { cn } from "@/lib/utils";
 import {
   DashboardIcon,
@@ -89,7 +87,7 @@ export function DashboardSidebarNav() {
                 size="lg"
                 isActive={isActive}
                 tooltip={item.title}
-                className="h-11 rounded-lg px-4 font-bold transition-colors hover:bg-muted/50 data-[active=true]:bg-transparent data-[active=true]:font-black data-[active=true]:text-primary"
+                className="h-11 rounded-lg px-4 font-bold hover:bg-muted/50 data-[active=true]:bg-transparent data-[active=true]:font-black data-[active=true]:text-primary"
               >
                 <Link
                   href={item.href}
@@ -101,13 +99,6 @@ export function DashboardSidebarNav() {
                     }
                   }}
                 >
-                  {isActive ? (
-                    <motion.span
-                      layoutId="dashboard-sidebar-active-indicator"
-                      className="pointer-events-none absolute -inset-x-1 -inset-y-1 rounded-lg bg-primary/10"
-                      transition={MOTION_TRANSITIONS.fastOut}
-                    />
-                  ) : null}
                   <item.icon className="relative z-10" />
                   <span
                     className={cn(

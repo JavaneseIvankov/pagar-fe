@@ -19,7 +19,7 @@ export function PublicReportsList({ reports }: PublicReportsListProps) {
         {/* TASK[ASCENT]: this should be a link (keep the current styling using buttonVariant) that when press will redirect to '/dashboard/sppg/laporan-publik/page.tsx' / */}
         <Button
           variant="ghost"
-          className="h-auto w-fit gap-2 p-0 font-semibold text-emerald-600 hover:bg-transparent hover:text-emerald-700"
+          className="h-auto w-fit gap-2 p-0 font-semibold text-primary hover:bg-transparent hover:text-primary"
         >
           Lihat Semua{" "}
           <HugeiconsIcon icon={ArrowRight01Icon} size={16} aria-hidden="true" />
@@ -29,7 +29,7 @@ export function PublicReportsList({ reports }: PublicReportsListProps) {
         {reports.map((report) => (
           <div
             key={report.id}
-            className="flex gap-3 rounded-2xl border border-border/60 bg-white/75 p-4"
+            className="flex gap-3 rounded-2xl border border-border/60 bg-background p-4"
           >
             <Avatar className="size-10 shrink-0">
               <AvatarFallback className="bg-muted">
@@ -58,7 +58,7 @@ export function PublicReportsList({ reports }: PublicReportsListProps) {
                       className="object-cover"
                     />
                   ) : (
-                    <div className="absolute inset-0 bg-slate-200" />
+                    <div className="absolute inset-0 bg-muted" />
                   )}
                 </div>
               </div>
@@ -103,7 +103,7 @@ export function PublicReportsList({ reports }: PublicReportsListProps) {
                     className="object-cover"
                   />
                 ) : (
-                  <div className="absolute inset-0 bg-slate-200" />
+                  <div className="absolute inset-0 bg-muted" />
                 )}
               </div>
             </div>

@@ -29,7 +29,10 @@ const STATS = [
 
 export function StatsSection() {
   return (
-    <section id="data-publik" className="bg-green-700 px-6 py-12 text-white">
+    <section
+      id="data-publik"
+      className="bg-primary px-6 py-12 text-primary-foreground"
+    >
       <div className="mx-auto max-w-5xl">
         <motion.div
           initial="hidden"
@@ -45,7 +48,7 @@ export function StatsSection() {
                 variants={STAGGER_CHILD}
                 className="flex flex-col items-center"
               >
-                <div className="inline-block rounded-full bg-white px-6 py-2 font-extrabold text-2xl text-green-700 shadow-sm lg:text-3xl">
+                <div className="inline-block rounded-full bg-background px-6 py-2 font-extrabold text-2xl text-primary shadow-sm lg:text-3xl">
                   {stat.val}
                 </div>
                 <span className="mt-3 font-semibold text-sm uppercase tracking-wide opacity-90">

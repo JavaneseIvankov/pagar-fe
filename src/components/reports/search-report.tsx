@@ -82,27 +82,27 @@ interface SearchReportLayoutProps {
 }
 
 function SearchReportLayout({
-  _className,
-  _items,
-  _searchValue,
+  className: _className,
+  items: _items,
+  searchValue,
   isReadOnly = false,
-  onSearchChange,
-  _selectedKecamatan,
-  _onKecamatanChange,
+  onSearchChange: _onSearchChange,
+  selectedKecamatan: _selectedKecamatan,
+  onKecamatanChange: _onKecamatanChange,
 }: SearchReportLayoutProps) {
   // FIXME: this has bad tab-navigation
   return (
     <div
       className={cn(
         "flex w-full min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center",
-        className,
+        _className,
       )}
     >
       <SearchInput
         className="w-full sm:flex-1"
         inputClassName="h-10"
         value={searchValue}
-        onChange={(e) => onSearchChange?.(e.target.value)}
+        onChange={(e) => _onSearchChange?.(e.target.value)}
         readOnly={isReadOnly}
         placeholder="Cari laporan atau menu…"
         aria-label="Cari laporan atau menu"

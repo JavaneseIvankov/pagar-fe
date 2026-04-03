@@ -59,7 +59,7 @@ export function AdminProfileContainer() {
         </p>
       </div>
 
-      <div className="rounded-2xl border border-amber-200/70 bg-amber-50/80 px-4 py-3 text-amber-950 text-sm leading-relaxed">
+      <div className="rounded-2xl border border-accent/30 bg-accent/10 px-4 py-3 text-accent-foreground text-sm leading-relaxed">
         Profil admin sekarang dibaca dari backend. Detail akses di samping masih
         memakai metadata placeholder frontend sampai backend menyediakan data
         izin yang lebih rinci.

@@ -12,7 +12,7 @@ export function ProfileHeaderCard({ profile }: ProfileHeaderCardProps) {
   return (
     <Card className="border-0 shadow-sm ring-0">
       <CardContent className="flex flex-col items-center gap-8 p-8 md:flex-row">
-        <div className="flex aspect-square h-36 w-36 items-center justify-center rounded-2xl border border-emerald-100/50 bg-[#e8f5ef] text-[#0eb363]">
+        <div className="flex aspect-square h-36 w-36 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
           <FlowerIcon />
         </div>
         <div className="flex flex-col gap-2">

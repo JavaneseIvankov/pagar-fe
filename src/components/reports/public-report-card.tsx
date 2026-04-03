@@ -25,7 +25,7 @@ export function PublicReportCard({ review }: PublicReportCardProps) {
             {author}
           </h4>
 
-          <p className="truncate @[40px]:text-xs text-[11px] text-muted-foreground">
+          <p className="truncate @[40px]:text-xs text-muted-foreground text-xs">
             {formatShortDate(review.postedAt)}
           </p>
         </div>
@@ -44,7 +44,7 @@ export function PublicReportCard({ review }: PublicReportCardProps) {
         <div className="flex @[40px]:flex-row flex-col @[40px]:items-center @[40px]:justify-between @[40px]:gap-3 gap-2.5">
           <div className="flex items-center @[40px]:gap-2 gap-1.5">
             <StarRating value={review.ratingScore} />
-            <span className="@[40px]:text-xs text-[11px] text-muted-foreground">
+            <span className="@[40px]:text-xs text-muted-foreground text-xs">
               {review.ratingScore}/5
             </span>
           </div>

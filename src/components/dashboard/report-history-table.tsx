@@ -23,14 +23,14 @@ export function ReportHistoryTable({ reports }: ReportHistoryTableProps) {
   return (
     <DashboardCard className="overflow-hidden">
       <div className="flex items-center gap-4 border-muted/50 border-b px-5 py-5 sm:px-6">
-        <ReportIcon className="text-[#008445]" />
+        <ReportIcon className="text-primary" />
         <h3 className="font-bold text-lg">Riwayat Laporan</h3>
       </div>
       <div className="flex flex-col gap-4 p-4 sm:hidden">
         {reports.map((report) => (
           <div
             key={report.id}
-            className="rounded-2xl border border-border/60 bg-white/75 p-4"
+            className="rounded-2xl border border-border/60 bg-background p-4"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
@@ -43,7 +43,7 @@ export function ReportHistoryTable({ reports }: ReportHistoryTableProps) {
               </div>
               <Badge
                 variant="secondary"
-                className="shrink-0 rounded-full bg-emerald-50 px-3 py-1 font-semibold text-emerald-600 text-xs hover:bg-emerald-50"
+                className="shrink-0 rounded-full bg-primary/10 px-3 py-1 font-semibold text-primary text-xs hover:bg-primary/20"
               >
                 {report.status === "SUBMITTED" ? "Terkirim" : report.status}
               </Badge>
@@ -116,7 +116,7 @@ export function ReportHistoryTable({ reports }: ReportHistoryTableProps) {
                 <TableCell className="py-4">
                   <Badge
                     variant="secondary"
-                    className="rounded-full bg-emerald-50 px-3 py-1 font-semibold text-emerald-600 text-xs hover:bg-emerald-50"
+                    className="rounded-full bg-primary/10 px-3 py-1 font-semibold text-primary text-xs hover:bg-primary/20"
                   >
                     {report.status === "SUBMITTED" ? "Terkirim" : report.status}
                   </Badge>

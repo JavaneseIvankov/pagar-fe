@@ -54,8 +54,8 @@ export function PaginationControls({
         className={cn(
           "size-10 rounded-lg",
           currentPage <= 1
-            ? "border-transparent bg-gray-200 text-gray-400 opacity-100"
-            : "border-gray-200 bg-white text-gray-500",
+            ? "border-transparent bg-muted text-muted-foreground opacity-100"
+            : "border-border bg-background text-muted-foreground",
         )}
         onClick={() => onPageChange(clampPage(currentPage - 1, totalPages))}
         disabled={currentPage <= 1}
@@ -70,7 +70,7 @@ export function PaginationControls({
             <div
               // biome-ignore lint/suspicious/noArrayIndexKey: stable index
               key={`ellipsis-${idx}`}
-              className="flex size-10 items-center justify-center rounded-lg border border-gray-200 bg-white font-bold text-black text-lg tracking-widest"
+              className="flex size-10 items-center justify-center rounded-lg border border-border bg-background font-bold text-foreground text-lg tracking-widest"
             >
               ...
             </div>
@@ -88,8 +88,8 @@ export function PaginationControls({
             className={cn(
               "size-10 rounded-lg font-bold text-lg",
               isCurrent
-                ? "border-2 border-[#008A45] bg-[#E8F8EF] text-[#008A45] hover:bg-[#D1F1E0] hover:text-[#008A45]"
-                : "border border-gray-200 bg-white text-black hover:bg-gray-50",
+                ? "border-2 border-primary bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary"
+                : "border border-border bg-background text-foreground hover:bg-muted/40",
             )}
             onClick={() => onPageChange(page as number)}
           >
@@ -105,8 +105,8 @@ export function PaginationControls({
         className={cn(
           "size-10 rounded-lg",
           currentPage >= totalPages
-            ? "border-transparent bg-gray-200 text-gray-400 opacity-100"
-            : "border-gray-200 bg-white text-gray-500",
+            ? "border-transparent bg-muted text-muted-foreground opacity-100"
+            : "border-border bg-background text-muted-foreground",
         )}
         onClick={() => onPageChange(clampPage(currentPage + 1, totalPages))}
         disabled={currentPage >= totalPages}

@@ -19,15 +19,19 @@ export function createServerApiClient() {
         );
 
         if (DEBUG) {
-          console.debug("[API:DEBUG] Request context:", {
-            endpoint: context.endpoint,
-            method: context.init.method,
-            url: context.url,
-            headers: context.headers,
-            body: context.init.body,
-            query: context.parsed.query,
-            params: context.parsed.params,
-          });
+          console.log("[API:DEBUG] Request context:");
+          console.dir(
+            {
+              endpoint: context.endpoint,
+              method: context.init.method,
+              url: context.url,
+              headers: context.headers,
+              body: context.init.body,
+              query: context.parsed.query,
+              params: context.parsed.params,
+            },
+            { depth: 4, colors: true },
+          );
         }
       },
       onResponse(context) {
@@ -36,12 +40,16 @@ export function createServerApiClient() {
         );
 
         if (DEBUG) {
-          console.debug("[API:DEBUG] Response context:", {
-            endpoint: context.endpoint,
-            status: context.response.status,
-            contentType: context.response.headers.get("content-type"),
-            payload: context.payload,
-          });
+          console.log("[API:DEBUG] Response context:");
+          console.dir(
+            {
+              endpoint: context.endpoint,
+              status: context.response.status,
+              contentType: context.response.headers.get("content-type"),
+              payload: context.payload,
+            },
+            { depth: 4, colors: true },
+          );
         }
       },
       onError(context) {
@@ -54,17 +62,21 @@ export function createServerApiClient() {
         }
 
         if (DEBUG) {
-          console.debug("[API:DEBUG] Error context:", {
-            endpoint: context.endpoint,
-            error: context.error,
-            response: context.response
-              ? {
+          console.log("[API:DEBUG] Error context:");
+          console.dir(
+            {
+              endpoint: context.endpoint,
+              error: context.error,
+              response: context.response
+                ? {
                   status: context.response.status,
                   statusText: context.response.ok ? "OK" : "Error",
                 }
-              : "No response",
-            payload: context.payload,
-          });
+                : "No response",
+              payload: context.payload,
+            },
+            { depth: 4, colors: true },
+          );
         }
       },
     },

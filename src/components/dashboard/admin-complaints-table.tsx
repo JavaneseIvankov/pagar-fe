@@ -53,7 +53,7 @@ export interface AdminComplaintsTableProps {
   onUpdateStatus: (params: {
     id: string;
     status: TAdminComplaintStatus;
-  }) => Promise<void>;
+  }) => void;
   updatingComplaintId: null | string;
 }
 
@@ -104,7 +104,7 @@ export function AdminComplaintsTable({
       return;
     }
 
-    await onUpdateStatus({
+    onUpdateStatus({
       id: selectedComplaint.id,
       status: selectedStatus,
     });

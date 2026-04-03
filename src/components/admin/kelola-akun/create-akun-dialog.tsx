@@ -119,7 +119,7 @@ const DEFAULT_VALUES: CreateAkunFormValues = {
 export interface CreateAkunDialogProps {
   isSubmitting: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (input: TAdminCreateManagedAccountInput) => Promise<void>;
+  onSubmit: (input: TAdminCreateManagedAccountInput) => void;
   open: boolean;
 }
 
@@ -151,7 +151,7 @@ export function CreateAkunDialog({
 
   const submitForm = async (data: CreateAkunFormValues) => {
     if (data.role === "SPPG") {
-      await onSubmit({
+      onSubmit({
         bgnCode: data.kodeBgn || undefined,
         email: data.email,
         password: data.kataSandi,
@@ -163,7 +163,7 @@ export function CreateAkunDialog({
       return;
     }
 
-    await onSubmit({
+    onSubmit({
       email: data.email,
       password: data.kataSandi,
       registrationCode: data.kodeRegistrasi || undefined,

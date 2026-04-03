@@ -1,8 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod/v3";
@@ -17,6 +15,8 @@ import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import type { TPublicProfile } from "@/types";
 import { createPasswordSchema } from "./profile-schema";
+import { Avatar } from "../ui/avatar";
+import { AvatarFallbackIcon } from "../avatar-fallback-icon";
 
 const publicProfileFormSchema = z
   .object({
@@ -73,9 +73,9 @@ export function PublicProfileForm({
   return (
     <div className="w-full max-w-xl rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
       <div className="mb-8 flex flex-col items-center">
-        <div className="mb-2 flex h-24 w-24 items-center justify-center rounded-full bg-gray-300">
-          <HugeiconsIcon icon={User} size={48} className="text-white" />
-        </div>
+        <Avatar className="mb-2 flex h-24 w-24 items-center justify-center rounded-full bg-gray-300">
+          <AvatarFallbackIcon className="size-24" iconClassName="size-12" />
+        </Avatar>
       </div>
 
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">

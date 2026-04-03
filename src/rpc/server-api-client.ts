@@ -4,7 +4,7 @@ import { createApiClient } from "@/lib/api";
 import { getAuthToken } from "@/lib/auth/server";
 import { env } from "@/lib/env/server";
 
-const DEBUG = "true";
+const DEBUG = env.NODE_ENV === "development";
 
 let serverApiClient: ReturnType<typeof createApiClient> | null = null;
 

@@ -1,6 +1,5 @@
 "use client";
 
-import { toast } from "sonner";
 import { ProfileHeaderCard } from "@/components/profile/profile-header-card";
 import { SppgAccountSettingsCard } from "@/components/profile/sppg-account-settings-card";
 import { SppgProfessionalInfoCard } from "@/components/profile/sppg-professional-info-card";
@@ -22,18 +21,8 @@ export function SppgProfileContainer() {
     return <div className="py-8 text-destructive">Gagal memuat profil.</div>;
   }
 
-  const handleSubmit = async (data: { address: string; sppgName: string }) => {
-    try {
-      const result = await updateSppgProfileMutation.mutateAsync(data);
-      toast.success(result.message);
-    } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Gagal memperbarui profil SPPG.",
-      );
-      throw error;
-    }
+  const handleSubmit = (data: { address: string; sppgName: string }) => {
+    updateSppgProfileMutation.mutate(data);
   };
 
   return (

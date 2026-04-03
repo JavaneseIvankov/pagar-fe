@@ -42,7 +42,7 @@ export function AdminKelolaAkunContainer() {
           return account.role === selectedRoleFilter;
         });
 
-  const handleApprove = async (id: string) => {
+  const handleApprove = (id: string) => {
     const account = pendingAccounts.find((item) => item.id === id);
 
     if (!account) {
@@ -50,20 +50,25 @@ export function AdminKelolaAkunContainer() {
       return;
     }
 
-    try {
-      await updateAccountStatusMutation.mutateAsync({
+    updateAccountStatusMutation.mutate(
+      {
         idUser: id,
         status: "APPROVED",
-      });
-      toast.success(`Akun ${account.username} berhasil disetujui.`);
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Gagal menyetujui akun.",
-      );
-    }
+      },
+      {
+        onSuccess: () => {
+          toast.success(`Akun ${account.username} berhasil disetujui.`);
+        },
+        onError: (error) => {
+          toast.error(
+            error instanceof Error ? error.message : "Gagal menyetujui akun.",
+          );
+        },
+      },
+    );
   };
 
-  const handleReject = async (id: string) => {
+  const handleReject = (id: string) => {
     const account = pendingAccounts.find((item) => item.id === id);
 
     if (!account) {
@@ -71,29 +76,36 @@ export function AdminKelolaAkunContainer() {
       return;
     }
 
-    try {
-      await updateAccountStatusMutation.mutateAsync({
+    updateAccountStatusMutation.mutate(
+      {
         idUser: id,
         status: "REJECTED",
-      });
-      toast.success(`Akun ${account.username} ditolak.`);
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Gagal menolak akun.",
-      );
-    }
+      },
+      {
+        onSuccess: () => {
+          toast.success(`Akun ${account.username} ditolak.`);
+        },
+        onError: (error) => {
+          toast.error(
+            error instanceof Error ? error.message : "Gagal menolak akun.",
+          );
+        },
+      },
+    );
   };
 
-  const handleCreateAkun = async (input: TAdminCreateManagedAccountInput) => {
-    try {
-      const result = await createAccountMutation.mutateAsync(input);
-      toast.success(`Akun ${result.user.username} berhasil dibuat.`);
-      setIsCreateAkunDialogOpen(false);
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Gagal membuat akun.",
-      );
-    }
+  const handleCreateAkun = (input: TAdminCreateManagedAccountInput) => {
+    createAccountMutation.mutate(input, {
+      onSuccess: (result) => {
+        toast.success(`Akun ${result.user.username} berhasil dibuat.`);
+        setIsCreateAkunDialogOpen(false);
+      },
+      onError: (error) => {
+        toast.error(
+          error instanceof Error ? error.message : "Gagal membuat akun.",
+        );
+      },
+    });
   };
 
   return (

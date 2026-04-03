@@ -1,6 +1,5 @@
 "use client";
 
-import { toast } from "sonner";
 import { ProfileFormSkeleton } from "@/components/profile/profile-form-skeleton";
 import {
   PublicProfileForm,
@@ -27,21 +26,11 @@ export function ProfileContainer() {
     return <div className="py-8 text-destructive">Gagal memuat profil.</div>;
   }
 
-  const handleSchoolSubmit = async (data: SchoolProfileFormValues) => {
-    try {
-      await updateSchoolProfileMutation.mutateAsync({
-        schoolName: data.schoolName,
-        address: data.address,
-      });
-      toast.success("Profil sekolah berhasil diperbarui!");
-    } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Gagal memperbarui profil sekolah.",
-      );
-      throw error;
-    }
+  const handleSchoolSubmit = (data: SchoolProfileFormValues) => {
+    updateSchoolProfileMutation.mutate({
+      schoolName: data.schoolName,
+      address: data.address,
+    });
   };
 
   const handlePublicSubmit = async (_data: PublicProfileFormValues) => {};

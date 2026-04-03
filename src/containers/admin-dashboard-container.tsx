@@ -1,6 +1,5 @@
 "use client";
 
-import { toast } from "sonner";
 import { AdminComplaintsOverview } from "@/components/dashboard/admin-complaints-overview";
 import { AdminComplaintsTable } from "@/components/dashboard/admin-complaints-table";
 import { AdminDashboardSkeleton } from "@/components/dashboard/admin-dashboard-skeleton";
@@ -107,21 +106,11 @@ export function AdminDashboardContainer() {
 
       <AdminComplaintsTable
         complaints={complaints}
-        onUpdateStatus={async ({ id, status }) => {
-          try {
-            const result = await updateComplaintStatusMutation.mutateAsync({
-              id,
-              status,
-            });
-            toast.success(result.message);
-          } catch (error) {
-            toast.error(
-              error instanceof Error
-                ? error.message
-                : "Gagal memperbarui status keluhan.",
-            );
-            throw error;
-          }
+        onUpdateStatus={({ id, status }) => {
+          updateComplaintStatusMutation.mutate({
+            id,
+            status,
+          });
         }}
         updatingComplaintId={updatingComplaintId}
       />

@@ -1,6 +1,5 @@
 "use client";
 
-import { toast } from "sonner";
 import { AdminAccessDetailsCard } from "@/components/profile/admin-access-details-card";
 import { AdminAccountSettingsCard } from "@/components/profile/admin-account-settings-card";
 import { AdminProfileSkeleton } from "@/components/profile/admin-profile-skeleton";
@@ -25,29 +24,19 @@ export function AdminProfileContainer() {
   const accessDetails = currentProfile.accessDetails.map(
     mapAdminAccessDetailToUi,
   );
-  const handleSubmit = async (data: {
+  const handleSubmit = (data: {
     confirmNewPassword?: string;
     email: string;
     name: string;
     newPassword?: string;
     username: string;
   }) => {
-    try {
-      const result = await updateAdminProfileMutation.mutateAsync({
-        name: data.name,
-        email: data.email,
-        username: data.username,
-        password: data.newPassword || undefined,
-      });
-      toast.success(result.message);
-    } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Gagal memperbarui profil admin.",
-      );
-      throw error;
-    }
+    updateAdminProfileMutation.mutate({
+      name: data.name,
+      email: data.email,
+      username: data.username,
+      password: data.newPassword || undefined,
+    });
   };
 
   return (

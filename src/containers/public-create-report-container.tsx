@@ -105,37 +105,39 @@ export function PublicCreateReportContainer({
     setValue,
   ]);
 
-  const onSubmit = async (data: PublicCreateReportFormValues) => {
-    try {
-      const formData = new FormData();
+  const _onSubmit = async (data: PublicCreateReportFormValues) => {
+    const formData = new FormData();
 
-      formData.set("id_sppg", data.sppgId);
-      formData.set("title", data.title);
-      formData.set("description", data.details);
-      formData.set("rating_score", String(data.rating));
+    formData.set("id_sppg", data.sppgId);
+    formData.set("title", data.title);
+    formData.set("description", data.details);
+    formData.set("rating_score", String(data.rating));
 
-      if (data.photo) {
-        formData.set("attachment", data.photo);
-      }
-
-      const result = await submitReviewMutation.mutateAsync(formData);
-      reset({
-        rating: 0,
-        title: "",
-        details: "",
-        sppgId: "",
-        photo: undefined,
-      });
-      toast.success(result.message);
-    } catch (error) {
-      if (handleClientApiError(error)) {
-        return;
-      }
-
-      toast.error(
-        error instanceof Error ? error.message : "Gagal mengirim laporan.",
-      );
+    if (data.photo) {
+      formData.set("attachment", data.photo);
     }
+
+    submitReviewMutation.mutate(formData, {
+      onSuccess: (result) => {
+        reset({
+          rating: 0,
+          title: "",
+          details: "",
+          sppgId: "",
+          photo: undefined,
+        });
+        toast.success(result.message);
+      },
+      onError: (error) => {
+        if (handleClientApiError(error)) {
+          return;
+        }
+
+        toast.error(
+          error instanceof Error ? error.message : "Gagal mengirim laporan.",
+        );
+      },
+    });
   };
 
   return (
@@ -151,7 +153,7 @@ export function PublicCreateReportContainer({
         setError("photo", { type: "manual", message })
       }
       onPhotoSelect={() => clearErrors("photo")}
-      onSubmit={onSubmit}
+      onSubmit={_onSubmit}
       register={register}
       selectedTarget={selectedTarget}
       targets={reviewSubmissionContextQuery.data?.targets ?? []}

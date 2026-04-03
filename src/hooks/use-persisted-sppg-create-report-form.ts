@@ -179,19 +179,21 @@ export function usePersistedSppgCreateReportForm() {
     0,
   );
 
-  async function onSubmit(data: TCreateReportForm) {
-    try {
-      const result = await submitMutation.mutateAsync(data);
-      await clearDraft();
-      reset(createReportFormDefaultValues());
-      toast.success(result.message);
-    } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : "Gagal mengirim laporan harian.",
-      );
-    }
+  function onSubmit(data: TCreateReportForm) {
+    submitMutation.mutate(data, {
+      onSuccess: async (result) => {
+        await clearDraft();
+        reset(createReportFormDefaultValues());
+        toast.success(result.message);
+      },
+      onError: (error) => {
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Gagal mengirim laporan harian.",
+        );
+      },
+    });
   }
 
   return {

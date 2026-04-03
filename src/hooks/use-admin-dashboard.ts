@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { queryKeys } from "@/lib/query-keys";
 import { fetchAdminDashboard, updateAdminComplaintStatus } from "@/rpc";
 import type { TAdminComplaintStatus } from "@/types";
@@ -21,10 +22,18 @@ export function useUpdateAdminComplaintStatus() {
         idReview: params.id,
         status: params.status,
       }),
-    onSuccess: async () => {
+    onSuccess: async (data) => {
       await queryClient.invalidateQueries({
         queryKey: queryKeys.adminDashboard.detail(),
       });
+      toast.success(data.message);
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Gagal memperbarui status keluhan.",
+      );
     },
   });
 }

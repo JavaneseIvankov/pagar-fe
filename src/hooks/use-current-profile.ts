@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { queryKeys } from "@/lib/query-keys";
 import {
   fetchCurrentAdminProfile,
@@ -45,6 +46,14 @@ export function useUpdateCurrentSchoolProfile() {
       await queryClient.invalidateQueries({
         queryKey: queryKeys.profile.current(),
       });
+      toast.success("Profil sekolah berhasil diperbarui!");
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Gagal memperbarui profil sekolah.",
+      );
     },
   });
 }
@@ -55,10 +64,18 @@ export function useUpdateCurrentSppgProfile() {
   return useMutation({
     mutationFn: (input: UpdateCurrentSppgProfileInput) =>
       updateCurrentSppgProfile(input),
-    onSuccess: async () => {
+    onSuccess: async (data) => {
       await queryClient.invalidateQueries({
         queryKey: queryKeys.profile.sppg(),
       });
+      toast.success(data.message);
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Gagal memperbarui profil SPPG.",
+      );
     },
   });
 }
@@ -69,10 +86,18 @@ export function useUpdateCurrentAdminProfile() {
   return useMutation({
     mutationFn: (input: UpdateCurrentAdminProfileInput) =>
       updateCurrentAdminProfile(input),
-    onSuccess: async () => {
+    onSuccess: async (data) => {
       await queryClient.invalidateQueries({
         queryKey: queryKeys.profile.admin(),
       });
+      toast.success(data.message);
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Gagal memperbarui profil admin.",
+      );
     },
   });
 }

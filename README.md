@@ -1,36 +1,27 @@
-# Pagar Frontend
+# 🍽️ PaGar (Pantau Gizi & Anggaran) Frontend
 
-Pagar is a Next.js 16 frontend for a food and nutrition reporting platform. The UI language is Indonesian. This repository currently runs against a frontend-owned mock RPC layer while keeping a strict anti-corruption boundary through Zod DTO validation and domain mapping.
+PaGar is a modern web application built with **Next.js 16** and **React 19** serving as a food and nutrition reporting platform. The application promotes transparency in public nutrition programs and budget realization in Indonesia. 
 
-## Stack
+The frontend enforces a strict anti-corruption boundary through Zod DTO validation and domain mapping before feeding data into the application, guaranteeing resilience between the server API responses and the presentation layer, with schema-drift reporting.
 
-- Next.js 16 App Router
-- React 19
-- TypeScript
-- Tailwind CSS v4
-- shadcn/ui
-- TanStack Query
-- Zustand
-- react-hook-form + Zod
-- Biome
-- pnpm
+## 🚀 Tech Stack
 
-## Scripts
+- **Framework:** Next.js 16 (App Router)
+- **UI Library:** React 19, shadcn/ui, Tailwind CSS v4
+- **State Management:** TanStack Query v5 (Server State), Zustand (Client State)
+- **Forms & Validation:** React Hook Form, Zod v4
+- **Tooling:** Biome (Linting & Formatting), pnpm
 
-```bash
-pnpm dev
-pnpm build
-pnpm start
-pnpm format
-pnpm lint
-pnpm lint:strict
-```
+## 📦 Getting Started
 
-There is currently no test runner configured.
+### Prerequisites
 
-## Running Locally
+- Node.js (v18 or higher)
+- [pnpm](https://pnpm.io/installation) (v8 or higher)
 
-1. Install dependencies:
+### Installation
+
+1. Clone the repository and install dependencies:
 
 ```bash
 pnpm install
@@ -47,7 +38,7 @@ Set `PAGAR_API_BASE_URL` in `.env.local` to your backend origin.
 3. Start the app:
 
 ```bash
-pnpm dev
+cp .env.example .env.local
 ```
 
 4. Open `http://localhost:3000`.
@@ -105,103 +96,76 @@ Authentication currently uses:
 
 The session cookie is parsed and serialized in [`src/lib/auth/cookie.ts`](./src/lib/auth/cookie.ts).
 
-### Mock Credentials
+3. Start the development server:
 
-Use these accounts locally:
-
-- `admin.pagar` / `Admin123`
-- `sppg-berkah-nutrisi` / `Sppg1234`
-- `sdn-kauman-1` / `School123`
-- `warga.malang` / `Public123`
-
-### Important Limitation
-
-The auth backend is still mock-only.
-
-- login and registration run through [`src/rpc/auth.ts`](./src/rpc/auth.ts)
-- user records are stored in module memory, not a real database
-- new registrations are not a production-ready persistence model
-
-This means auth behavior is shaped like a real app boundary, but the backing store is temporary.
-
-## Architecture
-
-The main application flow is:
-
-```text
-Backend or Mock Source
--> RPC Layer
--> Zod Validation
--> DTO to Domain Mapping
--> Query Hook / Server Read
--> Container
--> Presentational Component
+```bash
+pnpm dev
 ```
 
-Core rules in this repo:
+4. Open [http://localhost:3000](http://localhost:3000) in your browser. The app serves a public landing page at the root route.
 
-- RPC functions validate and map before returning data.
-- Components in `src/components/` stay presentational.
-- Smart orchestration belongs in `src/containers/` and hooks.
-- Frontend-only mock modeling belongs in frontend-owned modules, not backend contract files.
-- `src/types/dto/index.ts` is treated as backend-owned contract space.
+## 🔐 Authentication & Seed Accounts
 
-## Project Structure
+Authentication interfaces with the real backend API, using server actions and server-owned session cookies (`src/lib/auth/` and `src/rpc/auth.ts`). Role-based route protection and navigation handling is governed by `src/proxy.ts`. 
+
+## 🏗️ Architecture & Data Flow
+
+The application enforces a strict **Anti-Corruption Layer (ACL)** to separate frontend domain models from backend data transfer objects (DTOs):
+
+```text
+Backend API -> RPC Layer Schema Validation (Zod) -> DTO to Domain Mapping -> TanStack Query -> Container -> Presentational Component
+```
+
+- **RPC Layer (`src/rpc/`):** Network calls utilizing the custom API client (`server-api-client.ts`). Validates and maps payload boundaries.
+- **Smart/Dumb Components:** 
+  - `src/components/`: Pure, presentational UI components.
+  - `src/containers/`: Smart components that handle orchestration, state, and data fetching.
+- **Contracts (`src/types/`):** Backend DTO schemas live in `src/types/` along with application domain models and mappers.
+
+
+## 🗂️ Project Structure
 
 ```text
 src/
-  app/          Next.js routes and layouts
-  components/   Presentational UI
-  containers/   Smart orchestration components
-  hooks/        Custom hooks
-  lib/          Shared utilities and auth module
-  rpc/          RPC layer and mock backend boundaries
-  types/        DTO schemas, domain types, and mappers
+├── app/          # Next.js App Router pages, layouts, and API routes
+├── components/   # Dumb/presentational UI components (including shadcn/ui)
+├── containers/   # Smart orchestration components handling data/logic
+├── hooks/        # Custom React hooks (TanStack Query, Zustand, etc.)
+├── lib/          # Utilities, formatters, auth logic, and query keys
+├── rpc/          # RPC layer for network calls, API client wrappers
+└── types/        # DTO schemas, domain models, and mappers
 ```
 
-Relevant current modules:
+## 🗺️ Route Overview
 
-- [`src/lib/auth/`](./src/lib/auth)
-- [`src/rpc/`](./src/rpc)
-- [`src/types/`](./src/types)
+- **Public:** 
+  - `/` (Landing Page)
+  - `/laporan-masyarakat`, `/laporan-sppg`, `/laporan-sppg/[id]`
+  - `/auth/masuk`, `/auth/daftar`, `/auth/lupa-kata-sandi`
+- **Protected (Public Role):** 
+  - `/profil`
+  - `/tambah-laporan`
+- **SPPG Dashboard:** 
+  - `/dashboard/sppg` (Main)
+  - `/dashboard/sppg/manajemen-laporan`
+  - `/dashboard/sppg/laporan-periodik`
+  - `/dashboard/sppg/laporan-publik`
+  - `/dashboard/sppg/profil`
+- **Admin Dashboard:** 
+  - `/dashboard/admin` (Main)
+  - `/dashboard/admin/kelola-akun`
+  - `/dashboard/admin/keluhan`
+  - `/dashboard/admin/profil`
 
-## RPC and Mock Data
+## 🛠️ Available Scripts
 
-The current RPC layer includes:
+| Command | Description |
+| :--- | :--- |
+| `pnpm dev` | Starts the Next.js development server with Turbopack |
+| `pnpm build` | Builds the app for production (includes type-checking) |
+| `pnpm start` | Runs the built production application |
+| `pnpm format` | Auto-formats code using Biome (`--write`) |
+| `pnpm lint` | Lints code using Biome |
+| `pnpm lint:strict` | Lints code using Biome and strictly errors on warnings |
 
-- [`src/rpc/auth.ts`](./src/rpc/auth.ts)
-- [`src/rpc/reports.ts`](./src/rpc/reports.ts)
-- [`src/rpc/profile.ts`](./src/rpc/profile.ts)
-- [`src/rpc/sppg-dashboard.ts`](./src/rpc/sppg-dashboard.ts)
-- [`src/rpc/admin-dashboard.ts`](./src/rpc/admin-dashboard.ts)
-- [`src/rpc/admin-accounts.ts`](./src/rpc/admin-accounts.ts)
-- [`src/rpc/periodic-reports.ts`](./src/rpc/periodic-reports.ts)
-
-Shared mock response shaping for non-auth areas lives in [`src/rpc/mock-backend.ts`](./src/rpc/mock-backend.ts).
-
-## UI Notes
-
-- The public header is session-aware and reads session data from the server layout.
-- Dashboard navigation is also session-aware.
-- `/laporan-masyarakat` is the effective unauthenticated landing surface.
-
-## Known Gaps
-
-These areas are still not fully production-ready:
-
-- auth still uses a mock in-memory user store
-- forgot-password is an honest placeholder, not a real recovery flow
-- profile update flows are still incomplete for some sppg and admin
-- several dashboard/report areas still use mock RPC data
-
-## Verification
-
-Before committing, run:
-
-```bash
-pnpm format
-pnpm lint
-pnpm build
-```
-
-The Husky pre-commit hook also runs `pnpm format && pnpm lint`.
+> **Note:** A Husky pre-commit hook runs `pnpm format && pnpm lint` automatically before every commit to ensure code quality.

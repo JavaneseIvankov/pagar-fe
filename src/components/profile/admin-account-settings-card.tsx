@@ -80,7 +80,7 @@ export function AdminAccountSettingsCard({
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isDirty, isSubmitting },
     reset,
   } = useForm<AdminAccountSettingsFormValues>({
     resolver: zodResolver(adminAccountSettingsSchema),
@@ -94,6 +94,10 @@ export function AdminAccountSettingsCard({
   });
 
   const handleFormSubmit = async (data: AdminAccountSettingsFormValues) => {
+    if (!isDirty) {
+      return;
+    }
+
     await onSubmit(data);
     setIsEditing(false);
     reset({
@@ -256,7 +260,10 @@ export function AdminAccountSettingsCard({
               <Button
                 type="button"
                 className="w-full bg-green-600 text-white hover:bg-green-700"
-                onClick={() => setIsEditing(true)}
+                onClick={(event) => {
+                  event.preventDefault();
+                  setIsEditing(true);
+                }}
               >
                 Edit Profil Admin
               </Button>
@@ -265,7 +272,7 @@ export function AdminAccountSettingsCard({
                 <Button
                   type="submit"
                   className="w-full bg-green-600 text-white hover:bg-green-700"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !isDirty}
                 >
                   Simpan Perubahan
                 </Button>

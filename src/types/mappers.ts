@@ -242,6 +242,12 @@ function hasAttachmentMetadata(
   );
 }
 
+const getReporterName = (dto: DashboardReviewMapperInput): string => {
+  if (dto.is_anonymous) return "Anonim";
+  if (dto.school) return dto.school.school_name;
+  return "Anonim";
+};
+
 export function mapPublicDashboardReviewDtoToDomain(
   dto: DashboardReviewMapperInput,
 ): TPublicReview {
@@ -254,7 +260,7 @@ export function mapPublicDashboardReviewDtoToDomain(
     imageUrl,
     postedAt: new Date(dto.createdAt ?? new Date().toISOString()),
     ratingScore: dto.rating_score ?? 0,
-    reporterName: dto.display_author.split("-")[0] ?? "Anonim",
+    reporterName: getReporterName(dto),
     forSppg: createReviewTarget({
       id: dto.id_sppg,
       name: sppgName,

@@ -76,17 +76,25 @@ export function PublicCreateReportContainer({
   );
 
   useEffect(() => {
-    if (
-      !initialSppgId ||
-      selectedSppgId ||
-      !reviewSubmissionContextQuery.data?.targets.some(
-        (target) => target.id === initialSppgId,
-      )
-    ) {
+    if (!initialSppgId || selectedSppgId) {
       return;
     }
 
-    setValue("sppgId", initialSppgId, {
+    const normalizedInitialId = initialSppgId.trim();
+
+    if (!normalizedInitialId) {
+      return;
+    }
+
+    const hasTarget = reviewSubmissionContextQuery.data?.targets.some(
+      (target) => String(target.id) === normalizedInitialId,
+    );
+
+    if (!hasTarget) {
+      return;
+    }
+
+    setValue("sppgId", normalizedInitialId, {
       shouldDirty: false,
       shouldValidate: true,
     });

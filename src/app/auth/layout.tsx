@@ -1,5 +1,5 @@
 "use client";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { MOTION_TRANSITIONS } from "@/lib/motion/tokens";
@@ -64,42 +64,38 @@ export default function AuthLayout({
 
   return (
     <div className="grid min-h-dvh w-full grid-cols-1 bg-background md:grid-cols-2">
-      <section className="auth-thumbnail relative top-0 left-0 max-h-[10dvh] min-h-[240px] overflow-hidden bg-primary md:sticky md:min-h-dvh">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={content.image}
-            className="absolute inset-0"
-            initial={{ opacity: 0, scale: 1.02 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.01 }}
-            transition={MOTION_TRANSITIONS.baseOut}
-          >
-            <Image
-              src={content.image}
-              alt="Authentication background"
-              fill
-              className="object-cover object-center"
-              priority
-            />
-          </motion.div>
-        </AnimatePresence>
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={pathname}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={MOTION_TRANSITIONS.baseOut}
-            className="absolute inset-x-0 bottom-0 z-10 px-4 pb-6 text-white sm:px-6 sm:pb-8 md:right-10 md:bottom-24 md:left-10 md:px-0 md:pb-0"
-          >
-            <h1 className="max-w-xl text-balance text-h3 sm:text-h2 xl:text-h1">
-              {content.title}
-            </h1>
-            <p className="mt-3 max-w-2xl text-body-4 sm:text-body-3 md:max-w-xl">
-              {content.subtitle}
-            </p>
-          </motion.div>
-        </AnimatePresence>
+      <section className="auth-thumbnail relative max-h-[10dvh] min-h-[240px] overflow-hidden bg-primary md:min-h-dvh">
+        <motion.div
+          key={content.image}
+          className="absolute inset-0"
+          initial={{ opacity: 0, scale: 1.02 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 1.01 }}
+          transition={MOTION_TRANSITIONS.baseOut}
+        >
+          <Image
+            src={content.image}
+            alt="Authentication background"
+            fill
+            className="object-cover object-center"
+            priority
+          />
+        </motion.div>
+        <motion.div
+          key={pathname}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={MOTION_TRANSITIONS.baseOut}
+          className="absolute inset-x-0 bottom-0 z-10 px-4 pb-6 text-white sm:px-6 sm:pb-8 md:right-10 md:bottom-24 md:left-10 md:px-0 md:pb-0"
+        >
+          <h1 className="max-w-xl text-balance text-h3 sm:text-h2 xl:text-h1">
+            {content.title}
+          </h1>
+          <p className="mt-3 max-w-2xl text-body-4 sm:text-body-3 md:max-w-xl">
+            {content.subtitle}
+          </p>
+        </motion.div>
         <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black/85 via-black/45 to-transparent md:h-1/2" />
       </section>
       <section className="flex items-center justify-center px-4 pt-8 pb-[10dvh] sm:px-6 sm:py-10 md:min-h-dvh md:px-8 md:pb-8 xl:px-12">

@@ -15,7 +15,10 @@ import { REPORT_LIST_PAGE_SIZE } from "@/lib/pagination/constants";
 
 export function SppgReportContainer() {
   const isMobile = useIsMobile();
-  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
+  const [page, setPage] = useQueryState(
+    "page",
+    parseAsInteger.withDefault(1).withOptions({ scroll: false }),
+  );
   const [search] = useQueryState("search", { defaultValue: "" });
   const previousSearchRef = useRef(search);
 

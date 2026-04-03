@@ -38,6 +38,7 @@ export function ReportTabs({ className }: { className?: string }) {
           ) : null}
           <Link
             href="/laporan-masyarakat"
+            scroll={false}
             className="flex min-w-0 items-center justify-center gap-2 text-center"
           >
             <PeopleIcon />
@@ -58,6 +59,7 @@ export function ReportTabs({ className }: { className?: string }) {
           ) : null}
           <Link
             href="/laporan-sppg"
+            scroll={false}
             className="flex min-w-0 items-center justify-center gap-2 text-center"
           >
             <HugeiconsIcon

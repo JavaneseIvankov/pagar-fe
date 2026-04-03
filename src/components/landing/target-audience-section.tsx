@@ -113,7 +113,7 @@ export function TargetAudienceSection() {
                       key={item}
                       className="flex items-start gap-3 text-neutral-600 text-sm leading-tight"
                     >
-                      <CheckCircleIcon className="mt-0.5 size-4 shrink-0 text-green-500" />
+                      <CheckCircleIcon className="mt-0.5 shrink-0 text-green-500" />
                       <span>{item}</span>
                     </li>
                   ))}

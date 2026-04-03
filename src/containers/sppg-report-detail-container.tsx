@@ -1,5 +1,6 @@
 "use client";
 
+import { SppgReportAttachmentsCard } from "@/components/sppg-report-detail/sppg-report-attachments-card";
 import { SppgReportBudgetCard } from "@/components/sppg-report-detail/sppg-report-budget-card";
 import { SppgReportDetailLayout } from "@/components/sppg-report-detail/sppg-report-detail-layout";
 import { SppgReportDetailSkeleton } from "@/components/sppg-report-detail/sppg-report-detail-skeleton";
@@ -38,6 +39,11 @@ export function SppgReportDetailContainer({
       }
       budget={
         report.budget ? <SppgReportBudgetCard budget={report.budget} /> : null
+      }
+      attachments={
+        report.budget?.attachments?.length > 0 ? (
+          <SppgReportAttachmentsCard attachments={report.budget.attachments} />
+        ) : null
       }
       vendor={<SppgReportVendorCard vendor={report.author} />}
       related={

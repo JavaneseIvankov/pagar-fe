@@ -30,7 +30,7 @@ export function SppgReportRelatedReports({
               </div>
               <div className="flex h-full w-full min-w-0 flex-col justify-center">
                 <div className="mb-1 font-semibold text-primary text-xs uppercase tracking-wider">
-                  {report.mealTime}
+                  {report.author.username}
                 </div>
                 <div className="mb-1 line-clamp-1 font-bold text-foreground text-sm leading-tight">
                   {report.title}

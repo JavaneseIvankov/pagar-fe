@@ -22,7 +22,7 @@ export function SppgReportAttachmentsCard({
   return (
     <SppgDetailSectionCard>
       <SppgDetailSectionHeader
-        title="Bukti Laporan Anggaran"
+        title="Lampiran"
         icon={
           <HugeiconsIcon
             icon={Attachment01Icon}

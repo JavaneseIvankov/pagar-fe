@@ -1,4 +1,4 @@
-import { z } from 'zod/v3';
+import { z } from "zod/v3";
 
 const isValidDateOnly = (value: string) => {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
@@ -21,19 +21,19 @@ const isValidDateOnly = (value: string) => {
 };
 
 const emptyStringToUndefined = (value: unknown) =>
-  typeof value === 'string' && value.trim() === '' ? undefined : value;
+  typeof value === "string" && value.trim() === "" ? undefined : value;
 
 const dateOnlySchema = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/)
   .refine(isValidDateOnly, {
-    message: 'Invalid date',
+    message: "Invalid date",
   });
 const uuidSchema = z.string().uuid();
 const numericStringSchema = z.string().regex(/^-?\d+$/);
 const moneyResponseSchema = z.union([z.number().int(), numericStringSchema]);
-const successStatusSchema = z.literal('success');
-const errorStatusSchema = z.literal('error');
+const successStatusSchema = z.literal("success");
+const errorStatusSchema = z.literal("error");
 const timestampFields = {
   createdAt: z.string(),
   updatedAt: z.string(),
@@ -50,7 +50,7 @@ const successDataMetaEnvelope = <
   M extends z.ZodTypeAny,
 >(
   data: T,
-  meta: M
+  meta: M,
 ) =>
   z.object({
     status: successStatusSchema,
@@ -80,7 +80,9 @@ const statusErrorResponseSchema = z
   .object({
     status: errorStatusSchema,
     message: z.string(),
-    errors: z.union([z.array(z.string()), z.array(fieldErrorSchema)]).optional(),
+    errors: z
+      .union([z.array(z.string()), z.array(fieldErrorSchema)])
+      .optional(),
     stack: z.string().optional(),
   })
   .passthrough();
@@ -95,19 +97,19 @@ const authHeaderSchema = z.object({
 });
 
 const emptyObjectSchema = z.object({});
-const roleSchema = z.enum(['ADMIN', 'PUBLIC', 'SCHOOL', 'SPPG']);
-const accountStatusSchema = z.enum(['PENDING', 'APPROVED', 'REJECTED']);
-const reviewStatusSchema = z.enum(['MENUNGGU', 'INVESTIGASI', 'SELESAI']);
-const schoolOrSppgRoleSchema = z.enum(['SPPG', 'SCHOOL']);
-const accountDecisionSchema = z.enum(['APPROVED', 'REJECTED']);
+const roleSchema = z.enum(["ADMIN", "PUBLIC", "SCHOOL", "SPPG"]);
+const accountStatusSchema = z.enum(["PENDING", "APPROVED", "REJECTED"]);
+const reviewStatusSchema = z.enum(["MENUNGGU", "INVESTIGASI", "SELESAI"]);
+const schoolOrSppgRoleSchema = z.enum(["SPPG", "SCHOOL"]);
+const accountDecisionSchema = z.enum(["APPROVED", "REJECTED"]);
 const reviewRatingSchema = z.coerce.number().int().min(1).max(5);
 const requiredNumberInputSchema = z.preprocess(
   emptyStringToUndefined,
-  z.coerce.number()
+  z.coerce.number(),
 );
 const requiredPositiveIntInputSchema = z.preprocess(
   emptyStringToUndefined,
-  z.coerce.number().int().positive()
+  z.coerce.number().int().positive(),
 );
 
 const attachmentEntitySchema = z.object({
@@ -183,19 +185,25 @@ const userEntitySchema = z.object({
   account_status: accountStatusSchema,
 });
 
-const uploadMimeTypeSchema = z.enum(['image/jpeg', 'image/png', 'image/webp']);
+const uploadMimeTypeSchema = z.enum(["image/jpeg", "image/png", "image/webp"]);
 const uploadAttachmentFileSchema = z
   .object({
-    fieldname: z.literal('attachments').optional(),
+    fieldname: z.literal("attachments").optional(),
     mimetype: uploadMimeTypeSchema,
-    size: z.number().int().max(3 * 1024 * 1024),
+    size: z
+      .number()
+      .int()
+      .max(3 * 1024 * 1024),
     originalname: z.string().optional(),
     filename: z.string().optional(),
     path: z.string().optional(),
   })
   .passthrough();
 
-const attachmentsFilesSchema = z.array(uploadAttachmentFileSchema).max(2).optional();
+const attachmentsFilesSchema = z
+  .array(uploadAttachmentFileSchema)
+  .max(2)
+  .optional();
 
 const userPublicDataSchema = userEntitySchema.pick({
   id_user: true,
@@ -280,7 +288,7 @@ const adminProfileDataSchema = z.object({
   name: z.string().nullish(),
   username: z.string(),
   email: z.string().email(),
-  role: z.literal('ADMIN'),
+  role: z.literal("ADMIN"),
 });
 const publicProfileDataSchema = z.object({
   username: z.string(),
@@ -302,11 +310,13 @@ const adminSppgItemSchema = sppgEntitySchema.extend(timestampFields).extend({
   }),
 });
 
-const adminSchoolItemSchema = schoolEntitySchema.extend(timestampFields).extend({
-  user: z.object({
-    account_status: accountStatusSchema,
-  }),
-});
+const adminSchoolItemSchema = schoolEntitySchema
+  .extend(timestampFields)
+  .extend({
+    user: z.object({
+      account_status: accountStatusSchema,
+    }),
+  });
 
 const publicDashboardReviewItemSchema = reviewRecordSchema.extend({
   school: schoolNameOnlySchema.nullish(),
@@ -329,10 +339,12 @@ const dailyReportWithSppgSchema = dailyReportRecordSchema.extend({
   sppg: sppgNameAddressSchema,
 });
 
-const dailyReportWithBudgetAndAttachmentSchema = dailyReportRecordSchema.extend({
-  budgets: z.array(budgetRecordSchema),
-  attachments: z.array(attachmentRecordSchema),
-});
+const dailyReportWithBudgetAndAttachmentSchema = dailyReportRecordSchema.extend(
+  {
+    budgets: z.array(budgetRecordSchema),
+    attachments: z.array(attachmentRecordSchema),
+  },
+);
 
 const dailyReportForDashboardSchema = dailyReportRecordSchema.extend({
   sppg: sppgNameAddressSchema,
@@ -358,11 +370,14 @@ const sppgReviewDetailSchema = z.object({
 
 const budgetInputItemSchema = z.object({
   item_name: z.string().min(1),
-  item_price: z.coerce.number().int().refine(value => value !== 0),
+  item_price: z.coerce
+    .number()
+    .int()
+    .refine((value) => value !== 0),
 });
 
-const dailyReportBudgetsInputSchema = z.preprocess(value => {
-  if (typeof value !== 'string') {
+const dailyReportBudgetsInputSchema = z.preprocess((value) => {
+  if (typeof value !== "string") {
     return value;
   }
 
@@ -395,7 +410,7 @@ const reportPaginationSchema = z.object({
 const sppgDashboardDataSchema = z.object({
   sppg_name: z.string(),
   widgets: z.object({
-    status_hari_ini: z.enum(['SELESAI', 'BELUM']),
+    status_hari_ini: z.enum(["SELESAI", "BELUM"]),
     rata_rata_kalori: z.number(),
     sisa_anggaran: z.number().nullish(),
     total_laporan_masyarakat: z.number().int(),
@@ -405,7 +420,7 @@ const sppgDashboardDataSchema = z.object({
     reviewRecordSchema.extend({
       school: schoolNameOnlySchema.nullish(),
       attachments: z.array(attachmentUrlOnlySchema),
-    })
+    }),
   ),
 });
 
@@ -421,14 +436,14 @@ const adminDashboardDataSchema = z.object({
       user: z.object({
         username: z.string(),
       }),
-    })
+    }),
   ),
   vendor_warnings: z.array(
     z.object({
       nama_vendor: z.string(),
       rating: z.number(),
       jumlah_laporan: z.number().int(),
-    })
+    }),
   ),
 });
 
@@ -442,7 +457,7 @@ const periodicReportsDataSchema = z.object({
   reports: z.array(
     dailyReportRecordSchema.extend({
       budgets: z.array(budgetRecordSchema),
-    })
+    }),
   ),
 });
 
@@ -458,9 +473,10 @@ export const paginatedListQuerySchema = z.object({
   page: z.coerce.number().int().positive().optional(),
   limit: z.coerce.number().int().positive().optional(),
 });
-export const searchablePaginatedListQuerySchema = paginatedListQuerySchema.extend({
-  search: z.string().optional(),
-});
+export const searchablePaginatedListQuerySchema =
+  paginatedListQuerySchema.extend({
+    search: z.string().optional(),
+  });
 export const schoolPaginatedListQuerySchema = z.object({
   page: z.coerce.number().int().positive().optional(),
   limit: z.coerce.number().int().min(1).max(100).optional(),
@@ -480,8 +496,8 @@ export const registerPublicSuccessResponseSchema = successMessageDataEnvelope(
   z.object({
     id_user: uuidSchema,
     username: z.string(),
-    role: z.literal('PUBLIC'),
-  })
+    role: z.literal("PUBLIC"),
+  }),
 );
 export const registerPublicErrorResponseSchema = statusErrorResponseSchema;
 
@@ -498,8 +514,8 @@ export const registerSchoolSuccessResponseSchema = successMessageDataEnvelope(
   z.object({
     id_user: uuidSchema,
     username: z.string(),
-    role: z.literal('SCHOOL'),
-  })
+    role: z.literal("SCHOOL"),
+  }),
 );
 export const registerSchoolErrorResponseSchema = statusErrorResponseSchema;
 
@@ -516,8 +532,8 @@ export const registerSppgSuccessResponseSchema = successMessageDataEnvelope(
   z.object({
     id_user: uuidSchema,
     username: z.string(),
-    role: z.literal('SPPG'),
-  })
+    role: z.literal("SPPG"),
+  }),
 );
 export const registerSppgErrorResponseSchema = statusErrorResponseSchema;
 
@@ -530,7 +546,7 @@ export const loginSuccessResponseSchema = successMessageDataEnvelope(
   z.object({
     token: z.string(),
     user: loginUserDataSchema,
-  })
+  }),
 );
 export const loginErrorResponseSchema = statusErrorResponseSchema;
 
@@ -558,23 +574,21 @@ export const resetPasswordSuccessResponseSchema = z.object({
 });
 export const resetPasswordErrorResponseSchema = messageOnlyErrorSchema;
 
-export const getPendingAccountsSuccessResponseSchema = paginatedSuccessDataEnvelope(
-  z.array(pendingAccountItemSchema)
-);
+export const getPendingAccountsSuccessResponseSchema =
+  paginatedSuccessDataEnvelope(z.array(pendingAccountItemSchema));
 export const getPendingAccountsErrorResponseSchema = statusErrorResponseSchema;
 
-export const getActiveAccountsSuccessResponseSchema = paginatedSuccessDataEnvelope(
-  z.array(activeAccountItemSchema)
-);
+export const getActiveAccountsSuccessResponseSchema =
+  paginatedSuccessDataEnvelope(z.array(activeAccountItemSchema));
 export const getActiveAccountsErrorResponseSchema = statusErrorResponseSchema;
 
 export const getAllSppgSuccessResponseSchema = paginatedSuccessDataEnvelope(
-  z.array(adminSppgItemSchema)
+  z.array(adminSppgItemSchema),
 );
 export const getAllSppgErrorResponseSchema = statusErrorResponseSchema;
 
 export const getAllSchoolSuccessResponseSchema = paginatedSuccessDataEnvelope(
-  z.array(adminSchoolItemSchema)
+  z.array(adminSchoolItemSchema),
 );
 export const getAllSchoolErrorResponseSchema = statusErrorResponseSchema;
 
@@ -586,12 +600,13 @@ export const updateAccountStatusBodySchema = z.object({
   status: accountDecisionSchema,
 });
 
-export const updateAccountStatusSuccessResponseSchema = successMessageDataEnvelope(
-  z.object({
-    id_user: uuidSchema,
-    account_status: accountStatusSchema,
-  })
-);
+export const updateAccountStatusSuccessResponseSchema =
+  successMessageDataEnvelope(
+    z.object({
+      id_user: uuidSchema,
+      account_status: accountStatusSchema,
+    }),
+  );
 export const updateAccountStatusErrorResponseSchema = statusErrorResponseSchema;
 
 export const updateAdminProfileBodySchema = z.object({
@@ -601,23 +616,24 @@ export const updateAdminProfileBodySchema = z.object({
   password: z.string().min(6).optional(),
 });
 
-export const updateAdminProfileSuccessResponseSchema = successMessageDataEnvelope(
-  z.object({
-    id_user: uuidSchema,
-    name: z.string().nullish(),
-    username: z.string(),
-    email: z.string().email(),
-  })
-);
+export const updateAdminProfileSuccessResponseSchema =
+  successMessageDataEnvelope(
+    z.object({
+      id_user: uuidSchema,
+      name: z.string().nullish(),
+      username: z.string(),
+      email: z.string().email(),
+    }),
+  );
 export const updateAdminProfileErrorResponseSchema = statusErrorResponseSchema;
 
 export const getAdminProfileSuccessResponseSchema = successDataEnvelope(
-  adminProfileDataSchema
+  adminProfileDataSchema,
 );
 export const getAdminProfileErrorResponseSchema = statusErrorResponseSchema;
 
 export const getAdminDashboardSuccessResponseSchema = successDataEnvelope(
-  adminDashboardDataSchema
+  adminDashboardDataSchema,
 );
 export const getAdminDashboardErrorResponseSchema = statusErrorResponseSchema;
 
@@ -629,13 +645,12 @@ export const updateReviewStatusBodySchema = z.object({
   status_review: reviewStatusSchema,
 });
 
-export const updateReviewStatusSuccessResponseSchema = successMessageDataEnvelope(
-  reviewRecordSchema
-);
+export const updateReviewStatusSuccessResponseSchema =
+  successMessageDataEnvelope(reviewRecordSchema);
 export const updateReviewStatusErrorResponseSchema = statusErrorResponseSchema;
 
 export const getPublicSppgListSuccessResponseSchema = successDataEnvelope(
-  z.array(sppgListItemSchema)
+  z.array(sppgListItemSchema),
 );
 export const getPublicSppgListErrorResponseSchema = messageOnlyErrorSchema;
 
@@ -649,26 +664,27 @@ export const createPublicReviewBodySchema = z.object({
 export const createPublicReviewFilesSchema = attachmentsFilesSchema;
 
 export const createPublicReviewSuccessResponseSchema = successDataEnvelope(
-  createReviewRecordSchema
+  createReviewRecordSchema,
 );
 export const createPublicReviewErrorResponseSchema = messageOnlyErrorSchema;
 
 export const getPublicProfileSuccessResponseSchema = successDataEnvelope(
-  publicProfileDataSchema
+  publicProfileDataSchema,
 );
 export const getPublicProfileErrorResponseSchema = statusErrorResponseSchema;
 
 export const getPublicDashboardReviewsSuccessResponseSchema =
   successDataMetaEnvelope(
     z.array(publicDashboardReviewItemSchema),
-    schoolPaginationMetaSchema
+    schoolPaginationMetaSchema,
   );
-export const getPublicDashboardReviewsErrorResponseSchema = messageOnlyErrorSchema;
+export const getPublicDashboardReviewsErrorResponseSchema =
+  messageOnlyErrorSchema;
 
 export const getPublicDashboardSppgReportsSuccessResponseSchema =
   successDataMetaEnvelope(
     z.array(dailyReportForDashboardSchema),
-    schoolPaginationMetaSchema
+    schoolPaginationMetaSchema,
   );
 export const getPublicDashboardSppgReportsErrorResponseSchema =
   messageOnlyErrorSchema;
@@ -678,7 +694,7 @@ export const getDetailSppgReportParamsSchema = z.object({
 });
 
 export const getDetailSppgReportSuccessResponseSchema = successDataEnvelope(
-  publicDailyReportDetailSchema
+  publicDailyReportDetailSchema,
 );
 export const getDetailSppgReportErrorResponseSchema = messageOnlyErrorSchema;
 
@@ -686,13 +702,13 @@ export const getSchoolDetailSppgReportParamsSchema = z.object({
   id_daily_report: uuidSchema,
 });
 
-export const getSchoolDetailSppgReportSuccessResponseSchema = successDataEnvelope(
-  publicDailyReportDetailSchema
-);
-export const getSchoolDetailSppgReportErrorResponseSchema = messageOnlyErrorSchema;
+export const getSchoolDetailSppgReportSuccessResponseSchema =
+  successDataEnvelope(publicDailyReportDetailSchema);
+export const getSchoolDetailSppgReportErrorResponseSchema =
+  messageOnlyErrorSchema;
 
 export const getSchoolProfileSuccessResponseSchema = successDataEnvelope(
-  schoolProfileDataSchema
+  schoolProfileDataSchema,
 );
 export const getSchoolProfileErrorResponseSchema = messageOnlyErrorSchema;
 
@@ -701,21 +717,21 @@ export const updateSchoolProfileBodySchema = z.object({
   school_address: z.string().min(1),
 });
 
-export const updateSchoolProfileSuccessResponseSchema = successMessageDataEnvelope(
-  schoolProfileDataSchema
-);
+export const updateSchoolProfileSuccessResponseSchema =
+  successMessageDataEnvelope(schoolProfileDataSchema);
 export const updateSchoolProfileErrorResponseSchema = messageOnlyErrorSchema;
 
 export const getSchoolSppgListSuccessResponseSchema = successDataMetaEnvelope(
   z.array(sppgListItemSchema),
-  schoolPaginationMetaSchema
+  schoolPaginationMetaSchema,
 );
 export const getSchoolSppgListErrorResponseSchema = messageOnlyErrorSchema;
 
-export const getSchoolDailyReportsSuccessResponseSchema = successDataMetaEnvelope(
-  z.array(dailyReportWithSppgSchema),
-  schoolPaginationMetaSchema
-);
+export const getSchoolDailyReportsSuccessResponseSchema =
+  successDataMetaEnvelope(
+    z.array(dailyReportWithSppgSchema),
+    schoolPaginationMetaSchema,
+  );
 export const getSchoolDailyReportsErrorResponseSchema = messageOnlyErrorSchema;
 
 export const createSchoolReviewBodySchema = z.object({
@@ -727,28 +743,29 @@ export const createSchoolReviewBodySchema = z.object({
 
 export const createSchoolReviewFilesSchema = attachmentsFilesSchema;
 
-export const createSchoolReviewSuccessResponseSchema = successMessageDataEnvelope(
-  createReviewRecordSchema
-);
+export const createSchoolReviewSuccessResponseSchema =
+  successMessageDataEnvelope(createReviewRecordSchema);
 export const createSchoolReviewErrorResponseSchema = messageOnlyErrorSchema;
 
-export const getSchoolDashboardReviewsSuccessResponseSchema = successDataMetaEnvelope(
-  z.array(schoolDashboardReviewItemSchema),
-  schoolPaginationMetaSchema
-);
-export const getSchoolDashboardReviewsErrorResponseSchema = messageOnlyErrorSchema;
+export const getSchoolDashboardReviewsSuccessResponseSchema =
+  successDataMetaEnvelope(
+    z.array(schoolDashboardReviewItemSchema),
+    schoolPaginationMetaSchema,
+  );
+export const getSchoolDashboardReviewsErrorResponseSchema =
+  messageOnlyErrorSchema;
 
 export const getSchoolDashboardSppgReportsSuccessResponseSchema =
   successDataMetaEnvelope(
     z.array(dailyReportForDashboardSchema),
-    schoolPaginationMetaSchema
+    schoolPaginationMetaSchema,
   );
 export const getSchoolDashboardSppgReportsErrorResponseSchema =
   messageOnlyErrorSchema;
 
 export const getSppgReviewsSuccessResponseSchema = successDataMetaEnvelope(
   z.array(sppgReviewDetailSchema),
-  schoolPaginationMetaSchema
+  schoolPaginationMetaSchema,
 );
 export const getSppgReviewsErrorResponseSchema = z.union([
   statusErrorResponseSchema,
@@ -760,7 +777,7 @@ export const getSppgReviewDetailParamsSchema = z.object({
 });
 
 export const getSppgReviewDetailSuccessResponseSchema = successDataEnvelope(
-  sppgReviewDetailSchema
+  sppgReviewDetailSchema,
 );
 export const getSppgReviewDetailErrorResponseSchema = z.union([
   statusErrorResponseSchema,
@@ -768,7 +785,7 @@ export const getSppgReviewDetailErrorResponseSchema = z.union([
 ]);
 
 export const getSppgProfileSuccessResponseSchema = successDataEnvelope(
-  sppgProfileDataSchema
+  sppgProfileDataSchema,
 );
 export const getSppgProfileErrorResponseSchema = statusErrorResponseSchema;
 
@@ -777,13 +794,12 @@ export const updateSppgProfileBodySchema = z.object({
   sppg_address: z.string().optional(),
 });
 
-export const updateSppgProfileSuccessResponseSchema = successMessageDataEnvelope(
-  sppgEntitySchema.extend(timestampFields)
-);
+export const updateSppgProfileSuccessResponseSchema =
+  successMessageDataEnvelope(sppgEntitySchema.extend(timestampFields));
 export const updateSppgProfileErrorResponseSchema = statusErrorResponseSchema;
 
 export const getSppgDashboardSuccessResponseSchema = successDataEnvelope(
-  sppgDashboardDataSchema
+  sppgDashboardDataSchema,
 );
 export const getSppgDashboardErrorResponseSchema = statusErrorResponseSchema;
 
@@ -791,7 +807,7 @@ export const getSppgDailyReportsSuccessResponseSchema = successDataEnvelope(
   z.object({
     pagination: reportPaginationSchema,
     reports: z.array(dailyReportWithBudgetAndAttachmentSchema),
-  })
+  }),
 );
 export const getSppgDailyReportsErrorResponseSchema = statusErrorResponseSchema;
 
@@ -815,9 +831,10 @@ export const createSppgDailyReportSuccessResponseSchema =
     z.object({
       id_daily_report: uuidSchema,
       total_expense: z.number().int(),
-    })
+    }),
   );
-export const createSppgDailyReportErrorResponseSchema = statusErrorResponseSchema;
+export const createSppgDailyReportErrorResponseSchema =
+  statusErrorResponseSchema;
 
 export const getSppgPeriodicReportsQuerySchema = z.object({
   start_date: dateOnlySchema,
@@ -827,7 +844,7 @@ export const getSppgPeriodicReportsQuerySchema = z.object({
 });
 
 export const getSppgPeriodicReportsSuccessResponseSchema = successDataEnvelope(
-  periodicReportsDataSchema
+  periodicReportsDataSchema,
 );
 export const getSppgPeriodicReportsErrorResponseSchema =
   statusErrorResponseSchema;
@@ -837,7 +854,7 @@ export const getSppgDailyReportByIdParamsSchema = z.object({
 });
 
 export const getSppgDailyReportByIdSuccessResponseSchema = successDataEnvelope(
-  dailyReportWithBudgetAndAttachmentSchema
+  dailyReportWithBudgetAndAttachmentSchema,
 );
 export const getSppgDailyReportByIdErrorResponseSchema =
   statusErrorResponseSchema;
@@ -859,12 +876,28 @@ export type RegisterSppgBody = z.infer<typeof registerSppgBodySchema>;
 export type LoginBody = z.infer<typeof loginBodySchema>;
 export type ForgotPasswordBody = z.infer<typeof forgotPasswordBodySchema>;
 export type ResetPasswordBody = z.infer<typeof resetPasswordBodySchema>;
-export type UpdateAccountStatusBody = z.infer<typeof updateAccountStatusBodySchema>;
-export type UpdateAdminProfileBody = z.infer<typeof updateAdminProfileBodySchema>;
-export type UpdateReviewStatusBody = z.infer<typeof updateReviewStatusBodySchema>;
-export type CreatePublicReviewBody = z.infer<typeof createPublicReviewBodySchema>;
-export type UpdateSchoolProfileBody = z.infer<typeof updateSchoolProfileBodySchema>;
-export type CreateSchoolReviewBody = z.infer<typeof createSchoolReviewBodySchema>;
+export type UpdateAccountStatusBody = z.infer<
+  typeof updateAccountStatusBodySchema
+>;
+export type UpdateAdminProfileBody = z.infer<
+  typeof updateAdminProfileBodySchema
+>;
+export type UpdateReviewStatusBody = z.infer<
+  typeof updateReviewStatusBodySchema
+>;
+export type CreatePublicReviewBody = z.infer<
+  typeof createPublicReviewBodySchema
+>;
+export type UpdateSchoolProfileBody = z.infer<
+  typeof updateSchoolProfileBodySchema
+>;
+export type CreateSchoolReviewBody = z.infer<
+  typeof createSchoolReviewBodySchema
+>;
 export type UpdateSppgProfileBody = z.infer<typeof updateSppgProfileBodySchema>;
-export type CreateSppgDailyReportBody = z.infer<typeof createSppgDailyReportBodySchema>;
-export type UpdateSppgMonthlyBudgetBody = z.infer<typeof updateSppgMonthlyBudgetBodySchema>;
+export type CreateSppgDailyReportBody = z.infer<
+  typeof createSppgDailyReportBodySchema
+>;
+export type UpdateSppgMonthlyBudgetBody = z.infer<
+  typeof updateSppgMonthlyBudgetBodySchema
+>;

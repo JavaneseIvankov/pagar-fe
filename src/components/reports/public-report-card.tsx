@@ -3,15 +3,20 @@ import StarRating from "@/components/reports/star-rating";
 import { Avatar } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { formatShortDate } from "@/lib/formatters";
-import type { TPublicReview } from "@/types";
+import type { TPublicReview, TSppgReview } from "@/types";
 import { AvatarFallbackIcon } from "../avatar-fallback-icon";
 
 export interface PublicReportCardProps {
-  review: TPublicReview;
+  review: TPublicReview | TSppgReview;
+  showSppgName?: boolean;
 }
 
-export function PublicReportCard({ review }: PublicReportCardProps) {
+export function PublicReportCard({
+  review,
+  showSppgName = true,
+}: PublicReportCardProps) {
   const author = review.reporterName;
+  const sppgName = "forSppg" in review ? review.forSppg.sppgName : null;
 
   return (
     <Card className="@container card-surface group w-full overflow-hidden @[40px]:rounded-[24px] rounded-[20px]">
@@ -48,9 +53,11 @@ export function PublicReportCard({ review }: PublicReportCardProps) {
               {review.ratingScore}/5
             </span>
           </div>
-          <p className="line-clamp-2 break-words @[40px]:text-right font-semibold @[40px]:text-sm text-foreground/80 text-xs leading-snug">
-            {review.forSppg.sppgName}
-          </p>
+          {showSppgName && sppgName ? (
+            <p className="line-clamp-2 break-words @[40px]:text-right font-semibold @[40px]:text-sm text-foreground/80 text-xs leading-snug">
+              {sppgName}
+            </p>
+          ) : null}
         </div>
 
         <div className="flex flex-col @[40px]:gap-2 gap-1.5">

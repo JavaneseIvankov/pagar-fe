@@ -29,6 +29,12 @@ export const queryKeys = {
         params.search ?? "",
       ] as const,
   },
+  sppgReviews: {
+    list: (params: { limit: number; page: number }) =>
+      ["sppg-reviews", "list", params.page, params.limit] as const,
+    infinite: (params: { limit: number }) =>
+      ["sppg-reviews", "infinite", params.limit] as const,
+  },
   reviewSubmission: {
     context: () => ["review-submission", "context"] as const,
   },

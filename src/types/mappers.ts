@@ -17,6 +17,7 @@ import type {
   getSppgDashboardSuccessResponseSchema,
   getSppgPeriodicReportsSuccessResponseSchema,
   getSppgProfileSuccessResponseSchema,
+  getSppgReviewsSuccessResponseSchema,
   loginSuccessResponseSchema,
   registerPublicSuccessResponseSchema,
   registerSchoolSuccessResponseSchema,
@@ -46,6 +47,7 @@ import type {
   TSppgReport,
   TSppgReportDetail,
   TSppgReportSummary,
+  TSppgReview,
   TSppgStatistics,
 } from "./ui";
 
@@ -56,6 +58,9 @@ type PublicDashboardReviewItem =
   | z.infer<
       typeof getSchoolDashboardReviewsSuccessResponseSchema
     >["data"][number];
+type SppgReviewItem = z.infer<
+  typeof getSppgReviewsSuccessResponseSchema
+>["data"][number];
 type SppgDashboardReviewItem =
   SppgDashboardResponse["laporan_masyarakat"][number];
 type DashboardReviewMapperInput =
@@ -254,6 +259,18 @@ export function mapPublicDashboardReviewDtoToDomain(
       id: dto.id_sppg,
       name: sppgName,
     }),
+    content: dto.description ?? "",
+  };
+}
+
+export function mapSppgReviewDtoToDomain(dto: SppgReviewItem): TSppgReview {
+  return {
+    id: String(dto.id_review),
+    title: dto.title ?? "Laporan Masyarakat",
+    imageUrl: dto.attachments?.[0]?.file_url ?? DEFAULT_ATTACHMENT_URL,
+    postedAt: new Date(dto.createdAt ?? new Date().toISOString()),
+    ratingScore: dto.rating_score ? Number(dto.rating_score) : 0,
+    reporterName: dto.pelapor,
     content: dto.description ?? "",
   };
 }

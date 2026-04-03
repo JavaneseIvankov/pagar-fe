@@ -179,6 +179,16 @@ export type TPublicReview = {
   content: string;
 };
 
+export type TSppgReview = {
+  id: string;
+  title: string;
+  imageUrl: string;
+  postedAt: Date;
+  ratingScore: number;
+  reporterName: string;
+  content: string;
+};
+
 export type TReviewSppgTarget = {
   address: string;
   id: string;

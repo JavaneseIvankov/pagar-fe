@@ -7,15 +7,22 @@ import { toPaginatedResult } from "@/lib/pagination/to-paginated-result";
 import {
   mapPublicDashboardReviewDtoToDomain,
   mapPublicDashboardSppgReportDtoToDomain,
+  mapSppgReviewDtoToDomain,
   type TPaginatedResult,
   type TPublicReview,
   type TSppg,
   type TSppgReport,
   type TSppgReportDetail,
+  type TSppgReview,
 } from "@/types";
 import { createServerRpc } from "./server-rpc";
 
 type ReportViewerRole = "PUBLIC" | "SCHOOL";
+
+export interface FetchSppgReviewListParams {
+  limit?: number;
+  page?: number;
+}
 
 export interface FetchReportListParams {
   limit?: number;
@@ -33,6 +40,16 @@ function resolveListParams(params?: FetchReportListParams) {
         ? Math.floor(params.limit)
         : REPORT_LIST_PAGE_SIZE,
     search: trimmedSearch ? trimmedSearch : undefined,
+  };
+}
+
+function resolveSppgReviewParams(params?: FetchSppgReviewListParams) {
+  return {
+    page: params?.page && params.page > 0 ? Math.floor(params.page) : 1,
+    limit:
+      params?.limit && params.limit > 0
+        ? Math.floor(params.limit)
+        : REPORT_LIST_PAGE_SIZE,
   };
 }
 
@@ -166,6 +183,39 @@ export const fetchPublicReviews = createServerRpc(
   },
 );
 
+export const fetchSppgReviews = createServerRpc(
+  {
+    operation: "fetchSppgReviews",
+    onAuthExpired: "redirect",
+  },
+  async (
+    { client },
+    params?: FetchSppgReviewListParams,
+  ): Promise<TPaginatedResult<TSppgReview>> => {
+    await requireCurrentRole(
+      ["SPPG"],
+      "Laporan masyarakat hanya tersedia untuk akun SPPG.",
+    );
+    const normalizedParams = resolveSppgReviewParams(params);
+    const response = await client.getSppgReviews({
+      query: {
+        page: normalizedParams.page,
+        limit: normalizedParams.limit,
+      },
+    });
+
+    return toPaginatedResult({
+      items: response.data.map(mapSppgReviewDtoToDomain),
+      envelope: response.meta,
+      defaults: {
+        page: normalizedParams.page,
+        limit: normalizedParams.limit,
+        itemCount: response.data.length,
+      },
+    });
+  },
+);
+
 export const fetchSppgReportDetail = createServerRpc(
   {
     operation: "fetchSppgReportDetail",
@@ -174,20 +224,84 @@ export const fetchSppgReportDetail = createServerRpc(
   async ({ client }, id: string): Promise<TSppgReportDetail | null> => {
     try {
       const role = await getCurrentReportViewerRole();
-      const reportsResponse =
-        role === "PUBLIC"
-          ? await client.getPublicDashboardSppgReports({
-              query: {
-                page: 1,
-                limit: 50,
-              },
-            })
-          : await client.getSchoolDashboardSppgReports({
-              query: {
-                page: 1,
-                limit: 50,
-              },
-            });
+      if (role === "SCHOOL") {
+        const [detailResponse, reportsResponse] = await Promise.all([
+          client.getSchoolDetailSppgReport({
+            params: {
+              id_daily_report: id,
+            },
+          }),
+          client.getSchoolDashboardSppgReports({
+            query: {
+              page: 1,
+              limit: 3,
+            },
+          }),
+        ]);
+        const detail = detailResponse.data;
+        const relatedReports = reportsResponse.data
+          .map(mapPublicDashboardSppgReportDtoToDomain)
+          .filter((report) => report.id !== id)
+          .slice(0, 2);
+        const author = createFallbackAuthor({
+          id: detail.id_sppg,
+          name: detail.sppg.sppg_name,
+          address:
+            detail.sppg.sppg_address === undefined
+              ? null
+              : detail.sppg.sppg_address,
+        });
+
+        return {
+          id: String(detail.id_daily_report),
+          title: detail.menu_name,
+          author,
+          mealTime: detail.meal_time ?? "Makan Siang",
+          imageUrl:
+            detail.attachments[0]?.file_url ??
+            "https://placehold.co/1200x800?text=No+Image",
+          postedAt: new Date(detail.date_report),
+          nutritionalFacts: {
+            calories: {
+              inKcal: detail.energy ?? 0,
+              inDciPercent: 0,
+            },
+            proteinGrams: {
+              inGrams: detail.protein ?? 0,
+              inDciPercent: 0,
+            },
+            carbGrams: {
+              inGrams: detail.carbohydrate ?? 0,
+              inDciPercent: 0,
+            },
+            fatGrams: {
+              inGrams: detail.fat ?? 0,
+              inDciPercent: 0,
+            },
+          },
+          content: detail.menu_description ?? "",
+          status: "SUBMITTED",
+          budget: {
+            id: String(detail.id_daily_report),
+            items: [],
+            totalPrice: 0,
+            attachments: detail.attachments.map((attachment, index) => ({
+              id: `${detail.id_daily_report}-${index + 1}`,
+              label: `Lampiran ${index + 1}`,
+              url: attachment.file_url,
+              mimeType: attachment.file_type ?? "application/octet-stream",
+            })),
+          },
+          relatedReports,
+        };
+      }
+
+      const reportsResponse = await client.getPublicDashboardSppgReports({
+        query: {
+          page: 1,
+          limit: 50,
+        },
+      });
       const reports = reportsResponse.data.map(
         mapPublicDashboardSppgReportDtoToDomain,
       );
@@ -195,23 +309,6 @@ export const fetchSppgReportDetail = createServerRpc(
       const relatedReports = reports
         .filter((report) => report.id !== id)
         .slice(0, 2);
-
-      if (role === "SCHOOL") {
-        if (!matchedReport) {
-          return null;
-        }
-
-        return {
-          ...matchedReport,
-          budget: {
-            id: matchedReport.id,
-            items: [],
-            totalPrice: 0,
-            attachments: [],
-          },
-          relatedReports,
-        };
-      }
 
       const response = await client.getDetailSppgReport({
         params: {

@@ -52,6 +52,8 @@ export function InfoBannerSection() {
               "https://bhnybebpsxnfyazsjxtk.supabase.co/storage/v1/object/public/pagar-assets/landing-info-banner.jpg"
             }
             alt="info banner"
+            loading="lazy"
+            sizes="(max-width: 768px) 256px, 320px"
           />
         </motion.div>
       </div>

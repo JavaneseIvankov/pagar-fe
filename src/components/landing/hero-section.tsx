@@ -39,7 +39,7 @@ export function HeroSection() {
       >
         <motion.h1
           variants={STAGGER_CHILD}
-          className="font-extrabold text-5xl text-foreground leading-[1.1] tracking-tight lg:text-6xl"
+          className="min-h-[130px] font-extrabold text-5xl text-foreground leading-[1.1] tracking-tight lg:min-h-[160px] lg:text-6xl"
         >
           Transparansi Gizi Untuk{" "}
           <span className="text-primary">Generasi Sehat</span>
@@ -83,6 +83,8 @@ export function HeroSection() {
                 "https://bhnybebpsxnfyazsjxtk.supabase.co/storage/v1/object/public/pagar-assets/landing-hero-biggest.jpg"
               }
               alt="main hero"
+              priority
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 500px"
             />
           </div>
         </div>
@@ -94,6 +96,8 @@ export function HeroSection() {
                 "https://bhnybebpsxnfyazsjxtk.supabase.co/storage/v1/object/public/pagar-assets/landing-hero-small.jpg"
               }
               alt="smaller hero"
+              priority
+              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 25vw, 250px"
             />
           </div>
         </div>
@@ -105,6 +109,8 @@ export function HeroSection() {
                 "https://bhnybebpsxnfyazsjxtk.supabase.co/storage/v1/object/public/pagar-assets/landing-hero-small-1.jpg"
               }
               alt="smaller hero"
+              priority
+              sizes="(max-width: 768px) 33vw, (max-width: 1200px) 20vw, 167px"
             />
           </div>
         </div>

@@ -61,7 +61,7 @@ export function AppHeader({ session }: { session: TAuthSession | null }) {
   };
 
   const navButtonClassName =
-    "size-10 justify-center rounded-full border border-transparent px-0 text-muted-foreground transition-[background-color,color,border-color] hover:bg-card  hover:text-foreground xl:h-10 xl:w-auto xl:px-4";
+    "size-10 justify-center rounded-full border border-transparent px-0 text-muted-foreground transition-[background-color,color,border-color] hover:bg-card  hover:text-primary xl:h-10 xl:w-auto xl:px-4";
 
   return (
     <header className="sticky top-0 z-30 w-full border-border/60 border-b bg-card backdrop-blur">

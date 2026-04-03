@@ -12,9 +12,9 @@ export default async function DashboardLayout({
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full overflow-x-hidden">
+      <div className="flex min-h-screen w-full">
         <DashboardSidebar session={session} />
-        <SidebarInset className="overflow-y-auto bg-transparent peer-data-[variant=inset]:min-h-svh">
+        <SidebarInset className="bg-transparent peer-data-[variant=inset]:min-h-svh">
           <DashboardMobileHeader session={session} />
           <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 pt-4 pb-5 sm:px-6 sm:pt-5 sm:pb-6 md:py-6 lg:px-8 lg:py-8">
             {children}

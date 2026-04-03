@@ -1,5 +1,5 @@
 {
-  "version": "2.8",
+  "version": "2.9",
   "children": [
     {
       "type": "frame",
@@ -14859,6 +14859,8 @@
                   "id": "zifnZ",
                   "name": "brand-logo-component",
                   "reusable": true,
+                  "width": 346,
+                  "height": 139,
                   "cornerRadius": 16,
                   "stroke": {
                     "align": "inside",
@@ -14881,8 +14883,8 @@
                         "url": "images/image.png",
                         "mode": "fill"
                       },
-                      "width": 552,
-                      "height": 214
+                      "width": "fill_container",
+                      "height": "fill_container"
                     }
                   ]
                 }
@@ -16178,42 +16180,22 @@
           "padding": 10,
           "children": [
             {
-              "type": "frame",
-              "id": "5Yw70",
-              "name": "Logo",
+              "id": "1Xhqk",
+              "type": "ref",
+              "ref": "zifnZ",
               "width": "fill_container",
-              "height": 98.53447723388672,
-              "fill": {
-                "type": "color",
-                "color": "#ffffffff",
-                "enabled": false
-              },
-              "stroke": {
-                "align": "inside",
-                "thickness": 1
-              },
-              "layout": "none",
-              "children": [
-                {
-                  "type": "rectangle",
-                  "id": "JDKcn",
-                  "x": 0,
-                  "y": 0,
-                  "name": "Tambahkan subjudul 1",
-                  "fill": {
-                    "type": "image",
-                    "enabled": true,
-                    "url": "",
-                    "mode": "stretch"
-                  },
-                  "width": 254,
-                  "height": 98.53447723388672,
-                  "stroke": {
-                    "align": "inside",
-                    "thickness": 1
-                  }
+              "height": "fill_container",
+              "name": "logo1",
+              "x": 10,
+              "y": 10,
+              "descendants": {
+                "lPwDl": {
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "x": 20,
+                  "y": 10
                 }
-              ]
+              }
             }
           ]
         },
@@ -17017,42 +16999,24 @@
           "padding": 10,
           "children": [
             {
-              "type": "frame",
-              "id": "LLUYB",
-              "name": "Logo",
-              "width": "fill_container",
-              "height": 98.53447723388672,
-              "fill": {
-                "type": "color",
-                "color": "#ffffffff",
-                "enabled": false
-              },
-              "stroke": {
-                "align": "inside",
-                "thickness": 1
-              },
-              "layout": "none",
-              "children": [
-                {
-                  "type": "rectangle",
-                  "id": "BXcue",
-                  "x": 0,
-                  "y": 0,
-                  "name": "Tambahkan subjudul 1",
-                  "fill": {
-                    "type": "image",
-                    "enabled": true,
-                    "url": "",
-                    "mode": "stretch"
-                  },
-                  "width": 254,
-                  "height": 98.53447723388672,
-                  "stroke": {
-                    "align": "inside",
-                    "thickness": 1
-                  }
+              "id": "dXhh6",
+              "type": "ref",
+              "ref": "zifnZ",
+              "x": 10,
+              "y": 10,
+              "width": 236,
+              "height": 79,
+              "flipX": false,
+              "flipY": false,
+              "textGrowth": "auto",
+              "descendants": {
+                "lPwDl": {
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "x": 20,
+                  "y": 10
                 }
-              ]
+              }
             }
           ]
         },
@@ -17794,22 +17758,21 @@
               "layout": "none",
               "children": [
                 {
-                  "type": "rectangle",
-                  "id": "vl5v4",
-                  "x": 0,
-                  "y": 0,
-                  "name": "Tambahkan subjudul 1",
-                  "fill": {
-                    "type": "image",
-                    "enabled": true,
-                    "url": "",
-                    "mode": "stretch"
-                  },
+                  "id": "V8VUh",
+                  "type": "ref",
+                  "ref": "zifnZ",
                   "width": 254,
                   "height": 98.53447723388672,
-                  "stroke": {
-                    "align": "inside",
-                    "thickness": 1
+                  "x": 0,
+                  "y": 0,
+                  "name": "logo1",
+                  "descendants": {
+                    "lPwDl": {
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "x": 20,
+                      "y": 10
+                    }
                   }
                 }
               ]
@@ -18212,8 +18175,8 @@
         {
           "type": "frame",
           "id": "nAnme",
-          "x": -10,
-          "y": -10,
+          "x": 0,
+          "y": 0,
           "name": "Frame 38",
           "width": 797,
           "height": 1034,
@@ -18354,42 +18317,22 @@
           "padding": 10,
           "children": [
             {
-              "type": "frame",
-              "id": "qX2jQ",
-              "name": "Logo",
+              "id": "qX0Gx",
+              "type": "ref",
+              "ref": "zifnZ",
               "width": "fill_container",
-              "height": 98.53447723388672,
-              "fill": {
-                "type": "color",
-                "color": "#ffffffff",
-                "enabled": false
-              },
-              "stroke": {
-                "align": "inside",
-                "thickness": 1
-              },
-              "layout": "none",
-              "children": [
-                {
-                  "type": "rectangle",
-                  "id": "rLHqh",
-                  "x": 0,
-                  "y": 0,
-                  "name": "Tambahkan subjudul 1",
-                  "fill": {
-                    "type": "image",
-                    "enabled": true,
-                    "url": "",
-                    "mode": "stretch"
-                  },
-                  "width": 254,
-                  "height": 98.53447723388672,
-                  "stroke": {
-                    "align": "inside",
-                    "thickness": 1
-                  }
+              "height": "fill_container",
+              "name": "logo3",
+              "x": 10,
+              "y": 10,
+              "descendants": {
+                "lPwDl": {
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "x": 20,
+                  "y": 10
                 }
-              ]
+              }
             }
           ]
         },
@@ -18932,42 +18875,22 @@
           "padding": 10,
           "children": [
             {
-              "type": "frame",
-              "id": "4GQxW",
-              "name": "Logo",
+              "id": "59G3F",
+              "type": "ref",
+              "ref": "zifnZ",
               "width": "fill_container",
-              "height": 98.53447723388672,
-              "fill": {
-                "type": "color",
-                "color": "#ffffffff",
-                "enabled": false
-              },
-              "stroke": {
-                "align": "inside",
-                "thickness": 1
-              },
-              "layout": "none",
-              "children": [
-                {
-                  "type": "rectangle",
-                  "id": "SF19k",
-                  "x": 0,
-                  "y": 0,
-                  "name": "Tambahkan subjudul 1",
-                  "fill": {
-                    "type": "image",
-                    "enabled": true,
-                    "url": "",
-                    "mode": "stretch"
-                  },
-                  "width": 254,
-                  "height": 98.53447723388672,
-                  "stroke": {
-                    "align": "inside",
-                    "thickness": 1
-                  }
+              "height": "fill_container",
+              "name": "logo4",
+              "x": 10,
+              "y": 10,
+              "descendants": {
+                "lPwDl": {
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "x": 20,
+                  "y": 10
                 }
-              ]
+              }
             }
           ]
         },
@@ -19387,8 +19310,8 @@
           "children": [
             {
               "type": "frame",
-              "id": "K31od",
-              "name": "brand-logo",
+              "id": "hwK6m",
+              "name": "brand",
               "width": 211,
               "height": 116,
               "stroke": {
@@ -19405,42 +19328,24 @@
               "alignItems": "center",
               "children": [
                 {
-                  "type": "frame",
-                  "id": "wW8t6",
-                  "name": "Logo",
-                  "width": 255,
-                  "height": 98.92240905761719,
-                  "fill": {
-                    "type": "color",
-                    "color": "#ffffffff",
-                    "enabled": false
-                  },
-                  "stroke": {
-                    "align": "inside",
-                    "thickness": 1
-                  },
-                  "layout": "none",
-                  "children": [
-                    {
-                      "type": "rectangle",
-                      "id": "36XHl",
-                      "x": 0,
-                      "y": 0,
-                      "name": "Tambahkan subjudul 1",
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "",
-                        "mode": "stretch"
-                      },
-                      "width": 255,
-                      "height": 98.92240905761719,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1
-                      }
+                  "id": "MC5CR",
+                  "type": "ref",
+                  "ref": "zifnZ",
+                  "x": -12.5,
+                  "y": 18.5,
+                  "width": 236,
+                  "height": 79,
+                  "flipX": false,
+                  "flipY": false,
+                  "textGrowth": "auto",
+                  "descendants": {
+                    "lPwDl": {
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "x": 20,
+                      "y": 10
                     }
-                  ]
+                  }
                 }
               ]
             },
@@ -20013,6 +19918,8 @@
                         {
                           "type": "frame",
                           "id": "hcqoQ",
+                          "x": 0,
+                          "y": 0,
                           "name": "Frame 67",
                           "enabled": false,
                           "height": 48,
@@ -20302,9 +20209,11 @@
                             {
                               "type": "frame",
                               "id": "RjtOg",
+                              "x": 0,
+                              "y": 0,
                               "name": "Gizi",
                               "enabled": false,
-                              "width": "fill_container",
+                              "width": "fill_container(0)",
                               "stroke": {
                                 "align": "inside",
                                 "thickness": 1
@@ -20513,6 +20422,8 @@
                     {
                       "type": "line",
                       "id": "2NIbK",
+                      "x": 0,
+                      "y": 0,
                       "name": "Line 1",
                       "enabled": false,
                       "rotation": -0.000005008956130975318,
@@ -20527,9 +20438,11 @@
                     {
                       "type": "frame",
                       "id": "ko7di",
+                      "x": 0,
+                      "y": 0,
                       "name": "Frame 63",
                       "enabled": false,
-                      "width": "fill_container",
+                      "width": "fill_container(0)",
                       "stroke": {
                         "align": "inside",
                         "thickness": 1
@@ -20673,6 +20586,8 @@
                         {
                           "type": "frame",
                           "id": "h5vTj",
+                          "x": 0,
+                          "y": 0,
                           "name": "Frame 62",
                           "enabled": false,
                           "height": 48,
@@ -20855,6 +20770,8 @@
                         {
                           "type": "frame",
                           "id": "spwPt",
+                          "x": 0,
+                          "y": 0,
                           "name": "Frame 67",
                           "enabled": false,
                           "height": 48,
@@ -21144,9 +21061,11 @@
                             {
                               "type": "frame",
                               "id": "CFSXO",
+                              "x": 0,
+                              "y": 0,
                               "name": "Gizi",
                               "enabled": false,
-                              "width": "fill_container",
+                              "width": "fill_container(0)",
                               "stroke": {
                                 "align": "inside",
                                 "thickness": 1
@@ -21355,6 +21274,8 @@
                     {
                       "type": "line",
                       "id": "MEbaj",
+                      "x": 0,
+                      "y": 0,
                       "name": "Line 1",
                       "enabled": false,
                       "rotation": -0.000005008956130975318,
@@ -21369,9 +21290,11 @@
                     {
                       "type": "frame",
                       "id": "TKv1y",
+                      "x": 0,
+                      "y": 0,
                       "name": "Frame 63",
                       "enabled": false,
-                      "width": "fill_container",
+                      "width": "fill_container(0)",
                       "stroke": {
                         "align": "inside",
                         "thickness": 1
@@ -21515,6 +21438,8 @@
                         {
                           "type": "frame",
                           "id": "xJr1i",
+                          "x": 0,
+                          "y": 0,
                           "name": "Frame 62",
                           "enabled": false,
                           "height": 48,
@@ -21613,42 +21538,24 @@
               "alignItems": "center",
               "children": [
                 {
-                  "type": "frame",
-                  "id": "9LqlD",
-                  "name": "Logo",
-                  "width": 255,
-                  "height": 98.92240905761719,
-                  "fill": {
-                    "type": "color",
-                    "color": "#ffffffff",
-                    "enabled": false
-                  },
-                  "stroke": {
-                    "align": "inside",
-                    "thickness": 1
-                  },
-                  "layout": "none",
-                  "children": [
-                    {
-                      "type": "rectangle",
-                      "id": "hFty5",
-                      "x": 0,
-                      "y": 0,
-                      "name": "Tambahkan subjudul 1",
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "",
-                        "mode": "stretch"
-                      },
-                      "width": 255,
-                      "height": 98.92240905761719,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1
-                      }
+                  "id": "mJwsh",
+                  "type": "ref",
+                  "ref": "zifnZ",
+                  "x": -12.5,
+                  "y": 18.5,
+                  "width": 236,
+                  "height": 79,
+                  "flipX": false,
+                  "flipY": false,
+                  "textGrowth": "auto",
+                  "descendants": {
+                    "lPwDl": {
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "x": 20,
+                      "y": 10
                     }
-                  ]
+                  }
                 }
               ]
             },
@@ -22276,6 +22183,8 @@
                     {
                       "type": "frame",
                       "id": "YcEkI",
+                      "x": 0,
+                      "y": 0,
                       "name": "Rating",
                       "enabled": false,
                       "stroke": {
@@ -22735,6 +22644,8 @@
                     {
                       "type": "frame",
                       "id": "b6rQI",
+                      "x": 0,
+                      "y": 0,
                       "name": "Frame 61",
                       "enabled": false,
                       "stroke": {
@@ -23101,6 +23012,8 @@
                     {
                       "type": "frame",
                       "id": "Q2T7I",
+                      "x": 0,
+                      "y": 0,
                       "name": "Rating",
                       "enabled": false,
                       "stroke": {
@@ -23560,6 +23473,8 @@
                     {
                       "type": "frame",
                       "id": "VZscJ",
+                      "x": 0,
+                      "y": 0,
                       "name": "Frame 61",
                       "enabled": false,
                       "stroke": {
@@ -23771,8 +23686,8 @@
           "children": [
             {
               "type": "frame",
-              "id": "a7yXA",
-              "name": "brand-logo",
+              "id": "glWFA",
+              "name": "brand",
               "width": 211,
               "height": 116,
               "stroke": {
@@ -23789,42 +23704,24 @@
               "alignItems": "center",
               "children": [
                 {
-                  "type": "frame",
-                  "id": "y3HM6",
-                  "name": "Logo",
-                  "width": 255,
-                  "height": 98.92240905761719,
-                  "fill": {
-                    "type": "color",
-                    "color": "#ffffffff",
-                    "enabled": false
-                  },
-                  "stroke": {
-                    "align": "inside",
-                    "thickness": 1
-                  },
-                  "layout": "none",
-                  "children": [
-                    {
-                      "type": "rectangle",
-                      "id": "raI5j",
-                      "x": 0,
-                      "y": 0,
-                      "name": "Tambahkan subjudul 1",
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "",
-                        "mode": "stretch"
-                      },
-                      "width": 255,
-                      "height": 98.92240905761719,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1
-                      }
+                  "id": "N6Fpp",
+                  "type": "ref",
+                  "ref": "zifnZ",
+                  "x": -12.5,
+                  "y": 18.5,
+                  "width": 236,
+                  "height": 79,
+                  "flipX": false,
+                  "flipY": false,
+                  "textGrowth": "auto",
+                  "descendants": {
+                    "lPwDl": {
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "x": 20,
+                      "y": 10
                     }
-                  ]
+                  }
                 }
               ]
             },
@@ -26644,6 +26541,8 @@
                             {
                               "type": "frame",
                               "id": "oLzV8",
+                              "x": 0,
+                              "y": 0,
                               "name": "Icon Right Arrow",
                               "enabled": false,
                               "clip": true,
@@ -26730,8 +26629,8 @@
           "children": [
             {
               "type": "frame",
-              "id": "JsG40",
-              "name": "brand-logo",
+              "id": "sChB4",
+              "name": "brand",
               "width": 211,
               "height": 116,
               "stroke": {
@@ -26748,42 +26647,24 @@
               "alignItems": "center",
               "children": [
                 {
-                  "type": "frame",
-                  "id": "wVu30",
-                  "name": "Logo",
-                  "width": 255,
-                  "height": 98.92240905761719,
-                  "fill": {
-                    "type": "color",
-                    "color": "#ffffffff",
-                    "enabled": false
-                  },
-                  "stroke": {
-                    "align": "inside",
-                    "thickness": 1
-                  },
-                  "layout": "none",
-                  "children": [
-                    {
-                      "type": "rectangle",
-                      "id": "BN91i",
-                      "x": 0,
-                      "y": 0,
-                      "name": "Tambahkan subjudul 1",
-                      "fill": {
-                        "type": "image",
-                        "enabled": true,
-                        "url": "",
-                        "mode": "stretch"
-                      },
-                      "width": 255,
-                      "height": 98.92240905761719,
-                      "stroke": {
-                        "align": "inside",
-                        "thickness": 1
-                      }
+                  "id": "ae8vC",
+                  "type": "ref",
+                  "ref": "zifnZ",
+                  "x": -12.5,
+                  "y": 18.5,
+                  "width": 236,
+                  "height": 79,
+                  "flipX": false,
+                  "flipY": false,
+                  "textGrowth": "auto",
+                  "descendants": {
+                    "lPwDl": {
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "x": 20,
+                      "y": 10
                     }
-                  ]
+                  }
                 }
               ]
             },
@@ -27861,7 +27742,7 @@
         },
         {
           "type": "frame",
-          "id": "XuOH1",
+          "id": "CxGYL",
           "x": 1161,
           "y": 25,
           "name": "brand-logo",
@@ -27876,42 +27757,22 @@
           "padding": 10,
           "children": [
             {
-              "type": "frame",
-              "id": "nPsDA",
-              "name": "Logo",
+              "id": "XgOE7",
+              "type": "ref",
+              "ref": "zifnZ",
               "width": "fill_container",
-              "height": 98.53447723388672,
-              "fill": {
-                "type": "color",
-                "color": "#ffffffff",
-                "enabled": false
-              },
-              "stroke": {
-                "align": "inside",
-                "thickness": 1
-              },
-              "layout": "none",
-              "children": [
-                {
-                  "type": "rectangle",
-                  "id": "wqmqq",
-                  "x": 0,
-                  "y": 0,
-                  "name": "Tambahkan subjudul 1",
-                  "fill": {
-                    "type": "image",
-                    "enabled": true,
-                    "url": "",
-                    "mode": "stretch"
-                  },
-                  "width": 254,
-                  "height": 98.53447723388672,
-                  "stroke": {
-                    "align": "inside",
-                    "thickness": 1
-                  }
+              "height": "fill_container",
+              "name": "logo3",
+              "x": 10,
+              "y": 10,
+              "descendants": {
+                "lPwDl": {
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "x": 20,
+                  "y": 10
                 }
-              ]
+              }
             }
           ]
         },
@@ -28349,22 +28210,21 @@
                       "layout": "none",
                       "children": [
                         {
-                          "type": "rectangle",
-                          "id": "VskeR",
-                          "x": 0,
-                          "y": 0,
-                          "name": "Tambahkan subjudul 1",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "",
-                            "mode": "stretch"
-                          },
+                          "id": "cgQDt",
+                          "type": "ref",
+                          "ref": "zifnZ",
                           "width": 225,
                           "height": 87,
-                          "stroke": {
-                            "align": "inside",
-                            "thickness": 1
+                          "x": 0,
+                          "y": 0,
+                          "name": "logo6",
+                          "descendants": {
+                            "lPwDl": {
+                              "width": "fill_container",
+                              "height": "fill_container",
+                              "x": 20,
+                              "y": 10
+                            }
                           }
                         }
                       ]
@@ -31044,22 +30904,21 @@
                       "layout": "none",
                       "children": [
                         {
-                          "type": "rectangle",
-                          "id": "vfByt",
-                          "x": 0,
-                          "y": 0,
-                          "name": "Tambahkan subjudul 1",
-                          "fill": {
-                            "type": "image",
-                            "enabled": true,
-                            "url": "",
-                            "mode": "stretch"
-                          },
+                          "id": "PGgIC",
+                          "type": "ref",
+                          "ref": "zifnZ",
                           "width": 225,
                           "height": 87,
-                          "stroke": {
-                            "align": "inside",
-                            "thickness": 1
+                          "x": 0,
+                          "y": 0,
+                          "name": "logo7",
+                          "descendants": {
+                            "lPwDl": {
+                              "width": "fill_container",
+                              "height": "fill_container",
+                              "x": 20,
+                              "y": 10
+                            }
                           }
                         }
                       ]
@@ -34028,6 +33887,17 @@
           ]
         }
       ]
+    },
+    {
+      "type": "note",
+      "id": "qIntP",
+      "x": 7255,
+      "y": 6198,
+      "name": "text-artifacts",
+      "enabled": false,
+      "width": 749,
+      "height": 219,
+      "content": "BrandLogo - brand-logo-component - { imageUrl } - Reusable logo block used across screens\nSidebarLayout - sidebar-layout - { userName, role, navItems[], activeItemId } - Sidebar shell with logo and navigation\nNavItem - nav-item - { label, icon, target, active }\nAuthForm - auth-form - { title, subtitle, fields[], primaryActionLabel, secondaryLinkLabel } - Generic login/register shell\nTextInput - text-input - { label, placeholder, value, type, error }\nPasswordInput - password-input - { label, value, showToggle, error }\nCTAButton - button-primary - { label, disabled, loading, iconLeft }\nUserTypeCard - user-type-card - { title, description, selected } - Used on user selection screen\nRegistrationForm - register-form - { audience, fields[], submitLabel, extraLink }\nLoginForm - login-form - { audience, fields[], submitLabel, forgotLink }\nDashboardStatCard - stat-card - { title, value, deltaLabel, icon }\nReportFilterBar - report-filter-bar - { searchText, statusOptions[], dateRange, category }\nReportTable - report-table - { columns[], rows[], onRowClick }\nReportRow - report-row - { reportId, title, status, date, location, reporterName }\nStatusBadge - status-badge - { status, tone }\nPagination - pagination - { page, totalPages }\nReportDetailHeader - report-detail-header - { title, id, status, actions[] }\nAttachmentList - attachment-list - { files[] }\nCommentThread - comment-thread - { comments[], onReply }\nTimeline - timeline - { steps[] }"
     }
   ]
 }

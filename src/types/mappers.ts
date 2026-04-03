@@ -1,51 +1,100 @@
 import type { z } from "zod/v3";
 import type {
-  getAdminDashboardSuccessResponseSchema,
   getActiveAccountsSuccessResponseSchema,
-  loginSuccessResponseSchema,
+  getAdminDashboardReviewsSuccessResponseSchema,
+  getAdminDashboardSuccessResponseSchema,
+  getAdminProfileSuccessResponseSchema,
+  getDetailSppgReportSuccessResponseSchema,
+  getPendingAccountsSuccessResponseSchema,
   getPublicDashboardReviewsSuccessResponseSchema,
   getPublicDashboardSppgReportsSuccessResponseSchema,
-  getPendingAccountsSuccessResponseSchema,
-  registerSuccessResponseSchema,
+  getPublicProfileSuccessResponseSchema,
+  getPublicSppgListSuccessResponseSchema,
+  getSchoolDashboardReviewsSuccessResponseSchema,
+  getSchoolDashboardSppgReportsSuccessResponseSchema,
+  getSchoolProfileSuccessResponseSchema,
+  getSchoolSppgListSuccessResponseSchema,
   getSppgDailyReportByIdSuccessResponseSchema,
   getSppgDashboardSuccessResponseSchema,
   getSppgPeriodicReportsSuccessResponseSchema,
-} from "@/types/dto";
+  getSppgProfileSuccessResponseSchema,
+  getSppgReviewsSuccessResponseSchema,
+  loginSuccessResponseSchema,
+  registerPublicSuccessResponseSchema,
+  registerSchoolSuccessResponseSchema,
+  registerSppgSuccessResponseSchema,
+} from "@/lib/api/dto";
 import type {
+  TAdminAccessDetail,
   TAdminActiveAccount,
-  TAdminPendingAccount,
-  TAuthRegistrationResult,
-  TAuthSession,
   TAdminComplaint,
   TAdminComplaintStatus,
   TAdminDashboard,
+  TAdminPendingAccount,
+  TAdminProfile,
   TAdminStatistics,
   TAdminVendorWarning,
+  TAuthRegistrationResult,
+  TAuthSession,
   TBudget,
+  TPublicProfile,
   TPublicReview,
+  TReviewSppgTarget,
+  TSchoolProfile,
   TSppg,
   TSppgDashboard,
   TSppgPeriodicReport,
+  TSppgProfile,
   TSppgReport,
   TSppgReportDetail,
   TSppgReportSummary,
+  TSppgReview,
   TSppgStatistics,
 } from "./ui";
 
-type PublicDashboardReviewItem = z.infer<
-  typeof getPublicDashboardReviewsSuccessResponseSchema
+type PublicDashboardReviewItem =
+  | z.infer<
+      typeof getPublicDashboardReviewsSuccessResponseSchema
+    >["data"][number]
+  | z.infer<
+      typeof getSchoolDashboardReviewsSuccessResponseSchema
+    >["data"][number];
+type SppgReviewItem = z.infer<
+  typeof getSppgReviewsSuccessResponseSchema
 >["data"][number];
-type PublicDashboardReportItem = z.infer<
-  typeof getPublicDashboardSppgReportsSuccessResponseSchema
->["data"][number];
-type SppgDailyReportDetailItem = z.infer<
-  typeof getSppgDailyReportByIdSuccessResponseSchema
->["data"];
+type SppgDashboardReviewItem =
+  SppgDashboardResponse["laporan_masyarakat"][number];
+type DashboardReviewMapperInput =
+  | PublicDashboardReviewItem
+  | (SppgDashboardReviewItem & {
+      author_name: string;
+      display_author: string;
+      locationName: string;
+      sppg?: { sppg_name: string } | null;
+    });
+
+type PublicDashboardReportItem =
+  | z.infer<
+      typeof getPublicDashboardSppgReportsSuccessResponseSchema
+    >["data"][number]
+  | z.infer<
+      typeof getSchoolDashboardSppgReportsSuccessResponseSchema
+    >["data"][number];
+
+type SppgDailyReportDetailItem =
+  | z.infer<typeof getSppgDailyReportByIdSuccessResponseSchema>["data"]
+  | z.infer<typeof getDetailSppgReportSuccessResponseSchema>["data"];
 type SppgDashboardResponse = z.infer<
   typeof getSppgDashboardSuccessResponseSchema
 >["data"];
 type AdminDashboardResponse = z.infer<
   typeof getAdminDashboardSuccessResponseSchema
+>["data"];
+type AdminDashboardReviewItem = z.infer<
+  typeof getAdminDashboardReviewsSuccessResponseSchema
+>["data"][number];
+type AdminProfileResponse = z.infer<
+  typeof getAdminProfileSuccessResponseSchema
 >["data"];
 type ActiveAccountsResponse = z.infer<
   typeof getActiveAccountsSuccessResponseSchema
@@ -54,13 +103,44 @@ type LoginResponse = z.infer<typeof loginSuccessResponseSchema>["data"];
 type PendingAccountsResponse = z.infer<
   typeof getPendingAccountsSuccessResponseSchema
 >["data"][number];
+type ReviewSppgTargetResponse =
+  | z.infer<typeof getPublicSppgListSuccessResponseSchema>["data"][number]
+  | z.infer<typeof getSchoolSppgListSuccessResponseSchema>["data"][number];
+type PublicProfileResponse = z.infer<
+  typeof getPublicProfileSuccessResponseSchema
+>["data"];
 type PeriodicReportsResponse = z.infer<
   typeof getSppgPeriodicReportsSuccessResponseSchema
 >["data"];
-type RegisterResponse = z.infer<typeof registerSuccessResponseSchema>;
+type SchoolProfileResponse = z.infer<
+  typeof getSchoolProfileSuccessResponseSchema
+>["data"];
+type SppgProfileResponse = z.infer<
+  typeof getSppgProfileSuccessResponseSchema
+>["data"];
+type RegisterResponse =
+  | z.infer<typeof registerPublicSuccessResponseSchema>
+  | z.infer<typeof registerSchoolSuccessResponseSchema>
+  | z.infer<typeof registerSppgSuccessResponseSchema>;
+type DashboardRecentReportItem =
+  SppgDashboardResponse["riwayat_laporan"][number];
 
 const DEFAULT_ATTACHMENT_URL = "https://placehold.co/1200x800?text=No+Image";
 const DEFAULT_VENDOR_ADDRESS = "Alamat vendor belum tersedia";
+const DEFAULT_ADMIN_ACCESS_DETAILS: TAdminAccessDetail[] = [
+  {
+    id: "manage-sppg",
+    label: "Mengelola Vendor SPPG",
+  },
+  {
+    id: "manage-accounts",
+    label: "Mengelola Akun",
+  },
+  {
+    id: "monitor-data",
+    label: "Memantau Data",
+  },
+];
 
 function mapReviewStatusToAdminComplaintStatus(
   status: "MENUNGGU" | "INVESTIGASI" | "SELESAI",
@@ -76,10 +156,10 @@ function mapReviewStatusToAdminComplaintStatus(
 }
 
 function createNutritionalFacts(values: {
-  energy: number | null;
-  protein: number | null;
-  carbohydrate: number | null;
-  fat: number | null;
+  energy: number | null | undefined;
+  protein: number | null | undefined;
+  carbohydrate: number | null | undefined;
+  fat: number | null | undefined;
 }) {
   return {
     calories: {
@@ -102,53 +182,130 @@ function createNutritionalFacts(values: {
 }
 
 function createSppgAuthor(values: {
-  id: number;
-  userId: string;
+  id: number | string;
   username?: string;
   name: string;
   address?: string | null;
 }): TSppg {
+  const id = String(values.id);
+
   return {
-    id: values.userId,
+    id,
     role: "SPPG",
-    username: values.username ?? `sppg-${values.id}`,
-    sppgId: String(values.id),
+    username: values.username ?? values.name.toLowerCase().replace(/\s+/g, "-"),
+    sppgId: id,
     sppgName: values.name,
     address: values.address ?? DEFAULT_VENDOR_ADDRESS,
   };
 }
 
 function createReviewTarget(values: {
-  id: number | null;
+  id: null | number | string;
   name?: string | null;
   username?: string;
 }) {
+  const id = values.id === null ? "" : String(values.id);
+
   return {
-    id: String(values.id ?? 0),
-    username: values.username ?? `sppg-${values.id ?? 0}`,
-    sppgId: String(values.id ?? 0),
+    id,
+    username: values.username ?? values.name ?? "sppg",
+    sppgId: id,
     sppgName: values.name ?? "SPPG",
   };
 }
 
+function hasSppgName(
+  dto: DashboardReviewMapperInput,
+): dto is DashboardReviewMapperInput & { sppg: { sppg_name: string } | null } {
+  return "sppg" in dto;
+}
+
+function hasBudgets(
+  dto: SppgDailyReportDetailItem,
+): dto is SppgDailyReportDetailItem & {
+  budgets: Array<{
+    id_budget: number | string;
+    item_name: string;
+    item_price: number | string;
+  }>;
+} {
+  return "budgets" in dto;
+}
+
+function hasAttachmentMetadata(
+  attachment: SppgDailyReportDetailItem["attachments"][number],
+): attachment is SppgDailyReportDetailItem["attachments"][number] & {
+  entity_type: string;
+  file_category: null | string;
+  id_attachment: number | string;
+} {
+  return (
+    "id_attachment" in attachment &&
+    "entity_type" in attachment &&
+    "file_category" in attachment
+  );
+}
+
+const getReporterName = (dto: DashboardReviewMapperInput): string => {
+  if (dto.is_anonymous) return "Anonim";
+  if (dto.school) return dto.school.school_name;
+  return "Anonim";
+};
+
 export function mapPublicDashboardReviewDtoToDomain(
-  dto: PublicDashboardReviewItem,
+  dto: DashboardReviewMapperInput,
 ): TPublicReview {
   const imageUrl = dto.attachments?.[0]?.file_url ?? DEFAULT_ATTACHMENT_URL;
+  const sppgName = hasSppgName(dto) ? dto.sppg?.sppg_name : undefined;
+
   return {
     id: String(dto.id_review),
     title: dto.title ?? "Laporan Masyarakat",
     imageUrl,
-    postedAt: new Date(
-      dto.createdAt ?? dto.updatedAt ?? new Date().toISOString(),
-    ),
+    postedAt: new Date(dto.createdAt ?? new Date().toISOString()),
     ratingScore: dto.rating_score ?? 0,
-    reporterName: dto.display_author,
+    reporterName: getReporterName(dto),
     forSppg: createReviewTarget({
       id: dto.id_sppg,
-      name: dto.sppg?.sppg_name,
+      name: sppgName,
     }),
     content: dto.description ?? "",
+  };
+}
+
+export function mapSppgReviewDtoToDomain(dto: SppgReviewItem): TSppgReview {
+  return {
+    id: String(dto.id_review),
+    title: dto.title ?? "Laporan Masyarakat",
+    imageUrl: dto.attachments?.[0]?.file_url ?? DEFAULT_ATTACHMENT_URL,
+    postedAt: new Date(dto.createdAt ?? new Date().toISOString()),
+    ratingScore: dto.rating_score ? Number(dto.rating_score) : 0,
+    reporterName: dto.pelapor,
+    content: dto.description ?? "",
+  };
+}
+
+export function mapAdminDashboardReviewDtoToDomain(
+  dto: AdminDashboardReviewItem,
+): TAdminComplaint {
+  return {
+    id: String(dto.id_review),
+    authorName: dto.user?.username ?? "Anonim",
+    description: dto.description ?? "Tidak ada detail keluhan.",
+    title: dto.title ?? "Keluhan",
+    vendorName: dto.id_sppg ? `SPPG ${dto.id_sppg}` : "Vendor",
+    imageUrl: dto.attachments[0]?.file_url ?? "",
+    status: mapReviewStatusToAdminComplaintStatus(dto.status_review),
+  };
+}
+
+export function mapReviewSppgTargetDtoToDomain(
+  dto: ReviewSppgTargetResponse,
+): TReviewSppgTarget {
+  return {
+    id: dto.id_sppg,
+    name: dto.sppg_name,
+    address: dto.sppg_address ?? DEFAULT_VENDOR_ADDRESS,
   };
 }
 
@@ -160,7 +317,6 @@ export function mapPublicDashboardSppgReportDtoToDomain(
     title: dto.menu_name,
     author: createSppgAuthor({
       id: dto.id_sppg,
-      userId: `00000000-0000-4000-8000-${String(dto.id_sppg).padStart(12, "0")}`,
       name: dto.sppg.sppg_name,
       address: dto.sppg.sppg_address,
     }),
@@ -181,12 +337,13 @@ export function mapPublicDashboardSppgReportDtoToDomain(
 export function mapSppgDailyReportDetailDtoToDomain(
   dto: SppgDailyReportDetailItem,
 ): TSppgReportDetail {
+  const budgets = hasBudgets(dto) ? dto.budgets : [];
+
   const report: TSppgReport = {
     id: String(dto.id_daily_report),
     title: dto.menu_name,
     author: createSppgAuthor({
       id: dto.id_sppg,
-      userId: `00000000-0000-4000-8000-${String(dto.id_sppg).padStart(12, "0")}`,
       name: "SPPG",
     }),
     mealTime: dto.meal_time ?? "Makan Siang",
@@ -204,18 +361,20 @@ export function mapSppgDailyReportDetailDtoToDomain(
 
   const budget: TBudget = {
     id: String(dto.id_daily_report),
-    items:
-      dto.budgets?.map((item) => ({
-        id: String(item.id_budget),
-        name: item.item_name,
-        price: Number(item.item_price),
-      })) ?? [],
-    totalPrice:
-      dto.budgets?.reduce((sum, item) => sum + Number(item.item_price), 0) ?? 0,
+    items: budgets.map((item) => ({
+      id: String(item.id_budget),
+      name: item.item_name,
+      price: Number(item.item_price),
+    })),
+    totalPrice: budgets.reduce((sum, item) => sum + Number(item.item_price), 0),
     attachments:
       dto.attachments?.map((attachment) => ({
-        id: String(attachment.id_attachment),
-        label: attachment.file_category ?? attachment.entity_type,
+        id: hasAttachmentMetadata(attachment)
+          ? String(attachment.id_attachment)
+          : attachment.file_url,
+        label: hasAttachmentMetadata(attachment)
+          ? (attachment.file_category ?? attachment.entity_type)
+          : "Lampiran",
         url: attachment.file_url,
         mimeType: attachment.file_type ?? "application/octet-stream",
       })) ?? [],
@@ -228,11 +387,9 @@ export function mapSppgDailyReportDetailDtoToDomain(
   };
 }
 
-function mapDashboardRecentReportDtoToDomain(dto: {
-  id_daily_report: number;
-  menu_name: string;
-  date_report: string;
-}): TSppgReportSummary {
+function mapDashboardRecentReportDtoToDomain(
+  dto: DashboardRecentReportItem,
+): TSppgReportSummary {
   return {
     id: String(dto.id_daily_report),
     title: dto.menu_name,
@@ -265,14 +422,86 @@ export function mapSppgDashboardDtoToDomain(
     sppgName: dto.sppg_name,
     statistics,
     recentReports: dto.riwayat_laporan.map(mapDashboardRecentReportDtoToDomain),
-    publicReviews: dto.laporan_masyarakat.map((review) =>
-      mapPublicDashboardReviewDtoToDomain({
+    publicReviews: dto.laporan_masyarakat.map((review) => {
+      return mapPublicDashboardReviewDtoToDomain({
         ...review,
         author_name: review.school?.school_name ?? "Anonim",
         display_author: review.school?.school_name ?? "Anonim",
-        location_name: review.school?.school_name ?? "Sekolah",
-      }),
-    ),
+        locationName: review.school?.school_name ?? "Sekolah",
+      });
+    }),
+  };
+}
+
+export function mapSppgProfileDtoToDomain(
+  dto: SppgProfileResponse,
+): TSppgProfile {
+  const address = dto.sppg_address ?? DEFAULT_VENDOR_ADDRESS;
+
+  return {
+    id: dto.id_user,
+    role: "SPPG",
+    username: dto.user.username,
+    sppgId: dto.id_sppg,
+    sppgName: dto.sppg_name,
+    address,
+    description: "Deskripsi profil belum tersedia.",
+    email: dto.user.email,
+    location: address,
+    registrationCode: dto.user.bgn_code ?? "-",
+    accountStatus: dto.user.account_status,
+  };
+}
+
+export function mapPublicProfileDtoToDomain(
+  dto: PublicProfileResponse,
+  options: {
+    userId: string;
+  },
+): TPublicProfile {
+  return {
+    id: options.userId,
+    role: "PUBLIC",
+    username: dto.username,
+    displayName: dto.username,
+    email: dto.email,
+  };
+}
+
+export function mapAdminProfileDtoToDomain(
+  dto: AdminProfileResponse,
+  options: {
+    userId: string;
+  },
+): TAdminProfile {
+  return {
+    id: options.userId,
+    role: "ADMIN",
+    username: dto.username,
+    name: dto.name ?? dto.username,
+    email: dto.email,
+    accessDetails: DEFAULT_ADMIN_ACCESS_DETAILS,
+  };
+}
+
+// FIXME: fixate, this email fallback based on username is hacky
+
+export function mapSchoolProfileDtoToDomain(
+  dto: SchoolProfileResponse,
+  options: {
+    email?: string;
+    username: string;
+  },
+): TSchoolProfile {
+  return {
+    id: dto.id_user,
+    role: "SCHOOL",
+    username: options.username,
+    schoolId: dto.id_school,
+    schoolName: dto.school_name,
+    address: dto.school_address ?? "",
+    displayName: dto.school_name,
+    email: options.email ?? `${options.username}@pagar.app`,
   };
 }
 
@@ -281,6 +510,7 @@ export function mapActiveAccountDtoToDomain(
 ): TAdminActiveAccount {
   return {
     id: dto.id_user,
+    email: dto.email,
     username: dto.username,
     role: dto.role,
     createdAt: new Date(dto.createdAt),
@@ -292,11 +522,12 @@ export function mapPendingAccountDtoToDomain(
 ): TAdminPendingAccount {
   return {
     id: dto.id_user,
+    email: dto.email,
     username: dto.username,
     role: dto.role,
     createdAt: new Date(dto.createdAt),
-    registrationCode: dto.registration_code,
-    bgnCode: dto.bgn_code,
+    registrationCode: dto.registration_code ?? null,
+    bgnCode: dto.bgn_code ?? null,
   };
 }
 
@@ -316,7 +547,6 @@ export function mapRegisterDtoToDomain(
 ): TAuthRegistrationResult {
   return {
     message: dto.message,
-    accountStatus: dto.data.account_status,
     user: {
       id: dto.data.id_user,
       role: dto.data.role,
@@ -340,10 +570,11 @@ export function mapAdminDashboardDtoToDomain(
   const complaints: TAdminComplaint[] = dto.recent_complaints.map(
     (complaint) => ({
       id: String(complaint.id_review),
-      authorName: complaint.reviewer?.username ?? "Anonim",
+      authorName: complaint.user?.username ?? "Anonim",
+      description: complaint.description ?? "Tidak ada detail keluhan.",
       title: complaint.title ?? "Keluhan",
       vendorName: complaint.id_sppg ? `SPPG ${complaint.id_sppg}` : "Vendor",
-      imageUrl: DEFAULT_ATTACHMENT_URL,
+      imageUrl: "",
       status: mapReviewStatusToAdminComplaintStatus(complaint.status_review),
     }),
   );
@@ -397,7 +628,6 @@ export function mapPeriodicReportsDtoToDomain(
       }).format(date);
       buckets.set(key, {
         id: key,
-        url: `https://example.com/reports/${year}-${String(monthIndex + 1).padStart(2, "0")}.pdf`,
         periode,
         monthIndex,
         status: "VERIFIED",

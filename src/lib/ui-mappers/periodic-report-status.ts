@@ -11,13 +11,13 @@ export function getPeriodicReportVerificationStatusUi(
       return {
         label: "Terverifikasi",
         className:
-          "whitespace-nowrap rounded-md border-none bg-emerald-50 px-4 py-1.5 font-semibold text-emerald-600 text-sm hover:bg-emerald-50",
+          "whitespace-nowrap rounded-md border-none bg-primary/10 px-4 py-1.5 font-semibold text-primary text-sm hover:bg-primary/20",
       };
     case "NOT_VERIFIED":
       return {
         label: "Belum Verifikasi",
         className:
-          "whitespace-nowrap rounded-md border-none bg-orange-50 px-4 py-1.5 font-semibold text-orange-600 text-sm hover:bg-orange-50",
+          "whitespace-nowrap rounded-md border-none bg-accent/10 px-4 py-1.5 font-semibold text-accent-foreground text-sm hover:bg-accent/20",
       };
   }
 }

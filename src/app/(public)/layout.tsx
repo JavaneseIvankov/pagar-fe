@@ -1,17 +1,10 @@
-import { cookies } from "next/headers";
 import { AppHeader } from "@/components/app-header";
-import {
-  AUTH_SESSION_COOKIE_NAME,
-  parseAuthSessionCookieValue,
-} from "@/lib/auth";
+import { getAuthSession } from "@/lib/auth/server";
 
 export default async function PublicLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const cookieStore = await cookies();
-  const session = parseAuthSessionCookieValue(
-    cookieStore.get(AUTH_SESSION_COOKIE_NAME)?.value,
-  );
+  const session = await getAuthSession();
 
   return (
     <div className="flex min-h-[100dvh] w-full flex-col">

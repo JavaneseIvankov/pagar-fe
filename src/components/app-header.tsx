@@ -3,10 +3,10 @@
 import { Add01Icon, Home01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { logoutAction } from "@/lib/auth";
+import { cn } from "@/lib/utils";
+import { logoutUser } from "@/rpc";
 import type { TAuthSession, TRole } from "@/types";
 import { AppLogo } from "./app-logo";
 import ProfileButton from "./profile/profile-button";
@@ -54,14 +54,14 @@ export function AppHeader({ session }: { session: TAuthSession | null }) {
 
   const handleLogout = () => {
     startTransition(async () => {
-      await logoutAction();
+      await logoutUser();
       router.replace("/auth/masuk");
       router.refresh();
     });
   };
 
   const navButtonClassName =
-    "size-10 justify-center rounded-full border border-transparent px-0 text-muted-foreground transition-[background-color,color,border-color] hover:border-border/70 hover:bg-white/80 hover:text-foreground xl:h-10 xl:w-auto xl:px-4";
+    "size-10 justify-center rounded-full border border-transparent px-0 text-muted-foreground transition-[background-color,color,border-color] hover:bg-card  hover:text-primary xl:h-10 xl:w-auto xl:px-4";
 
   return (
     <header className="sticky top-0 z-30 w-full border-border/60 border-b bg-card backdrop-blur">
@@ -117,10 +117,13 @@ function HeaderActions({
   return (
     <>
       <Link
-        className={buttonVariants({
-          variant: "ghost",
-          className: cn("gap-2", navButtonClassName),
-        })}
+        className={cn(
+          buttonVariants({
+            variant: "ghost",
+            className: "gap-2",
+          }),
+          navButtonClassName,
+        )}
         href={"/"}
         title="Beranda"
         aria-label="Beranda"
@@ -130,10 +133,13 @@ function HeaderActions({
       </Link>
       {canCreateReport ? (
         <Link
-          className={buttonVariants({
-            variant: "ghost",
-            className: cn("gap-2", navButtonClassName),
-          })}
+          className={cn(
+            buttonVariants({
+              variant: "ghost",
+              className: "gap-2",
+            }),
+            navButtonClassName,
+          )}
           href={"/tambah-laporan"}
           title="Tambah laporan"
           aria-label="Tambah laporan"

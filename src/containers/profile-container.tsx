@@ -1,18 +1,21 @@
 "use client";
 
-import { toast } from "sonner";
+import { ProfileFormSkeleton } from "@/components/profile/profile-form-skeleton";
 import {
   PublicProfileForm,
   type PublicProfileFormValues,
 } from "@/components/profile/public-profile-form";
-import { ProfileFormSkeleton } from "@/components/profile/profile-form-skeleton";
 import {
   SchoolProfileForm,
   type SchoolProfileFormValues,
 } from "@/components/profile/school-profile-form";
-import { useCurrentProfile } from "@/hooks/use-current-profile";
+import {
+  useCurrentProfile,
+  useUpdateCurrentSchoolProfile,
+} from "@/hooks/use-current-profile";
 
 export function ProfileContainer() {
+  const updateSchoolProfileMutation = useUpdateCurrentSchoolProfile();
   const { data: currentUser, isLoading, isError } = useCurrentProfile();
 
   if (isLoading) {
@@ -24,27 +27,32 @@ export function ProfileContainer() {
   }
 
   const handleSchoolSubmit = (data: SchoolProfileFormValues) => {
-    console.log("School Submit data", data);
-    toast.success("Profil sekolah berhasil diperbarui!");
+    updateSchoolProfileMutation.mutate({
+      schoolName: data.schoolName,
+      address: data.address,
+    });
   };
 
-  const handlePublicSubmit = (data: PublicProfileFormValues) => {
-    console.log("Public Submit data", data);
-    toast.success("Profil pengguna berhasil diperbarui!");
-  };
+  const handlePublicSubmit = async (_data: PublicProfileFormValues) => {};
+
+  const profileForm =
+    currentUser.role === "SCHOOL" ? (
+      <SchoolProfileForm
+        initialData={currentUser}
+        onSubmit={handleSchoolSubmit}
+      />
+    ) : currentUser.role === "PUBLIC" ? (
+      <PublicProfileForm
+        canEdit={false}
+        initialData={currentUser}
+        onSubmit={handlePublicSubmit}
+      />
+    ) : null;
 
   return (
     <div className="flex w-full justify-center py-8">
-      {currentUser.role === "SCHOOL" ? (
-        <SchoolProfileForm
-          initialData={currentUser}
-          onSubmit={handleSchoolSubmit}
-        />
-      ) : currentUser.role === "PUBLIC" ? (
-        <PublicProfileForm
-          initialData={currentUser}
-          onSubmit={handlePublicSubmit}
-        />
+      {profileForm ? (
+        <div className="flex w-full max-w-xl flex-col gap-3">{profileForm}</div>
       ) : (
         <div className="py-8 text-muted-foreground">
           Tipe profil ini belum didukung di halaman publik.

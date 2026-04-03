@@ -2,20 +2,22 @@
 
 import { AdminComplaintsOverview } from "@/components/dashboard/admin-complaints-overview";
 import { AdminComplaintsTable } from "@/components/dashboard/admin-complaints-table";
-import { AdminDashboardHeader } from "@/components/dashboard/admin-dashboard-header";
 import { AdminDashboardSkeleton } from "@/components/dashboard/admin-dashboard-skeleton";
 import {
   type AdminSummaryStatItem,
   AdminSummaryStats,
 } from "@/components/dashboard/admin-summary-stats";
-import { AdminVendorWarnings } from "@/components/dashboard/admin-vendor-warnings";
+import { DashboardPageHeader } from "@/components/dashboard/dashboard-page-header";
 import {
   PeopleIcon,
   ReportIcon,
   SchoolIcon,
   TruckIcon,
 } from "@/components/exported-icons";
-import { useAdminDashboard } from "@/hooks/use-admin-dashboard";
+import {
+  useAdminDashboard,
+  useUpdateAdminComplaintStatus,
+} from "@/hooks/use-admin-dashboard";
 import { getAdminComplaintStatusUi } from "@/lib/ui-mappers";
 import type { TAdminStatistics } from "@/types";
 
@@ -60,6 +62,7 @@ function mapSummaryStats(statistics: TAdminStatistics): AdminSummaryStatItem[] {
 
 export function AdminDashboardContainer() {
   const { data, isLoading, isError } = useAdminDashboard();
+  const updateComplaintStatusMutation = useUpdateAdminComplaintStatus();
 
   if (isLoading) {
     return <AdminDashboardSkeleton />;
@@ -76,6 +79,9 @@ export function AdminDashboardContainer() {
     ...complaint,
     statusUi: getAdminComplaintStatusUi(complaint.status),
   }));
+  const updatingComplaintId = updateComplaintStatusMutation.isPending
+    ? (updateComplaintStatusMutation.variables?.id ?? null)
+    : null;
 
   const totalReviews = data.statistics.reviews.total || 1;
   const schoolPercent = Math.round(
@@ -87,14 +93,27 @@ export function AdminDashboardContainer() {
 
   return (
     <div className="mx-auto flex w-full flex-col gap-8">
-      <AdminDashboardHeader
-        title="Panel Monitoring Pusat"
-        description="Pantau real-time transparansi gizi dan realisasi anggaran publik"
-      />
+      <DashboardPageHeader>
+        <DashboardPageHeader.Title>
+          Panel Monitoring Pusat
+        </DashboardPageHeader.Title>
+        <DashboardPageHeader.Description>
+          Pantau real-time transparansi gizi dan realisasi anggaran publik
+        </DashboardPageHeader.Description>
+      </DashboardPageHeader>
 
       <AdminSummaryStats stats={summaryStats} />
 
-      <AdminComplaintsTable complaints={complaints} />
+      <AdminComplaintsTable
+        complaints={complaints}
+        onUpdateStatus={({ id, status }) => {
+          updateComplaintStatusMutation.mutate({
+            id,
+            status,
+          });
+        }}
+        updatingComplaintId={updatingComplaintId}
+      />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_2fr]">
         <AdminComplaintsOverview
@@ -102,7 +121,6 @@ export function AdminDashboardContainer() {
           schoolPercent={schoolPercent}
           publicPercent={publicPercent}
         />
-        <AdminVendorWarnings warnings={data.warnings} />
       </div>
     </div>
   );

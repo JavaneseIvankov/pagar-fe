@@ -9,7 +9,7 @@ export default function CreateReportPage() {
           Input Laporan Makan harian
         </h1>
         <p className="mt-2 text-muted-foreground">
-          Lengkapi rincian menu dan anggaran untuk tanggal 14 Maret 2026
+          Lengkapi rincian menu, gizi, dan anggaran untuk laporan harian.
         </p>
       </div>
 

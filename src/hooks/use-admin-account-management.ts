@@ -3,11 +3,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/query-keys";
 import {
+  createAdminManagedAccount,
   fetchAdminActiveAccounts,
   fetchAdminPendingAccounts,
   updateAdminAccountStatus,
 } from "@/rpc";
-import type { TAdminAccountDecision } from "@/types";
+import type {
+  TAdminAccountDecision,
+  TAdminCreateManagedAccountInput,
+} from "@/types";
 
 export function useAdminActiveAccounts() {
   return useQuery({
@@ -38,6 +42,20 @@ export function useUpdateAdminAccountStatus() {
           queryKey: queryKeys.adminAccounts.pending(),
         }),
       ]);
+    },
+  });
+}
+
+export function useCreateAdminManagedAccount() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: TAdminCreateManagedAccountInput) =>
+      createAdminManagedAccount(input),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.adminAccounts.pending(),
+      });
     },
   });
 }

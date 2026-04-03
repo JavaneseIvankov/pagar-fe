@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import type { TPublicReview } from "@/types";
 import { AvatarFallbackIcon } from "../avatar-fallback-icon";
 import { DashboardCard } from "./dashboard-card";
+import Link from "next/link";
 
 interface PublicReportsListProps {
   reports: TPublicReview[];
@@ -16,19 +17,18 @@ export function PublicReportsList({ reports }: PublicReportsListProps) {
     <DashboardCard>
       <div className="flex flex-col gap-3 border-border/50 border-b px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <h3 className="font-bold text-lg">Laporan Masyarakat</h3>
-        <Button
-          variant="ghost"
-          className="h-auto w-fit gap-2 p-0 font-semibold text-emerald-600 hover:bg-transparent hover:text-emerald-700"
-        >
-          Lihat Semua{" "}
-          <HugeiconsIcon icon={ArrowRight01Icon} size={16} aria-hidden="true" />
+        {/* TASK[ASCENT]: this should be a link (keep the current styling using buttonVariant) that when press will redirect to '/dashboard/sppg/laporan-publik/page.tsx' / */}
+        <Button asChild variant="ghost" className="h-auto gap-2 p-0">
+          <Link href="/dashboard/sppg/laporan-publik">
+            Lihat Semua <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
+          </Link>
         </Button>
       </div>
       <div className="flex flex-col gap-4 p-4 sm:hidden">
         {reports.map((report) => (
           <div
             key={report.id}
-            className="flex gap-3 rounded-2xl border border-border/60 bg-white/75 p-4"
+            className="flex gap-3 rounded-2xl border border-border/60 bg-background p-4"
           >
             <Avatar className="size-10 shrink-0">
               <AvatarFallback className="bg-muted">
@@ -57,7 +57,7 @@ export function PublicReportsList({ reports }: PublicReportsListProps) {
                       className="object-cover"
                     />
                   ) : (
-                    <div className="absolute inset-0 bg-slate-200" />
+                    <div className="absolute inset-0 bg-muted" />
                   )}
                 </div>
               </div>
@@ -102,7 +102,7 @@ export function PublicReportsList({ reports }: PublicReportsListProps) {
                     className="object-cover"
                   />
                 ) : (
-                  <div className="absolute inset-0 bg-slate-200" />
+                  <div className="absolute inset-0 bg-muted" />
                 )}
               </div>
             </div>

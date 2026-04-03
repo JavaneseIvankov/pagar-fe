@@ -1,16 +1,31 @@
-import { delayedValue } from "@/lib/utils";
+"use server";
+
 import {
-  getSppgPeriodicReportsSuccessResponseSchema,
   mapPeriodicReportsDtoToDomain,
   type TSppgPeriodicReport,
 } from "@/types";
-import { buildSppgPeriodicReportsResponse } from "./mock-backend";
+import { createServerRpc } from "./server-rpc";
 
-export async function fetchSppgPeriodicReports(): Promise<
-  TSppgPeriodicReport[]
-> {
-  const rawData = await delayedValue(buildSppgPeriodicReportsResponse(), 300);
-  const dto = getSppgPeriodicReportsSuccessResponseSchema.parse(rawData);
-
-  return mapPeriodicReportsDtoToDomain(dto.data);
+export interface FetchSppgPeriodicReportsParams {
+  endDate: string;
+  startDate: string;
 }
+
+export const fetchSppgPeriodicReports = createServerRpc(
+  {
+    operation: "fetchSppgPeriodicReports",
+  },
+  async (
+    { client },
+    { endDate, startDate }: FetchSppgPeriodicReportsParams,
+  ): Promise<TSppgPeriodicReport[]> => {
+    const dto = await client.getSppgPeriodicReports({
+      query: {
+        end_date: endDate,
+        start_date: startDate,
+      },
+    });
+
+    return mapPeriodicReportsDtoToDomain(dto.data);
+  },
+);

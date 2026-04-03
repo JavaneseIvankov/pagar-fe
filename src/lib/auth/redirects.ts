@@ -1,4 +1,5 @@
 export const LOGIN_RETURN_TO_PARAM = "returnTo";
+export const AUTH_SESSION_EXPIRED_PATH = "/auth/session-expired";
 
 const INTERNAL_APP_ORIGIN = "http://pagar.local";
 

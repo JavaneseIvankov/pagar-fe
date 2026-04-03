@@ -25,19 +25,24 @@ export function NutritionalFactItem({
   return (
     <div
       className={cn(
-        "rounded-lg border-0 bg-muted px-2 py-2 text-center",
+        "rounded-lg border-0 bg-muted px-1 py-1.5 text-center",
         className,
       )}
     >
       <p
         className={cn(
-          "text-body-3 text-foreground/30 uppercase",
+          "text-foreground/40 text-xs uppercase tracking-tight sm:text-xs",
           labelClassName,
         )}
       >
         {label}
       </p>
-      <p className={cn("font-black text-body-3 lg:text-h4", valueClassName)}>
+      <p
+        className={cn(
+          "mt-0.5 font-bold text-xs leading-tight sm:text-xs",
+          valueClassName,
+        )}
+      >
         {value} {unit}
       </p>
     </div>
@@ -47,7 +52,7 @@ export function NutritionalFactItem({
 export function NutritionalFacts({ facts }: NutritionalFactsProps) {
   return (
     <div className="@container my-2 w-full">
-      <div className="grid @[300px]:grid-cols-4 grid-cols-2 gap-2 rounded-lg">
+      <div className="grid grid-cols-4 gap-1 rounded-lg sm:gap-1.5">
         <NutritionalFactItem
           label="Kalori"
           value={facts.calories.inKcal}

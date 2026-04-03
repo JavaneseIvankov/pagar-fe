@@ -4,14 +4,6 @@ import { debounce, parseAsInteger, useQueryState } from "nuqs";
 import { Suspense, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { SearchInput } from "../search-input";
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from "../ui/combobox";
 
 type KecamatanFilterEntry = {
   value: number;
@@ -52,12 +44,15 @@ function SearchReportFallback({ className }: { className?: string }) {
 function SearchReportContainer({ className }: { className?: string }) {
   const [search, setSearch] = useQueryState("search", {
     defaultValue: "",
+    shallow: false,
     limitUrlUpdates: debounce(500),
   });
 
   const [kecamatanId, setKecamatanId] = useQueryState<number>(
     "kecamatanId",
-    parseAsInteger,
+    parseAsInteger.withOptions({
+      shallow: false,
+    }),
   );
 
   const selectedKecamatan = useMemo(() => {
@@ -87,31 +82,33 @@ interface SearchReportLayoutProps {
 }
 
 function SearchReportLayout({
-  className,
-  items,
+  className: _className,
+  items: _items,
   searchValue,
   isReadOnly = false,
-  onSearchChange,
-  selectedKecamatan,
-  onKecamatanChange,
+  onSearchChange: _onSearchChange,
+  selectedKecamatan: _selectedKecamatan,
+  onKecamatanChange: _onKecamatanChange,
 }: SearchReportLayoutProps) {
   // FIXME: this has bad tab-navigation
   return (
     <div
       className={cn(
         "flex w-full min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center",
-        className,
+        _className,
       )}
     >
       <SearchInput
         className="w-full sm:flex-1"
         inputClassName="h-10"
         value={searchValue}
-        onChange={(e) => onSearchChange?.(e.target.value)}
+        onChange={(e) => _onSearchChange?.(e.target.value)}
         readOnly={isReadOnly}
         placeholder="Cari laporan atau menu…"
         aria-label="Cari laporan atau menu"
       />
+      {/* 
+          FIXME: temprary
       <Combobox
         items={items}
         itemToStringValue={(k: KecamatanFilterEntry) => k.label}
@@ -141,6 +138,7 @@ function SearchReportLayout({
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
+      */}
     </div>
   );
 }

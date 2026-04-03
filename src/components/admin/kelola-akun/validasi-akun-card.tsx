@@ -2,10 +2,7 @@
 
 import { ValidasiAkunCardSkeleton } from "@/components/admin/kelola-akun/validasi-akun-card-skeleton";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatShortDate } from "@/lib/formatters";
-import { getManagedAccountRoleUi } from "@/lib/ui-mappers";
 import type { TAdminPendingAccount } from "@/types";
 
 interface ValidasiAkunCardProps {
@@ -34,9 +31,6 @@ export function ValidasiAkunCard({
           <CardTitle className="font-bold text-lg">
             Validasi Akun SPPG & Sekolah
           </CardTitle>
-          <p className="text-muted-foreground text-sm">
-            Tinjau akun baru sebelum diaktifkan.
-          </p>
         </div>
       </CardHeader>
 
@@ -49,63 +43,52 @@ export function ValidasiAkunCard({
           </div>
         ) : hasItems ? (
           <>
-            <div className="mb-3 grid grid-cols-[1.2fr_100px_120px] items-center gap-4 font-semibold text-muted-foreground text-xs uppercase">
-              <span>Akun</span>
-              <span className="text-center">Role</span>
-              <span className="text-center">Aksi</span>
+            <div className="mb-3 grid grid-cols-[1fr_1fr_100px_160px] items-center gap-4 font-semibold text-muted-foreground text-xs uppercase">
+              <span>Email</span>
+              <span>Username</span>
+              <span className="text-center">Status</span>
+              <span className="text-center">Validasi</span>
             </div>
 
-            <div className="flex flex-1 flex-col gap-1">
+            <div className="flex max-h-[500px] flex-col gap-1 overflow-y-auto pr-2">
               {items.map((item) => {
                 const isUpdating = updatingAccountId === item.id;
-                const roleUi = getManagedAccountRoleUi(item.role);
 
                 return (
                   <div
                     key={item.id}
-                    className="grid grid-cols-[1.2fr_100px_120px] items-start gap-4 border-border/50 border-b py-4 last:border-0"
+                    className="grid grid-cols-[1fr_1fr_100px_160px] items-center gap-4 border-border/50 border-b py-4 last:border-0"
                   >
-                    <div className="min-w-0 space-y-1">
-                      <p className="truncate font-semibold text-sm">
-                        {item.username}
-                      </p>
-                      <p className="text-muted-foreground text-xs">
-                        Diajukan {formatShortDate(item.createdAt)}
-                      </p>
-                      <div className="flex flex-wrap gap-2 pt-1 text-xs">
-                        <span className="rounded-full bg-muted px-2 py-1 text-muted-foreground">
-                          Reg: {item.registrationCode ?? "-"}
-                        </span>
-                        <span className="rounded-full bg-muted px-2 py-1 text-muted-foreground">
-                          BGN: {item.bgnCode ?? "-"}
-                        </span>
-                      </div>
-                    </div>
+                    <p className="truncate text-muted-foreground text-sm">
+                      {item.email}
+                    </p>
+                    <p className="truncate text-foreground text-sm">
+                      @{item.username}
+                    </p>
 
                     <div className="flex justify-center">
-                      <Badge variant="secondary" className={roleUi.className}>
-                        {roleUi.label}
+                      <Badge className="rounded-full border-0 bg-sky-50 font-medium text-sky-500 hover:bg-sky-50">
+                        Menunggu
                       </Badge>
                     </div>
 
-                    <div className="flex flex-col items-stretch gap-2">
-                      <Button
+                    <div className="flex items-center justify-center gap-2">
+                      <button
                         type="button"
-                        className="bg-emerald-600 px-3 py-1 font-semibold text-white text-xs hover:bg-emerald-700"
+                        className="rounded-full bg-emerald-50 px-3 py-1 font-semibold text-emerald-600 text-xs hover:bg-emerald-100 disabled:opacity-50"
                         disabled={isLoading || isUpdating}
                         onClick={() => onApprove(item.id)}
                       >
-                        {isUpdating ? "Memproses..." : "Setuju"}
-                      </Button>
-                      <Button
+                        {isUpdating ? "..." : "Setuju"}
+                      </button>
+                      <button
                         type="button"
-                        variant="outline"
-                        className="border-red-200 bg-red-50 px-3 py-1 font-semibold text-red-600 text-xs hover:bg-red-100 hover:text-red-700"
+                        className="rounded-full bg-rose-50 px-3 py-1 font-semibold text-rose-600 text-xs hover:bg-rose-100 disabled:opacity-50"
                         disabled={isLoading || isUpdating}
                         onClick={() => onReject(item.id)}
                       >
-                        {isUpdating ? "Memproses..." : "Tolak"}
-                      </Button>
+                        {isUpdating ? "..." : "Tolak"}
+                      </button>
                     </div>
                   </div>
                 );

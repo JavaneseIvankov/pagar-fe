@@ -59,8 +59,7 @@ export function AdminProfileSkeleton() {
       </div>
 
       <p className="text-center text-muted-foreground text-sm">
-        Halaman ini masih bersifat baca-saja sampai kontrak pembaruan profil
-        admin tersedia.
+        Memuat profil admin, pengaturan akun, dan detail akses saat ini.
       </p>
     </div>
   );

@@ -13,7 +13,6 @@ export type TAuthSession = {
 };
 
 export type TAuthRegistrationResult = {
-  accountStatus: TAccountStatus;
   message: string;
   user: TUser;
 };
@@ -69,8 +68,29 @@ export type TAdminAccountRoleFilter = "ALL" | TManagedAccountRole;
 
 export type TAdminAccountDecision = "APPROVED" | "REJECTED";
 
+export type TAdminCreateManagedAccountInput =
+  | {
+      email: string;
+      password: string;
+      registrationCode?: string;
+      role: "SCHOOL";
+      schoolAddress: string;
+      schoolName: string;
+      username: string;
+    }
+  | {
+      bgnCode?: string;
+      email: string;
+      password: string;
+      role: "SPPG";
+      sppgAddress: string;
+      sppgName: string;
+      username: string;
+    };
+
 export type TAdminManagedAccount = {
   id: string;
+  email: string;
   username: string;
   role: TManagedAccountRole;
   createdAt: Date;
@@ -95,6 +115,19 @@ export type TAdminProfile = TAdmin & {
 };
 
 export type TCurrentProfile = TPublicProfile | TSchoolProfile;
+
+export type TPaginationMeta = {
+  page: number;
+  limit: number;
+  totalItems: number;
+  totalPages: number;
+  hasNextPage: boolean;
+};
+
+export type TPaginatedResult<TItem> = {
+  items: TItem[];
+  meta: TPaginationMeta;
+};
 
 export type TNutritionalFacts = {
   calories: {
@@ -145,6 +178,22 @@ export type TPublicReview = {
   reporterName: string;
   forSppg: Omit<TSppg, "address" | "role">;
   content: string;
+};
+
+export type TSppgReview = {
+  id: string;
+  title: string;
+  imageUrl: string;
+  postedAt: Date;
+  ratingScore: number;
+  reporterName: string;
+  content: string;
+};
+
+export type TReviewSppgTarget = {
+  address: string;
+  id: string;
+  name: string;
 };
 
 export type TBudgetItem = {
@@ -198,7 +247,6 @@ export type TSppgDashboard = {
 
 export type TSppgPeriodicReport = {
   id: string;
-  url: string;
   periode: string;
   monthIndex: number;
   status: "VERIFIED" | "NOT_VERIFIED";
@@ -235,6 +283,7 @@ export type TAdminComplaintStatus = "PENDING" | "INVESTIGATING" | "RESOLVED";
 export type TAdminComplaint = {
   id: string;
   authorName: string;
+  description: string;
   title: string;
   vendorName: string;
   imageUrl: string;

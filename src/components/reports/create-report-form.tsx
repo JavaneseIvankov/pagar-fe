@@ -31,6 +31,7 @@ import { FileUpload } from "@/components/ui/file-upload";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import type { TReviewSppgTarget } from "@/types";
+import { SendIcon } from "../exported-icons";
 
 export interface PublicCreateReportFormValues {
   photo?: File;
@@ -244,7 +245,7 @@ export function CreateReportForm({
         }
       >
         {isSubmitting ? "Mengirim Laporan..." : "Kirim Laporan Sekarang"}
-        <HugeiconsIcon icon={Navigation03Icon} className="ml-2 rotate-90" />
+        <SendIcon className="ml-2" />
       </Button>
     </form>
   );

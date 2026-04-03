@@ -15,9 +15,13 @@ import {
   SchoolIcon,
   TruckIcon,
 } from "@/components/exported-icons";
-import { useAdminDashboard } from "@/hooks/use-admin-dashboard";
+import {
+  useAdminDashboard,
+  useUpdateAdminComplaintStatus,
+} from "@/hooks/use-admin-dashboard";
 import { getAdminComplaintStatusUi } from "@/lib/ui-mappers";
 import type { TAdminStatistics } from "@/types";
+import { toast } from "sonner";
 
 function mapSummaryStats(statistics: TAdminStatistics): AdminSummaryStatItem[] {
   return [
@@ -60,6 +64,7 @@ function mapSummaryStats(statistics: TAdminStatistics): AdminSummaryStatItem[] {
 
 export function AdminDashboardContainer() {
   const { data, isLoading, isError } = useAdminDashboard();
+  const updateComplaintStatusMutation = useUpdateAdminComplaintStatus();
 
   if (isLoading) {
     return <AdminDashboardSkeleton />;
@@ -76,6 +81,9 @@ export function AdminDashboardContainer() {
     ...complaint,
     statusUi: getAdminComplaintStatusUi(complaint.status),
   }));
+  const updatingComplaintId = updateComplaintStatusMutation.isPending
+    ? (updateComplaintStatusMutation.variables?.id ?? null)
+    : null;
 
   const totalReviews = data.statistics.reviews.total || 1;
   const schoolPercent = Math.round(
@@ -94,7 +102,26 @@ export function AdminDashboardContainer() {
 
       <AdminSummaryStats stats={summaryStats} />
 
-      <AdminComplaintsTable complaints={complaints} />
+      <AdminComplaintsTable
+        complaints={complaints}
+        onUpdateStatus={async ({ id, status }) => {
+          try {
+            const result = await updateComplaintStatusMutation.mutateAsync({
+              id,
+              status,
+            });
+            toast.success(result.message);
+          } catch (error) {
+            toast.error(
+              error instanceof Error
+                ? error.message
+                : "Gagal memperbarui status keluhan.",
+            );
+            throw error;
+          }
+        }}
+        updatingComplaintId={updatingComplaintId}
+      />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_2fr]">
         <AdminComplaintsOverview

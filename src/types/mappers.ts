@@ -528,9 +528,10 @@ export function mapAdminDashboardDtoToDomain(
     (complaint) => ({
       id: String(complaint.id_review),
       authorName: complaint.user?.username ?? "Anonim",
+      description: complaint.description ?? "Tidak ada detail keluhan.",
       title: complaint.title ?? "Keluhan",
       vendorName: complaint.id_sppg ? `SPPG ${complaint.id_sppg}` : "Vendor",
-      imageUrl: DEFAULT_ATTACHMENT_URL,
+      imageUrl: "",
       status: mapReviewStatusToAdminComplaintStatus(complaint.status_review),
     }),
   );

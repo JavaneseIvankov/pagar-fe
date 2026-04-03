@@ -272,6 +272,7 @@ export type TAdminComplaintStatus = "PENDING" | "INVESTIGATING" | "RESOLVED";
 export type TAdminComplaint = {
   id: string;
   authorName: string;
+  description: string;
   title: string;
   vendorName: string;
   imageUrl: string;

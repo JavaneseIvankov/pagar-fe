@@ -26,6 +26,7 @@ export function ReportHistoryTable({ reports }: ReportHistoryTableProps) {
         <ReportIcon className="text-primary" />
         <h3 className="font-bold text-lg">Riwayat Laporan</h3>
       </div>
+
       <div className="flex flex-col gap-4 p-4 sm:hidden">
         {reports.map((report) => (
           <div
@@ -37,64 +38,61 @@ export function ReportHistoryTable({ reports }: ReportHistoryTableProps) {
                 <p className="line-clamp-2 break-words font-semibold text-sm">
                   {report.title}
                 </p>
+
                 <p className="mt-1 text-muted-foreground text-xs tabular-nums">
                   {formatLongDate(report.postedAt)}
                 </p>
               </div>
+
               <Badge
                 variant="secondary"
-                className="shrink-0 rounded-full bg-primary/10 px-3 py-1 font-semibold text-primary text-xs hover:bg-primary/20"
+                className="shrink-0 rounded-full bg-primary/10 px-2 py-0.5 font-medium text-[11px] text-primary hover:bg-primary/20"
               >
                 {report.status === "SUBMITTED" ? "Terkirim" : report.status}
               </Badge>
             </div>
+
             <div className="mt-4 flex justify-end gap-1.5">
               <Button
                 variant="ghost"
                 size="icon"
-                className="size-9 text-foreground"
+                className="size-8"
                 aria-label={`Unduh ${report.title}`}
               >
-                <HugeiconsIcon
-                  icon={Download01Icon}
-                  size={18}
-                  aria-hidden="true"
-                />
+                <HugeiconsIcon icon={Download01Icon} size={16} />
               </Button>
+
               <Button
                 variant="ghost"
                 size="icon"
-                className="size-9 text-foreground"
+                className="size-8"
                 aria-label={`Hapus ${report.title}`}
               >
-                <HugeiconsIcon
-                  icon={Delete01Icon}
-                  size={18}
-                  aria-hidden="true"
-                />
+                <HugeiconsIcon icon={Delete01Icon} size={16} />
               </Button>
             </div>
           </div>
         ))}
       </div>
+
       <div className="hidden overflow-x-auto p-2 px-4 sm:block">
-        <Table className="min-w-[640px]">
-          <TableHeader className="bg-transparent">
+        <Table className="min-w-[640px] table-fixed">
+          <TableHeader>
             <TableRow className="border-none hover:bg-transparent">
-              <TableHead className="h-12 text-left font-medium text-muted-foreground">
+              <TableHead className="h-10 w-[60%] text-left font-medium text-muted-foreground">
                 Nama Laporan
               </TableHead>
-              <TableHead className="h-12 font-medium text-muted-foreground">
+
+              <TableHead className="h-10 w-[25%] font-medium text-muted-foreground">
                 Tanggal
               </TableHead>
-              <TableHead className="h-12 font-medium text-muted-foreground">
+
+              <TableHead className="h-10 w-[15%] whitespace-nowrap font-medium text-muted-foreground">
                 Status
-              </TableHead>
-              <TableHead className="h-12 w-24 text-right font-medium text-muted-foreground">
-                Aksi
               </TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody>
             {reports.map((report, index) => (
               <TableRow
@@ -105,49 +103,23 @@ export function ReportHistoryTable({ reports }: ReportHistoryTableProps) {
                     : "border-muted/50"
                 }
               >
-                <TableCell className="max-w-[280px] py-4">
-                  <span className="line-clamp-2 break-words font-medium">
+                <TableCell className="py-3">
+                  <span className="line-clamp-2 break-words font-medium text-sm">
                     {report.title}
                   </span>
                 </TableCell>
-                <TableCell className="py-4 font-medium tabular-nums">
+
+                <TableCell className="py-3 font-medium text-sm tabular-nums">
                   {formatLongDate(report.postedAt)}
                 </TableCell>
-                <TableCell className="py-4">
+
+                <TableCell className="py-3">
                   <Badge
                     variant="secondary"
-                    className="rounded-full bg-primary/10 px-3 py-1 font-semibold text-primary text-xs hover:bg-primary/20"
+                    className="whitespace-nowrap rounded-full bg-primary/10 px-2 py-0.5 font-medium text-[11px] text-primary hover:bg-primary/20"
                   >
                     {report.status === "SUBMITTED" ? "Terkirim" : report.status}
                   </Badge>
-                </TableCell>
-                <TableCell className="py-4 text-right">
-                  <div className="flex justify-end gap-1">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-foreground"
-                      aria-label={`Unduh ${report.title}`}
-                    >
-                      <HugeiconsIcon
-                        icon={Download01Icon}
-                        size={18}
-                        aria-hidden="true"
-                      />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-foreground"
-                      aria-label={`Hapus ${report.title}`}
-                    >
-                      <HugeiconsIcon
-                        icon={Delete01Icon}
-                        size={18}
-                        aria-hidden="true"
-                      />
-                    </Button>
-                  </div>
                 </TableCell>
               </TableRow>
             ))}

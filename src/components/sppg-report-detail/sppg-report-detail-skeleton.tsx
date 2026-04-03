@@ -12,7 +12,7 @@ export function SppgReportDetailSkeleton() {
         <div className="flex w-full flex-col gap-6">
           <Skeleton className="aspect-[16/9] w-full rounded-xl lg:aspect-[2/1]" />
 
-          <div className="rounded-xl border-2 border-foreground/10 p-6">
+          <div className="rounded-xl border-2 border-foreground/10 bg-card p-6">
             <div className="mb-6 flex items-center gap-3">
               <Skeleton className="h-8 w-8 rounded-lg" />
               <Skeleton className="h-7 w-40" />
@@ -37,7 +37,7 @@ export function SppgReportDetailSkeleton() {
             </div>
           </div>
 
-          <div className="rounded-xl border-2 border-foreground/10 p-6">
+          <div className="rounded-xl border-2 border-foreground/10 bg-card p-6">
             <div className="mb-6 flex items-center gap-3">
               <Skeleton className="h-8 w-8 rounded-lg" />
               <Skeleton className="h-7 w-36" />
@@ -59,7 +59,7 @@ export function SppgReportDetailSkeleton() {
           </div>
         </div>
 
-        <div className="flex w-full flex-col gap-6 lg:sticky lg:top-6">
+        <div className="flex w-full flex-col gap-6 bg-card lg:sticky lg:top-6">
           <div className="rounded-xl border-2 border-foreground/10 p-6">
             <div className="mb-6 flex items-center gap-3">
               <Skeleton className="h-8 w-8 rounded-lg" />

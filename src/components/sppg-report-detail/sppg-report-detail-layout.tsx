@@ -7,6 +7,7 @@ export interface SppgReportDetailLayoutProps {
   hero: ReactNode;
   nutrition: ReactNode;
   budget?: ReactNode;
+  attachments?: ReactNode;
   vendor: ReactNode;
   related?: ReactNode;
   discrepancy: ReactNode;
@@ -57,6 +58,7 @@ export function SppgReportDetailLayout({
   hero,
   nutrition,
   budget,
+  attachments,
   vendor,
   related,
   discrepancy,
@@ -72,6 +74,7 @@ export function SppgReportDetailLayout({
           {hero}
           {nutrition}
           {budget}
+          {attachments}
         </div>
 
         <div className="right flex w-full flex-col gap-6 lg:sticky lg:top-6">

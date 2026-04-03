@@ -10,6 +10,7 @@ interface FileUploadProps {
   value?: File[];
   defaultValue?: File[];
   onChange?: (files: File[]) => void;
+  onReject?: (rejections: FileUploadRejection[]) => void;
   maxFiles?: number;
   maxSizeMB?: number;
   accept?: string;
@@ -19,6 +20,14 @@ interface FileUploadProps {
   helperText?: string;
   className?: string;
   dropzoneClassName?: string;
+}
+
+export type FileUploadRejectionCode = "file-too-large";
+
+export interface FileUploadRejection {
+  code: FileUploadRejectionCode;
+  file: File;
+  message: string;
 }
 
 function getFileKey(file: File) {
@@ -115,6 +124,7 @@ export function FileUpload({
   value,
   defaultValue = [],
   onChange,
+  onReject,
   maxFiles = 1,
   maxSizeMB = 10,
   accept = "image/*",
@@ -143,9 +153,30 @@ export function FileUpload({
   const handleFileSelect = (filesList: FileList | null) => {
     if (!filesList) return;
 
-    let newFiles = Array.from(filesList);
-    newFiles = newFiles.filter((f) => f.size <= maxSizeMB * 1024 * 1024);
-    if (newFiles.length === 0) return;
+    const selectedFiles = Array.from(filesList);
+    const oversizedFiles = selectedFiles.filter(
+      (file) => file.size > maxSizeMB * 1024 * 1024,
+    );
+
+    if (oversizedFiles.length > 0) {
+      onReject?.(
+        oversizedFiles.map((file) => ({
+          code: "file-too-large",
+          file,
+          message: `Ukuran file maksimal ${maxSizeMB}MB. Pilih file yang lebih kecil.`,
+        })),
+      );
+    }
+
+    let newFiles = selectedFiles.filter(
+      (file) => file.size <= maxSizeMB * 1024 * 1024,
+    );
+    if (newFiles.length === 0) {
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      return;
+    }
 
     const nextFiles =
       maxFiles === 1

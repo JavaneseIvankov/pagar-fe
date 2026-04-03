@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod/v3";
 import { InfoCircleIcon } from "@/components/exported-icons";
-import { loginAction } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -16,9 +15,9 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
+import { loginUser } from "@/rpc";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -52,7 +51,7 @@ export function LoginForm({
 
   const onSubmit = (data: LoginFormValues) => {
     startTransition(async () => {
-      const result = await loginAction({
+      const result = await loginUser({
         ...data,
         returnTo: returnTo ?? undefined,
       });
@@ -101,9 +100,11 @@ export function LoginForm({
               aria-invalid={!!errors.username}
               disabled={isPending}
             />
-            {errors.username && (
-              <FieldError>{errors.username.message}</FieldError>
-            )}
+            <div className="motion-error-slot" data-visible={!!errors.username}>
+              {errors.username ? (
+                <FieldError>{errors.username.message}</FieldError>
+              ) : null}
+            </div>
           </Field>
 
           <Field data-invalid={!!errors.password}>
@@ -115,13 +116,27 @@ export function LoginForm({
               aria-invalid={!!errors.password}
               disabled={isPending}
             />
-            {errors.password && (
-              <FieldError>{errors.password.message}</FieldError>
-            )}
+            <div className="motion-error-slot" data-visible={!!errors.password}>
+              {errors.password ? (
+                <FieldError>{errors.password.message}</FieldError>
+              ) : null}
+            </div>
           </Field>
         </FieldGroup>
-        <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending ? "Memproses..." : "Masuk"}
+        <Button
+          type="submit"
+          className="motion-press w-full"
+          disabled={isPending}
+        >
+          <span className="inline-flex items-center justify-center gap-2">
+            {isPending ? (
+              <span
+                aria-hidden="true"
+                className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent"
+              />
+            ) : null}
+            <span>{isPending ? "Memproses..." : "Masuk"}</span>
+          </span>
         </Button>
         <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <Link href="/auth/lupa-kata-sandi" className="text-body-4 underline">

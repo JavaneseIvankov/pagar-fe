@@ -1,8 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod/v3";
@@ -15,8 +13,10 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import type { TUser } from "@/types";
+import type { TPublicProfile } from "@/types";
 import { createPasswordSchema } from "./profile-schema";
+import { Avatar } from "../ui/avatar";
+import { AvatarFallbackIcon } from "../avatar-fallback-icon";
 
 const publicProfileFormSchema = z
   .object({
@@ -27,11 +27,13 @@ const publicProfileFormSchema = z
 export type PublicProfileFormValues = z.infer<typeof publicProfileFormSchema>;
 
 export interface PublicProfileFormProps {
-  initialData: TUser;
-  onSubmit: (data: PublicProfileFormValues) => void;
+  canEdit?: boolean;
+  initialData: TPublicProfile;
+  onSubmit: (data: PublicProfileFormValues) => Promise<void> | void;
 }
 
 export function PublicProfileForm({
+  canEdit = true,
   initialData,
   onSubmit,
 }: PublicProfileFormProps) {
@@ -52,8 +54,8 @@ export function PublicProfileForm({
     },
   });
 
-  const handleFormSubmit = (data: PublicProfileFormValues) => {
-    onSubmit(data);
+  const handleFormSubmit = async (data: PublicProfileFormValues) => {
+    await onSubmit(data);
     setIsEditing(false);
     reset({
       ...data,
@@ -71,9 +73,9 @@ export function PublicProfileForm({
   return (
     <div className="w-full max-w-xl rounded-xl border border-gray-200 bg-white p-8 shadow-sm">
       <div className="mb-8 flex flex-col items-center">
-        <div className="mb-2 flex h-24 w-24 items-center justify-center rounded-full bg-gray-300">
-          <HugeiconsIcon icon={User} size={48} className="text-white" />
-        </div>
+        <Avatar className="mb-2 flex h-24 w-24 items-center justify-center rounded-full bg-gray-300">
+          <AvatarFallbackIcon className="size-24" iconClassName="size-12" />
+        </Avatar>
       </div>
 
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
@@ -83,7 +85,7 @@ export function PublicProfileForm({
             <Input
               id="username"
               placeholder="Username"
-              disabled={!isEditing}
+              disabled={!canEdit || !isEditing}
               {...register("username")}
               aria-invalid={!!errors.username}
             />
@@ -159,12 +161,16 @@ export function PublicProfileForm({
             <Button
               type="button"
               className="w-full bg-green-600 text-white hover:bg-green-700"
+              disabled={!canEdit}
               onClick={(e) => {
                 e.preventDefault();
+                if (!canEdit) {
+                  return;
+                }
                 setIsEditing(true);
               }}
             >
-              Edit Profil
+              {canEdit ? "Edit Profil" : "Pembaruan Profil Tidak Tersedia"}
             </Button>
           ) : (
             <>

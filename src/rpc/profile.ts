@@ -1,7 +1,17 @@
+"use server";
+
 import z from "zod/v3";
-import { admins, publicUsers, schools, sppgs } from "@/mock-data";
-import { delayedValue } from "@/lib/utils";
-import type { TAdminProfile, TCurrentProfile, TSppgProfile } from "@/types";
+import { getAuthSession, requireCurrentRole } from "@/lib/auth/server";
+import {
+  mapAdminProfileDtoToDomain,
+  mapPublicProfileDtoToDomain,
+  mapSchoolProfileDtoToDomain,
+  mapSppgProfileDtoToDomain,
+  type TAdminProfile,
+  type TCurrentProfile,
+  type TSppgProfile,
+} from "@/types";
+import { createServerRpc } from "./server-rpc";
 
 // TODO: Replace with actual API mock or call (once shape is established)
 const currentProfileSchema = z.discriminatedUnion("role", [
@@ -53,97 +63,179 @@ const currentAdminProfileSchema = z.object({
 });
 
 type CurrentProfileMock = z.infer<typeof currentProfileSchema>;
-type CurrentSppgProfileMock = z.infer<typeof currentSppgProfileSchema>;
-type CurrentAdminProfileMock = z.infer<typeof currentAdminProfileSchema>;
 
-const currentPublicProfileRole: CurrentProfileMock["role"] = "PUBLIC";
+export const fetchCurrentProfile = createServerRpc(
+  {
+    operation: "fetchCurrentProfile",
+  },
+  async ({ client, parse }): Promise<TCurrentProfile> => {
+    const session = await getAuthSession();
 
-function buildCurrentProfileMock(): CurrentProfileMock {
-  if (currentPublicProfileRole === "SCHOOL") {
-    const school = schools[0];
+    if (session?.user.role === "SCHOOL") {
+      const dto = await client.getSchoolProfile();
+
+      return parse(
+        currentProfileSchema,
+        mapSchoolProfileDtoToDomain(dto.data, {
+          username: session.user.username,
+        }),
+        "school-profile",
+      );
+    }
+
+    if (session?.user.role === "PUBLIC") {
+      const dto = await client.getPublicProfile();
+
+      return parse(
+        currentProfileSchema,
+        mapPublicProfileDtoToDomain(dto.data, {
+          userId: session.user.id,
+        }) satisfies CurrentProfileMock,
+        "public-profile",
+      );
+    }
+
+    if (!session) {
+      throw new Error("Sesi profil tidak ditemukan.");
+    }
+
+    throw new Error("Profil saat ini hanya tersedia untuk publik dan sekolah.");
+  },
+);
+
+export const fetchCurrentSppgProfile = createServerRpc(
+  {
+    operation: "fetchCurrentSppgProfile",
+  },
+  async ({ client, parse }): Promise<TSppgProfile> => {
+    const dto = await client.getSppgProfile();
+
+    return parse(
+      currentSppgProfileSchema,
+      mapSppgProfileDtoToDomain(dto.data),
+      "response",
+    );
+  },
+);
+
+export const fetchCurrentAdminProfile = createServerRpc(
+  {
+    operation: "fetchCurrentAdminProfile",
+  },
+  async ({ client, parse }): Promise<TAdminProfile> => {
+    const session = await requireCurrentRole(
+      ["ADMIN"],
+      "Profil admin hanya tersedia untuk akun admin.",
+    );
+    const dto = await client.getAdminProfile();
+
+    return parse(
+      currentAdminProfileSchema,
+      mapAdminProfileDtoToDomain(dto.data, {
+        userId: session.user.id,
+      }),
+      "admin-profile",
+    );
+  },
+);
+
+export type UpdateCurrentSchoolProfileInput = {
+  address: string;
+  schoolName: string;
+};
+
+export type UpdateCurrentSppgProfileInput = {
+  address: string;
+  sppgName: string;
+};
+
+export type UpdateCurrentAdminProfileInput = {
+  email: string;
+  name: string;
+  password?: string;
+  username: string;
+};
+
+export const updateCurrentSchoolProfile = createServerRpc(
+  {
+    operation: "updateCurrentSchoolProfile",
+  },
+  async (
+    { client, parse },
+    input: UpdateCurrentSchoolProfileInput,
+  ): Promise<TCurrentProfile> => {
+    const session = await requireCurrentRole(
+      ["SCHOOL"],
+      "Pembaruan profil sekolah hanya tersedia untuk akun sekolah.",
+    );
+
+    const dto = await client.updateSchoolProfile({
+      body: {
+        school_address: input.address,
+        school_name: input.schoolName,
+      },
+    });
+
+    return parse(
+      currentProfileSchema,
+      mapSchoolProfileDtoToDomain(dto.data, {
+        username: session.user.username,
+      }),
+      "updated-school-profile",
+    );
+  },
+);
+
+export const updateCurrentSppgProfile = createServerRpc(
+  {
+    operation: "updateCurrentSppgProfile",
+  },
+  async (
+    { client },
+    input: UpdateCurrentSppgProfileInput,
+  ): Promise<{ message: string }> => {
+    await requireCurrentRole(
+      ["SPPG"],
+      "Pembaruan profil SPPG hanya tersedia untuk akun SPPG.",
+    );
+
+    const dto = await client.updateSppgProfile({
+      body: {
+        sppg_name: input.sppgName,
+        sppg_address: input.address,
+      },
+    });
 
     return {
-      role: "SCHOOL",
-      id: school?.id ?? "user-school-001",
-      username: school?.username ?? "school-1",
-      schoolId: school?.schoolId ?? "SCH-MLG-001",
-      schoolName: school?.schoolName ?? "Sekolah",
-      address: school?.address ?? "",
-      displayName: school?.schoolName ?? "Sekolah",
-      email: "sekolah@pagar.app",
+      message: dto.message,
     };
-  }
+  },
+);
 
-  const publicUser = publicUsers[0];
+export const updateCurrentAdminProfile = createServerRpc(
+  {
+    operation: "updateCurrentAdminProfile",
+  },
+  async (
+    { client },
+    input: UpdateCurrentAdminProfileInput,
+  ): Promise<{ message: string }> => {
+    await requireCurrentRole(
+      ["ADMIN"],
+      "Pembaruan profil admin hanya tersedia untuk akun admin.",
+    );
 
-  return {
-    role: "PUBLIC",
-    id: publicUser?.id ?? "user-public-001",
-    username: publicUser?.username ?? "pengguna",
-    displayName: "Pengguna Publik",
-    email: "warga@pagar.app",
-  };
-}
-
-function buildCurrentSppgProfileMock(): CurrentSppgProfileMock {
-  const sppg = sppgs[0];
-
-  return {
-    role: "SPPG",
-    id: sppg?.id ?? "user-sppg-001",
-    username: sppg?.username ?? "sppg-1",
-    sppgId: sppg?.sppgId ?? "SPPG-MLG-001",
-    sppgName: sppg?.sppgName ?? "SPPG",
-    address: sppg?.address ?? "",
-    description:
-      "Penyedia nutrisi presisi tersertifikasi untuk program kesehatan nasional dengan fokus pada transparansi rantai pasok.",
-    email: "sppg@pagar.app",
-    location: "Kota Malang, Kec. Kedungkandang",
-    registrationCode: "REG-SPPG-001",
-    accountStatus: "APPROVED",
-  };
-}
-
-function buildCurrentAdminProfileMock(): CurrentAdminProfileMock {
-  const admin = admins[0];
-
-  return {
-    role: "ADMIN",
-    id: admin?.id ?? "user-admin-001",
-    username: admin?.username ?? "admin",
-    name: "Admin Pagar",
-    email: "admin@pagar.app",
-    accessDetails: [
-      {
-        id: "manage-sppg",
-        label: "Mengelola Vendor SPPG",
+    const dto = await client.updateProfile({
+      body: {
+        name: input.name,
+        username: input.username,
+        email: input.email,
+        password: input.password,
       },
-      {
-        id: "manage-accounts",
-        label: "Mengelola Akun",
-      },
-      {
-        id: "monitor-data",
-        label: "Memantau Data",
-      },
-    ],
-  };
-}
+    });
 
-export async function fetchCurrentProfile(): Promise<TCurrentProfile> {
-  const rawData = await delayedValue(buildCurrentProfileMock(), 300);
-
-  return currentProfileSchema.parse(rawData);
-}
-
-export async function fetchCurrentSppgProfile(): Promise<TSppgProfile> {
-  const rawData = await delayedValue(buildCurrentSppgProfileMock(), 300);
-
-  return currentSppgProfileSchema.parse(rawData);
-}
-
-export async function fetchCurrentAdminProfile(): Promise<TAdminProfile> {
-  const rawData = await delayedValue(buildCurrentAdminProfileMock(), 300);
-
-  return currentAdminProfileSchema.parse(rawData);
-}
+    return {
+      message: dto.message,
+    };
+  },
+);

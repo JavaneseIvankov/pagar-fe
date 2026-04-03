@@ -22,7 +22,7 @@ export function AuthContentLayout({
   return (
     <div
       className={cn(
-        "mx-auto flex w-full max-w-xl flex-col gap-6 sm:gap-8 lg:max-w-[32rem] lg:gap-10",
+        "mx-auto flex w-full max-w-xl flex-col gap-4 sm:gap-6 lg:max-w-[32rem] lg:gap-8",
         className,
       )}
     >

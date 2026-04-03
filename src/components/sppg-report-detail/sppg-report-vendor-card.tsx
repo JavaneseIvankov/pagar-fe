@@ -14,21 +14,21 @@ export interface SppgReportVendorCardProps {
 export function SppgReportVendorCard({ vendor }: SppgReportVendorCardProps) {
   return (
     <SppgDetailSectionCard className="overflow-hidden">
-      <CardHeader className="border-foreground/5 border-b bg-slate-50/50 pt-4 pb-3">
-        <h4 className="font-bold text-[11px] text-foreground/40 uppercase tracking-[0.2em]">
+      <CardHeader className="border-foreground/5 border-b bg-muted/50 pt-4 pb-3">
+        <h4 className="font-bold text-foreground/40 text-xs uppercase tracking-widest">
           INFORMASI VENDOR
         </h4>
       </CardHeader>
       <CardContent className="flex flex-col gap-4 p-5">
         <div className="mb-1 flex items-center gap-4">
-          <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-green-50/80">
-            <ShopIcon className="h-6 w-6 text-foreground" />
+          <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-primary/10">
+            <ShopIcon className="h-6 w-6 text-primary" />
           </div>
           <div className="flex min-w-0 flex-col">
             <h3 className="truncate font-bold text-base leading-tight md:text-lg">
               {vendor.sppgName}
             </h3>
-            <p className="mt-1 font-medium text-[11px] text-muted-foreground">
+            <p className="mt-1 font-medium text-muted-foreground text-xs">
               Vendor Terakreditasi B
             </p>
           </div>
@@ -57,10 +57,10 @@ export function SppgReportVendorCard({ vendor }: SppgReportVendorCardProps) {
               </p>
             </div>
             <div className="flex items-center justify-between gap-3">
-              <span className="rounded-full bg-emerald-50 px-3 py-1 font-semibold text-[11px] text-emerald-700">
+              <span className="rounded-full bg-primary/10 px-3 py-1 font-semibold text-primary text-xs">
                 Lokasi Terverifikasi
               </span>
-              <span className="font-medium text-[11px] text-muted-foreground">
+              <span className="font-medium text-muted-foreground text-xs">
                 Peta menyusul
               </span>
             </div>

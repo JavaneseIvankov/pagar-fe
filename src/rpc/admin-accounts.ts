@@ -1,59 +1,100 @@
-import { delayedValue } from "@/lib/utils";
+"use server";
+
 import {
-  getActiveAccountsSuccessResponseSchema,
-  getPendingAccountsSuccessResponseSchema,
   mapActiveAccountDtoToDomain,
   mapPendingAccountDtoToDomain,
-  updateAccountStatusBodySchema,
-  updateAccountStatusParamsSchema,
-  updateAccountStatusSuccessResponseSchema,
+  mapRegisterDtoToDomain,
   type TAdminAccountDecision,
   type TAdminActiveAccount,
+  type TAdminCreateManagedAccountInput,
   type TAdminPendingAccount,
+  type TAuthRegistrationResult,
 } from "@/types";
-import {
-  buildActiveAccountsResponse,
-  buildPendingAccountsResponse,
-  updateMockAccountStatus,
-} from "./mock-backend";
+import { createServerRpc } from "./server-rpc";
 
-export async function fetchAdminActiveAccounts(): Promise<
-  TAdminActiveAccount[]
-> {
-  const rawData = await delayedValue(buildActiveAccountsResponse(), 300);
-  const dto = getActiveAccountsSuccessResponseSchema.parse(rawData);
+export const fetchAdminActiveAccounts = createServerRpc(
+  {
+    operation: "fetchAdminActiveAccounts",
+  },
+  async ({ client }): Promise<TAdminActiveAccount[]> => {
+    const dto = await client.getActiveAccounts();
 
-  return dto.data.map(mapActiveAccountDtoToDomain);
-}
+    return dto.data.map(mapActiveAccountDtoToDomain);
+  },
+);
 
-export async function fetchAdminPendingAccounts(): Promise<
-  TAdminPendingAccount[]
-> {
-  const rawData = await delayedValue(buildPendingAccountsResponse(), 300);
-  const dto = getPendingAccountsSuccessResponseSchema.parse(rawData);
+export const fetchAdminPendingAccounts = createServerRpc(
+  {
+    operation: "fetchAdminPendingAccounts",
+  },
+  async ({ client }): Promise<TAdminPendingAccount[]> => {
+    const dto = await client.getPendingAccounts();
 
-  return dto.data.map(mapPendingAccountDtoToDomain);
-}
+    return dto.data.map(mapPendingAccountDtoToDomain);
+  },
+);
 
-export async function updateAdminAccountStatus(params: {
-  idUser: string;
-  status: TAdminAccountDecision;
-}) {
-  const parsedParams = updateAccountStatusParamsSchema.parse({
-    id_user: params.idUser,
-  });
-  const parsedBody = updateAccountStatusBodySchema.parse({
-    status: params.status,
-  });
+export const updateAdminAccountStatus = createServerRpc(
+  {
+    operation: "updateAdminAccountStatus",
+  },
+  async (
+    { client },
+    params: {
+      idUser: string;
+      status: TAdminAccountDecision;
+    },
+  ) => {
+    const dto = await client.updateAccountStatus({
+      params: {
+        id_user: params.idUser,
+      },
+      body: {
+        status: params.status,
+      },
+    });
 
-  await delayedValue(null, 300);
+    return {
+      accountStatus: dto.data.account_status,
+      id: dto.data.id_user,
+    };
+  },
+);
 
-  const rawData = updateMockAccountStatus({
-    idUser: parsedParams.id_user,
-    status: parsedBody.status,
-  });
+export const createAdminManagedAccount = createServerRpc(
+  {
+    operation: "createAdminManagedAccount",
+  },
+  async (
+    { client },
+    input: TAdminCreateManagedAccountInput,
+  ): Promise<TAuthRegistrationResult> => {
+    if (input.role === "SCHOOL") {
+      const dto = await client.registerSchool({
+        body: {
+          email: input.email,
+          password: input.password,
+          registration_code: input.registrationCode,
+          school_address: input.schoolAddress,
+          school_name: input.schoolName,
+          username: input.username,
+        },
+      });
 
-  const dto = updateAccountStatusSuccessResponseSchema.parse(rawData);
+      return mapRegisterDtoToDomain(dto);
+    }
 
-  return dto;
-}
+    const dto = await client.registerSppg({
+      body: {
+        bgn_code: input.bgnCode,
+        email: input.email,
+        password: input.password,
+        sppg_address: input.sppgAddress,
+        sppg_name: input.sppgName,
+        username: input.username,
+      },
+    });
+
+    return mapRegisterDtoToDomain(dto);
+  },
+);

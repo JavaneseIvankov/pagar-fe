@@ -5,7 +5,15 @@ import {
   InformationCircleIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import type {
+  Control,
+  FieldErrors,
+  SubmitHandler,
+  UseFormHandleSubmit,
+  UseFormRegister,
+} from "react-hook-form";
 import { Controller } from "react-hook-form";
+import { toast } from "sonner";
 import { DashboardCard } from "@/components/dashboard/dashboard-card";
 import {
   ForkAndSpoonIcon,
@@ -16,6 +24,7 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   Field,
+  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -31,13 +40,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
-import type {
-  Control,
-  FieldErrors,
-  SubmitHandler,
-  UseFormHandleSubmit,
-  UseFormRegister,
-} from "react-hook-form";
 import type { TCreateReportForm } from "@/hooks/use-persisted-sppg-create-report-form";
 
 interface DashboardCreateReportFormProps {
@@ -47,9 +49,16 @@ interface DashboardCreateReportFormProps {
   fields: Array<{ id: string }>;
   handleSubmit: UseFormHandleSubmit<TCreateReportForm>;
   isHydrating: boolean;
+  isSubmitting: boolean;
+  jumlahPorsi: number;
+  onBudgetProofReject: (message: string) => void;
+  onBudgetProofSelect: () => void;
+  onFoodPhotoReject: (message: string) => void;
+  onFoodPhotoSelect: () => void;
   onSubmit: SubmitHandler<TCreateReportForm>;
   register: UseFormRegister<TCreateReportForm>;
   remove: (index: number) => void;
+  targetKalori: number;
   totalAnggaranPerPorsi: number;
 }
 
@@ -60,18 +69,41 @@ export function CreateReportForm({
   fields,
   handleSubmit,
   isHydrating,
+  isSubmitting,
+  jumlahPorsi,
+  onBudgetProofReject,
+  onBudgetProofSelect,
+  onFoodPhotoReject,
+  onFoodPhotoSelect,
   onSubmit,
   register,
   remove,
+  targetKalori,
   totalAnggaranPerPorsi,
 }: DashboardCreateReportFormProps) {
+  const rincianAnggaranErrorMessage =
+    typeof errors.rincianAnggaran?.message === "string"
+      ? errors.rincianAnggaran.message
+      : null;
+
   if (isHydrating) {
-    return <div className="overflow-y-scroll"></div>;
+    return (
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_350px]">
+        <div className="space-y-6">
+          <div className="h-60 animate-pulse rounded-2xl bg-muted/50" />
+          <div className="h-52 animate-pulse rounded-2xl bg-muted/50" />
+          <div className="h-72 animate-pulse rounded-2xl bg-muted/50" />
+        </div>
+        <div className="h-80 animate-pulse rounded-2xl bg-muted/50" />
+      </div>
+    );
   }
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit, () => {
+        toast.error("Form belum valid. Periksa field yang ditandai merah.");
+      })}
       className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_350px]"
     >
       {/* KIRI - Form Section */}
@@ -85,6 +117,21 @@ export function CreateReportForm({
 
           <FieldGroup className="gap-6">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <Field data-invalid={!!errors.tanggalLaporan}>
+                <FieldLabel htmlFor="tanggalLaporan">
+                  Tanggal Laporan
+                </FieldLabel>
+                <Input
+                  id="tanggalLaporan"
+                  type="date"
+                  {...register("tanggalLaporan")}
+                  aria-invalid={!!errors.tanggalLaporan}
+                />
+                {errors.tanggalLaporan && (
+                  <FieldError>{errors.tanggalLaporan.message}</FieldError>
+                )}
+              </Field>
+
               <Field data-invalid={!!errors.namaMenu}>
                 <FieldLabel htmlFor="namaMenu">Nama Menu Makanan</FieldLabel>
                 <Input
@@ -112,6 +159,21 @@ export function CreateReportForm({
                   <FieldError>{errors.waktuMakan.message}</FieldError>
                 )}
               </Field>
+
+              <Field data-invalid={!!errors.jumlahPorsi}>
+                <FieldLabel htmlFor="jumlahPorsi">Jumlah Porsi</FieldLabel>
+                <Input
+                  id="jumlahPorsi"
+                  type="number"
+                  min={1}
+                  placeholder="Masukkan total porsi"
+                  {...register("jumlahPorsi", { valueAsNumber: true })}
+                  aria-invalid={!!errors.jumlahPorsi}
+                />
+                {errors.jumlahPorsi && (
+                  <FieldError>{errors.jumlahPorsi.message}</FieldError>
+                )}
+              </Field>
             </div>
 
             <Field data-invalid={!!errors.deskripsi}>
@@ -125,6 +187,10 @@ export function CreateReportForm({
                 {...register("deskripsi")}
                 aria-invalid={!!errors.deskripsi}
               />
+              <FieldDescription>
+                Jelaskan informasi tambahan mengenai menu atau kondisi khusus
+                (minimal 10 karakter).
+              </FieldDescription>
               {errors.deskripsi && (
                 <FieldError>{errors.deskripsi.message}</FieldError>
               )}
@@ -140,16 +206,22 @@ export function CreateReportForm({
             render={({ field }) => (
               <FileUpload
                 maxFiles={1}
-                maxSizeMB={10}
+                maxSizeMB={3}
                 value={field.value ?? []}
-                onChange={field.onChange}
+                onChange={(files) => {
+                  field.onChange(files);
+                  onFoodPhotoSelect();
+                }}
+                onReject={(rejections) =>
+                  onFoodPhotoReject(rejections[0].message)
+                }
                 dropzoneClassName={
                   errors.fotoMakanan
                     ? "border-destructive bg-destructive/5 hover:bg-destructive/10"
                     : undefined
                 }
                 title="Unggah Foto Makanan"
-                helperText="Pastikan foto jelas dan memperlihatkan seluruh porsi makanan (Maks. 10MB)"
+                helperText="Pastikan foto jelas dan memperlihatkan seluruh porsi makanan (maks. 3MB)"
               />
             )}
           />
@@ -334,6 +406,11 @@ export function CreateReportForm({
               </TableBody>
             </Table>
           </div>
+          {rincianAnggaranErrorMessage && (
+            <FieldError className="mt-3">
+              {rincianAnggaranErrorMessage}
+            </FieldError>
+          )}
 
           <div className="mt-4 flex items-center justify-between rounded-lg bg-emerald-500 px-6 py-4 text-white">
             <span className="font-semibold">Total Anggaran Per Porsi</span>
@@ -351,17 +428,23 @@ export function CreateReportForm({
             render={({ field }) => (
               <FileUpload
                 maxFiles={1}
-                maxSizeMB={10}
-                accept=".pdf,.xlsx,.xls,.png,.jpg,.jpeg"
+                maxSizeMB={3}
+                accept="image/png,image/jpeg,image/webp"
                 value={field.value ?? []}
-                onChange={field.onChange}
+                onChange={(files) => {
+                  field.onChange(files);
+                  onBudgetProofSelect();
+                }}
+                onReject={(rejections) =>
+                  onBudgetProofReject(rejections[0].message)
+                }
                 dropzoneClassName={
                   errors.buktiAnggaran
                     ? "border-destructive bg-destructive/5 hover:bg-destructive/10"
                     : undefined
                 }
                 title="Unggah Bukti Rincian Anggaran"
-                helperText="Format file bisa berupa .excel, .pdf, .jpg, .png maksimal 10MB"
+                helperText="Backend menerima bukti anggaran berupa JPG, PNG, atau WEBP (maks. 3MB)"
               />
             )}
           />
@@ -381,23 +464,32 @@ export function CreateReportForm({
           <div className="mb-8 flex flex-col gap-4">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Total Porsi</span>
-              <span className="font-semibold">1,250 Porsi</span>
+              <span className="font-semibold">
+                {jumlahPorsi > 0
+                  ? `${jumlahPorsi.toLocaleString("id-ID")} Porsi`
+                  : "-"}
+              </span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Target Kalori</span>
-              <span className="font-semibold text-emerald-500">750 kcal</span>
+              <span className="font-semibold text-emerald-500">
+                {targetKalori > 0 ? `${targetKalori} kcal` : "-"}
+              </span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Total Anggaran</span>
-              <span className="font-semibold">Rp 25.000.000</span>
+              <span className="font-semibold">
+                Rp {totalAnggaranPerPorsi.toLocaleString("id-ID")}
+              </span>
             </div>
           </div>
 
           <Button
             type="submit"
             className="mb-4 flex h-12 w-full items-center justify-center gap-3 rounded-xl bg-emerald-500 text-base text-white hover:bg-emerald-600"
+            disabled={isSubmitting}
           >
-            Kirim Laporan
+            {isSubmitting ? "Mengirim Laporan..." : "Kirim Laporan"}
             <SendIcon className="size-4" />
           </Button>
 

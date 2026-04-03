@@ -11,9 +11,16 @@ export function SppgCreateReportContainer() {
     fields,
     handleSubmit,
     isHydrating,
+    isSubmitting,
+    jumlahPorsi,
+    onBudgetProofReject,
+    onBudgetProofSelect,
+    onFoodPhotoReject,
+    onFoodPhotoSelect,
     onSubmit,
     register,
     remove,
+    targetKalori,
     totalAnggaranPerPorsi,
   } = usePersistedSppgCreateReportForm();
 
@@ -25,9 +32,16 @@ export function SppgCreateReportContainer() {
       fields={fields}
       handleSubmit={handleSubmit}
       isHydrating={isHydrating}
+      isSubmitting={isSubmitting}
+      jumlahPorsi={jumlahPorsi}
+      onBudgetProofReject={onBudgetProofReject}
+      onBudgetProofSelect={onBudgetProofSelect}
+      onFoodPhotoReject={onFoodPhotoReject}
+      onFoodPhotoSelect={onFoodPhotoSelect}
       onSubmit={onSubmit}
       register={register}
       remove={remove}
+      targetKalori={targetKalori}
       totalAnggaranPerPorsi={totalAnggaranPerPorsi}
     />
   );

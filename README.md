@@ -27,13 +27,74 @@ The frontend enforces a strict anti-corruption boundary through Zod DTO validati
 pnpm install
 ```
 
-2. Set up environment variables:
+2. Create your local env file and set the backend base URL:
 
 ```bash
 cp .env.example .env.local
 ```
 
-> Set `PAGAR_API_BASE_URL` in `.env.local` to point to your local or remote backend origin.
+Set `PAGAR_API_BASE_URL` in `.env.local` to your backend origin.
+
+3. Start the app:
+
+```bash
+cp .env.example .env.local
+```
+
+4. Open `http://localhost:3000`.
+
+## Current Route Behavior
+
+The app does not serve a content page at `/` for now.
+
+- `/` redirects to `/laporan-masyarakat` for unauthenticated users.
+- `/` redirects to the authenticated landing page for signed-in users.
+- `/dashboard` redirects to the correct dashboard landing page or `/auth/masuk`.
+
+This interception is handled by [`src/proxy.ts`](./src/proxy.ts).
+
+## Route Overview
+
+Public surfaces:
+
+- `/laporan-masyarakat`
+- `/laporan-sppg`
+- `/laporan-sppg/[id]`
+- `/auth/masuk`
+- `/auth/daftar`
+- `/auth/daftar/publik`
+- `/auth/daftar/sekolah`
+- `/auth/daftar/sppg`
+- `/auth/lupa-kata-sandi`
+
+Protected public-role surfaces:
+
+- `/profil`
+- `/tambah-laporan`
+
+SPPG dashboard:
+
+- `/dashboard/sppg`
+- `/dashboard/sppg/manajemen-laporan`
+- `/dashboard/sppg/laporan-periodik`
+- `/dashboard/sppg/profil`
+
+Admin dashboard:
+
+- `/dashboard/admin`
+- `/dashboard/admin/kelola-akun`
+- `/dashboard/admin/profil`
+
+## Authentication
+
+Authentication currently uses:
+
+- server actions in [`src/lib/auth/actions.ts`](./src/lib/auth/actions.ts)
+- a server-owned session cookie
+- route gating in [`src/proxy.ts`](./src/proxy.ts)
+- navigation policy in [`src/lib/auth/navigation.ts`](./src/lib/auth/navigation.ts)
+
+The session cookie is parsed and serialized in [`src/lib/auth/cookie.ts`](./src/lib/auth/cookie.ts).
 
 3. Start the development server:
 

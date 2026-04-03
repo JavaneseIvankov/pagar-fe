@@ -1,6 +1,16 @@
 import { PublicCreateReportContainer } from "@/containers/public-create-report-container";
 
-export default function CreateReportPage() {
+type CreateReportPageProps = {
+  searchParams?: Promise<{
+    sppgId?: string;
+  }>;
+};
+
+export default async function CreateReportPage({
+  searchParams,
+}: CreateReportPageProps) {
+  const resolvedSearchParams = await searchParams;
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mx-auto mb-8 max-w-4xl text-left">
@@ -12,7 +22,9 @@ export default function CreateReportPage() {
           melaporkan temuan Anda di lapangan.
         </p>
       </div>
-      <PublicCreateReportContainer />
+      <PublicCreateReportContainer
+        initialSppgId={resolvedSearchParams?.sppgId}
+      />
     </div>
   );
 }

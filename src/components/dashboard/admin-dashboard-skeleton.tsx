@@ -12,7 +12,7 @@ export function AdminDashboardSkeleton() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 bg-card sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-2xl border border-border/60 p-6">
           <div className="mb-5 flex items-start justify-between gap-3">
             <Skeleton className="h-10 w-10 rounded-xl" />
@@ -24,7 +24,7 @@ export function AdminDashboardSkeleton() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border/60 p-6">
+        <div className="rounded-2xl border border-border/60 bg-card p-6">
           <div className="mb-5 flex items-start justify-between gap-3">
             <Skeleton className="h-10 w-10 rounded-xl" />
             <Skeleton className="h-7 w-20 rounded-full" />
@@ -35,7 +35,7 @@ export function AdminDashboardSkeleton() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border/60 p-6">
+        <div className="rounded-2xl border border-border/60 bg-card p-6">
           <div className="mb-5 flex items-start justify-between gap-3">
             <Skeleton className="h-10 w-10 rounded-xl" />
             <Skeleton className="h-7 w-24 rounded-full" />
@@ -46,7 +46,7 @@ export function AdminDashboardSkeleton() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border/60 p-6">
+        <div className="rounded-2xl border border-border/60 bg-card p-6">
           <div className="mb-5 flex items-start justify-between gap-3">
             <Skeleton className="h-10 w-10 rounded-xl" />
             <Skeleton className="h-7 w-16 rounded-full" />
@@ -58,7 +58,7 @@ export function AdminDashboardSkeleton() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-border/60 p-6">
+      <div className="rounded-2xl border border-border/60 bg-card p-6">
         <div className="mb-6 flex items-center justify-between gap-4">
           <Skeleton className="h-7 w-40" />
           <Skeleton className="h-5 w-24" />
@@ -122,7 +122,7 @@ export function AdminDashboardSkeleton() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_2fr]">
+      <div className="grid grid-cols-1 gap-6 bg-card lg:grid-cols-[1fr_2fr]">
         <div className="rounded-2xl border border-border/60 p-6">
           <div className="mb-6 flex items-center gap-3">
             <Skeleton className="h-10 w-10 rounded-lg" />
@@ -149,7 +149,7 @@ export function AdminDashboardSkeleton() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border/60 p-6">
+        <div className="rounded-2xl border border-border/60 bg-card p-6">
           <div className="mb-6 flex items-center gap-3">
             <Skeleton className="h-10 w-10 rounded-lg" />
             <Skeleton className="h-6 w-36" />

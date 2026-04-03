@@ -1,207 +1,279 @@
-import { z } from "zod/v3";
-import { delayedValue } from "@/lib/utils";
+"use server";
+
+import { ApiClientError } from "@/lib/api";
+import { getAuthenticatedLandingPath } from "@/lib/auth/navigation";
+import { getSafeReturnToPath } from "@/lib/auth/redirects";
+import { clearAuthSession, setAuthSession } from "@/lib/auth/server";
 import {
-  loginBodySchema,
-  loginErrorResponseSchema,
-  loginSuccessResponseSchema,
   mapLoginDtoToDomain,
   mapRegisterDtoToDomain,
-  registerBodySchema,
-  registerErrorResponseSchema,
-  registerSuccessResponseSchema,
-  type TAccountStatus,
   type TAuthRegistrationResult,
-  type TAuthSession,
-  type TRole,
 } from "@/types";
+import { createServerRpc } from "./server-rpc";
 
-type AuthUserRecord = {
-  accountStatus: TAccountStatus;
-  bgnCode: string | null;
-  idUser: string;
+type AuthActionErrorResult = {
+  message: string;
+  status: "error";
+};
+
+type AuthActionSuccessResult = {
+  message: string;
+  redirectTo: string;
+  status: "success";
+};
+
+export type AuthActionResult = AuthActionErrorResult | AuthActionSuccessResult;
+
+type PasswordRecoveryErrorResult = {
+  message: string;
+  status: "error";
+};
+
+type PasswordRecoverySuccessResult = {
+  message: string;
+  redirectTo?: string;
+  status: "success";
+};
+
+export type PasswordRecoveryActionResult =
+  | PasswordRecoveryErrorResult
+  | PasswordRecoverySuccessResult;
+
+type LoginUserInput = {
   password: string;
-  registrationCode: string | null;
-  role: TRole;
+  returnTo?: string;
   username: string;
 };
 
-const authUserRecordSchema = z.object({
-  idUser: z.string().uuid(),
-  username: z.string(),
-  password: z.string(),
-  role: z.enum(["ADMIN", "PUBLIC", "SCHOOL", "SPPG"]),
-  registrationCode: z.string().nullable(),
-  bgnCode: z.string().nullable(),
-  accountStatus: z.enum(["PENDING", "APPROVED", "REJECTED"]),
-});
+type RequestPasswordResetInput = {
+  email: string;
+};
 
-const authUserDatabaseSchema = z.array(authUserRecordSchema);
+type ResetPasswordInput = {
+  newPassword: string;
+  token: string;
+};
 
-const INITIAL_AUTH_USERS: AuthUserRecord[] = [
-  {
-    idUser: "00000000-0000-4000-8000-000000000901",
-    username: "admin.pagar",
-    password: "Admin123",
-    role: "ADMIN",
-    registrationCode: null,
-    bgnCode: null,
-    accountStatus: "APPROVED",
-  },
-  {
-    idUser: "00000000-0000-4000-8000-000000000902",
-    username: "warga.malang",
-    password: "Public123",
-    role: "PUBLIC",
-    registrationCode: null,
-    bgnCode: null,
-    accountStatus: "APPROVED",
-  },
-  {
-    idUser: "00000000-0000-4000-8000-000000000903",
-    username: "sdn-kauman-1",
-    password: "School123",
-    role: "SCHOOL",
-    registrationCode: "REG-SCH-001",
-    bgnCode: null,
-    accountStatus: "APPROVED",
-  },
-  {
-    idUser: "00000000-0000-4000-8000-000000000904",
-    username: "sppg-berkah-nutrisi",
-    password: "Sppg1234",
-    role: "SPPG",
-    registrationCode: null,
-    bgnCode: "BGN-SPPG-001",
-    accountStatus: "APPROVED",
-  },
-];
-
-let fallbackAuthUserDatabase = [...INITIAL_AUTH_USERS];
-
-function createAuthError(message: string) {
-  const dto = loginErrorResponseSchema.parse({
-    status: "error",
-    message,
-  });
-
-  return new Error(dto.message);
-}
-
-function createUserId() {
-  if (typeof globalThis.crypto?.randomUUID === "function") {
-    return globalThis.crypto.randomUUID();
-  }
-
-  return `00000000-0000-4000-8000-${String(Date.now()).padStart(12, "0").slice(-12)}`;
-}
-
-function readAuthUserDatabase() {
-  return authUserDatabaseSchema.parse(fallbackAuthUserDatabase);
-}
-
-function writeAuthUserDatabase(records: AuthUserRecord[]) {
-  fallbackAuthUserDatabase = records;
-}
-
-export async function loginUser(input: {
+type RegisterPublicInput = {
+  email: string;
   password: string;
+  role: "PUBLIC";
   username: string;
-}): Promise<TAuthSession> {
-  const body = loginBodySchema.parse(input);
-  const records = readAuthUserDatabase();
-  const userRecord = records.find(
-    (record) => record.username === body.username,
-  );
+};
 
-  if (!userRecord || userRecord.password !== body.password) {
-    throw createAuthError("Username atau kata sandi tidak valid.");
-  }
-
-  if (userRecord.accountStatus === "PENDING") {
-    throw createAuthError("Akun Anda masih menunggu persetujuan admin.");
-  }
-
-  if (userRecord.accountStatus === "REJECTED") {
-    throw createAuthError("Akun Anda ditolak. Hubungi admin untuk bantuan.");
-  }
-
-  const rawData = await delayedValue(
-    {
-      status: "success" as const,
-      message: "Login berhasil.",
-      data: {
-        token: `mock-token-${userRecord.idUser}`,
-        user: {
-          id_user: userRecord.idUser,
-          username: userRecord.username,
-          role: userRecord.role,
-        },
-      },
-    },
-    300,
-  );
-  const dto = loginSuccessResponseSchema.parse(rawData);
-
-  return mapLoginDtoToDomain(dto.data);
-}
-
-export async function registerUser(input: {
-  bgnCode?: string;
+type RegisterSchoolInput = {
+  email: string;
   password: string;
   registrationCode?: string;
-  role: TRole;
+  role: "SCHOOL";
+  schoolAddress: string;
+  schoolName: string;
   username: string;
-}): Promise<TAuthRegistrationResult> {
-  const body = registerBodySchema.parse({
-    username: input.username,
-    password: input.password,
-    role: input.role,
-    registration_code: input.registrationCode,
-    bgn_code: input.bgnCode,
-  });
-  const records = readAuthUserDatabase();
+};
 
-  if (records.some((record) => record.username === body.username)) {
-    const errorDto = registerErrorResponseSchema.parse({
-      status: "error",
-      message: "Username sudah digunakan.",
-    });
+type RegisterSppgInput = {
+  bgnCode?: string;
+  email: string;
+  password: string;
+  role: "SPPG";
+  sppgAddress: string;
+  sppgName: string;
+  username: string;
+};
 
-    throw new Error(errorDto.message);
+type RegisterUserInput =
+  | RegisterPublicInput
+  | RegisterSchoolInput
+  | RegisterSppgInput;
+
+function getErrorMessage(error: unknown, fallbackMessage: string) {
+  if (error instanceof ApiClientError) {
+    return error.message;
   }
 
-  const accountStatus: TAccountStatus =
-    body.role === "PUBLIC" ? "APPROVED" : "PENDING";
+  if (error instanceof Error) {
+    return error.message;
+  }
 
-  const nextRecord: AuthUserRecord = {
-    idUser: createUserId(),
-    username: body.username,
-    password: body.password,
-    role: body.role,
-    registrationCode: body.registration_code ?? null,
-    bgnCode: body.bgn_code ?? null,
-    accountStatus,
-  };
+  return fallbackMessage;
+}
 
-  writeAuthUserDatabase([...records, nextRecord]);
+const registerWithBackend = createServerRpc(
+  {
+    operation: "registerWithBackend",
+  },
+  async (
+    { client },
+    input: RegisterUserInput,
+  ): Promise<TAuthRegistrationResult> => {
+    if (input.role === "PUBLIC") {
+      const response = await client.registerPublic({
+        body: {
+          email: input.email,
+          password: input.password,
+          username: input.username,
+        },
+      });
 
-  const rawData = await delayedValue(
-    {
-      status: "success" as const,
-      message:
-        accountStatus === "APPROVED"
-          ? "Akun berhasil dibuat. Silakan masuk."
-          : "Pendaftaran berhasil dikirim dan menunggu persetujuan admin.",
-      data: {
-        id_user: nextRecord.idUser,
-        username: nextRecord.username,
-        role: nextRecord.role,
-        account_status: nextRecord.accountStatus,
+      return mapRegisterDtoToDomain(response);
+    }
+
+    if (input.role === "SCHOOL") {
+      const response = await client.registerSchool({
+        body: {
+          email: input.email,
+          password: input.password,
+          registration_code: input.registrationCode,
+          school_address: input.schoolAddress,
+          school_name: input.schoolName,
+          username: input.username,
+        },
+      });
+
+      return mapRegisterDtoToDomain(response);
+    }
+
+    const response = await client.registerSppg({
+      body: {
+        bgn_code: input.bgnCode,
+        email: input.email,
+        password: input.password,
+        sppg_address: input.sppgAddress,
+        sppg_name: input.sppgName,
+        username: input.username,
       },
-    },
-    300,
-  );
-  const dto = registerSuccessResponseSchema.parse(rawData);
+    });
 
-  return mapRegisterDtoToDomain(dto);
+    return mapRegisterDtoToDomain(response);
+  },
+);
+
+const loginWithBackend = createServerRpc(
+  {
+    operation: "loginWithBackend",
+  },
+  async ({ client }, input: LoginUserInput) => {
+    return client.login({
+      body: {
+        password: input.password,
+        username: input.username,
+      },
+    });
+  },
+);
+
+const requestPasswordResetWithBackend = createServerRpc(
+  {
+    operation: "requestPasswordResetWithBackend",
+  },
+  async ({ client }, input: RequestPasswordResetInput) => {
+    return client.forgotPassword({
+      body: {
+        email: input.email,
+      },
+    });
+  },
+);
+
+const resetPasswordWithBackend = createServerRpc(
+  {
+    operation: "resetPasswordWithBackend",
+  },
+  async ({ client }, input: ResetPasswordInput) => {
+    return client.resetPassword({
+      params: {
+        token: input.token,
+      },
+      body: {
+        newPassword: input.newPassword,
+      },
+    });
+  },
+);
+
+export async function loginUser(
+  input: LoginUserInput,
+): Promise<AuthActionResult> {
+  try {
+    const response = await loginWithBackend(input);
+    const session = mapLoginDtoToDomain(response.data);
+    const safeReturnTo = getSafeReturnToPath(input.returnTo);
+
+    await setAuthSession(session);
+
+    return {
+      status: "success",
+      message: response.message,
+      redirectTo:
+        safeReturnTo ?? getAuthenticatedLandingPath(session.user.role),
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: getErrorMessage(error, "Gagal masuk ke akun Anda."),
+    };
+  }
+}
+
+export async function registerUser(
+  input: RegisterUserInput,
+): Promise<AuthActionResult> {
+  try {
+    const result = await registerWithBackend(input);
+
+    return {
+      status: "success",
+      message: result.message,
+      redirectTo: "/auth/masuk",
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: getErrorMessage(error, "Gagal mendaftarkan akun."),
+    };
+  }
+}
+
+export async function requestPasswordReset(
+  input: RequestPasswordResetInput,
+): Promise<PasswordRecoveryActionResult> {
+  try {
+    const result = await requestPasswordResetWithBackend(input);
+
+    return {
+      status: "success",
+      message: result.message,
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: getErrorMessage(
+        error,
+        "Gagal memproses permintaan reset kata sandi.",
+      ),
+    };
+  }
+}
+
+export async function resetPassword(
+  input: ResetPasswordInput,
+): Promise<PasswordRecoveryActionResult> {
+  try {
+    const result = await resetPasswordWithBackend(input);
+
+    return {
+      status: "success",
+      message: result.message,
+      redirectTo: "/auth/masuk",
+    };
+  } catch (error) {
+    return {
+      status: "error",
+      message: getErrorMessage(error, "Gagal mengatur ulang kata sandi."),
+    };
+  }
+}
+
+export async function logoutUser() {
+  await clearAuthSession();
 }

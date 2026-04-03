@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from "sonner";
 import { AdminComplaintsOverview } from "@/components/dashboard/admin-complaints-overview";
 import { AdminComplaintsTable } from "@/components/dashboard/admin-complaints-table";
 import { AdminDashboardHeader } from "@/components/dashboard/admin-dashboard-header";
@@ -8,7 +9,6 @@ import {
   type AdminSummaryStatItem,
   AdminSummaryStats,
 } from "@/components/dashboard/admin-summary-stats";
-import { AdminVendorWarnings } from "@/components/dashboard/admin-vendor-warnings";
 import {
   PeopleIcon,
   ReportIcon,
@@ -21,7 +21,6 @@ import {
 } from "@/hooks/use-admin-dashboard";
 import { getAdminComplaintStatusUi } from "@/lib/ui-mappers";
 import type { TAdminStatistics } from "@/types";
-import { toast } from "sonner";
 
 function mapSummaryStats(statistics: TAdminStatistics): AdminSummaryStatItem[] {
   return [

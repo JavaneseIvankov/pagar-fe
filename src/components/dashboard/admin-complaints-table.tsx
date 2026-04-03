@@ -181,7 +181,7 @@ export function AdminComplaintsTable({
                         height={64}
                       />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-muted text-xs text-muted-foreground">
+                      <div className="flex h-full w-full items-center justify-center bg-muted text-muted-foreground text-xs">
                         -
                       </div>
                     )}

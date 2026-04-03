@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function SppgReportListSkeleton() {
   return (
-    <div className="grid w-full grid-cols-1 gap-4 rounded-xl bg-card ring-1 ring-foreground/10 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid w-full grid-cols-1 gap-4 rounded-xl sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
       <div className="overflow-hidden rounded-[20px] border border-border/60 pt-4 sm:rounded-[24px]">
         <div className="flex gap-3 border-border/50 border-b px-3 py-3 sm:px-6 sm:py-4">
           <Skeleton className="h-10 w-10 rounded-full" />
